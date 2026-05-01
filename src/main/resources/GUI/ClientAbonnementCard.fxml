@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="320.0" styleClass="client-plan-card" stylesheets="@../CSS/style.css" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ClientAbonnementCardController">
+   <children>
+      <Label styleClass="plan-badge" text="POPULAR PLAN" />
+      <Label fx:id="nameLabel" styleClass="client-card-title" text="Premium Plan" />
+      <HBox alignment="BASELINE_LEFT" spacing="5.0">
+         <children>
+            <Label fx:id="priceLabel" styleClass="client-card-price" text="99.99" />
+            <Label text="DT / mois" textFill="#9a7b5f" />
+         </children>
+      </HBox>
+      <Label fx:id="durationLabel" styleClass="client-duration-label" text="12 Months Access" />
+      <Label fx:id="descLabel" styleClass="client-card-desc" text="Unlock all features including exclusive artist auctions and 0% commission." wrapText="true" VBox.vgrow="ALWAYS" />
+      <Button mnemonicParsing="false" onAction="#handleSubscribe" styleClass="client-btn-primary" text="Subscribe" maxWidth="1.7976931348623157E308">
+         <VBox.margin>
+            <Insets top="15.0" />
+         </VBox.margin>
+      </Button>
+   </children>
+</VBox>

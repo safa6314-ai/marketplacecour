@@ -12,4 +12,8 @@ public interface InterfaceCRUD<T> {
     public void supprimer(int id) throws SQLException;
 
     public List<T> afficher() throws SQLException;
+
+    default T getById(int id) throws SQLException {
+        return null;
+    }
 }

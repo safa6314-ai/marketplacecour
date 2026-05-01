@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="820.0" prefWidth="1400.0" styleClass="admin-root" stylesheets="@../CSS/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AdminController">
+   <children>
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox prefWidth="220.0" styleClass="admin-sidebar">
+               <children>
+                  <Label styleClass="header-text" text="ARTEVIA" textFill="#6c63ff">
+                     <VBox.margin><Insets bottom="30.0" /></VBox.margin>
+                  </Label>
+                  <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="admin-nav-active" text="Admin Dashboard" />
+                  <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="admin-nav" text="Abonnements" />
+                  <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="admin-nav" text="Souscriptions" />
+                  <Pane VBox.vgrow="ALWAYS" />
+                  <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToClientView" styleClass="admin-btn-primary" text="Switch To Client View" />
+               </children>
+            </VBox>
+
+            <VBox HBox.hgrow="ALWAYS" spacing="16.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="admin-topbar">
+                     <children>
+                        <Label fx:id="modeTitle" styleClass="admin-section-title" text="Gestion des abonnements" />
+                        <HBox styleClass="admin-switch-container">
+                           <children>
+                              <Button fx:id="btnAbonnement" mnemonicParsing="false" onAction="#showAbonnements" styleClass="admin-switch-btn-active" text="Abonnements" />
+                              <Button fx:id="btnSouscription" mnemonicParsing="false" onAction="#showSouscriptions" styleClass="admin-switch-btn" text="Souscriptions" />
+                           </children>
+                        </HBox>
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#handleAdd" styleClass="admin-btn-secondary" text="Open Form" />
+                        <Button mnemonicParsing="false" onAction="#handleSave" styleClass="admin-btn-primary" text="Save" />
+                     </children>
+                     <padding><Insets left="24.0" right="24.0" top="16.0" bottom="8.0" /></padding>
+                  </HBox>
+
+                  <HBox spacing="16.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" styleClass="transparent-scroll">
+                           <content>
+                              <GridPane fx:id="grid" hgap="18.0" vgap="18.0">
+                                 <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                              </GridPane>
+                           </content>
+                        </ScrollPane>
+
+                        <VBox fx:id="formPanel" managed="false" prefWidth="360.0" spacing="12.0" styleClass="admin-form-panel" visible="false">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="admin-section-title" style="-fx-font-size: 20px;" text="Formulaire" />
+                                    <Pane HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#handleCloseForm" styleClass="admin-nav" text="Close" />
+                                 </children>
+                              </HBox>
+
+                                 <VBox fx:id="abonnementForm" spacing="6.0">
+                                 <children>
+                                    <Label text="Nom" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <TextField fx:id="aboNomField" promptText="Basic / Premium / VIP" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #e5bc95; -fx-border-radius: 5; -fx-padding: 6;" />
+                                    <Label fx:id="aboNomError" styleClass="error-label" />
+
+                                    <Label text="Prix" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <TextField fx:id="aboPrixField" promptText="ex: 29.90" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #e5bc95; -fx-border-radius: 5; -fx-padding: 6;" />
+                                    <Label fx:id="aboPrixError" styleClass="error-label" />
+
+                                    <Label text="Durée (mois)" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <TextField fx:id="aboDureeField" promptText="ex: 6" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #e5bc95; -fx-border-radius: 5; -fx-padding: 6;" />
+                                    <Label fx:id="aboDureeError" styleClass="error-label" />
+
+                                    <Label text="Description" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <TextArea fx:id="aboDescField" prefRowCount="3" style="-fx-control-inner-background: white; -fx-text-fill: #5f3f25; -fx-border-color: #e5bc95; -fx-border-radius: 5;" />
+                                    <Label fx:id="aboDescError" styleClass="error-label" />
+                                 </children>
+                              </VBox>
+
+                              <VBox fx:id="souscriptionForm" managed="false" spacing="6.0" visible="false">
+                                 <children>
+                                    <Label text="Nom Client" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <TextField fx:id="subClientField" promptText="ex: Ali" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #e5bc95; -fx-border-radius: 5; -fx-padding: 6;" />
+                                    <Label fx:id="subClientError" styleClass="error-label" />
+
+                                    <Label text="Date Début" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <DatePicker fx:id="subDateDebut" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #e5bc95; -fx-border-radius: 5; -fx-padding: 2;" maxWidth="1.7976931348623157E308" />
+                                    <Label fx:id="subDateDebutError" styleClass="error-label" />
+
+                                    <Label text="Date Fin" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <DatePicker fx:id="subDateFin" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #e5bc95; -fx-border-radius: 5; -fx-padding: 2;" maxWidth="1.7976931348623157E308" />
+                                    <Label fx:id="subDateFinError" styleClass="error-label" />
+
+                                    <Label text="Statut" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <TextField fx:id="subStatutField" promptText="active / inactive" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #e5bc95; -fx-border-radius: 5; -fx-padding: 6;" />
+                                    <Label fx:id="subStatutError" styleClass="error-label" />
+
+                                    <Label text="Abonnement" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                                    <ComboBox fx:id="subAboComboBox" promptText="Choisir un abonnement" style="-fx-background-color: white; -fx-border-color: #e5bc95; -fx-border-radius: 5; -fx-padding: 2;" maxWidth="1.7976931348623157E308" />
+                                    <Label fx:id="subAboIdError" styleClass="error-label" />
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding><Insets top="16.0" right="16.0" left="16.0" bottom="16.0" /></padding>
+                        </VBox>
+                     </children>
+                     <VBox.margin><Insets left="8.0" right="16.0" bottom="16.0" /></VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

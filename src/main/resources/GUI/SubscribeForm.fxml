@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefWidth="450.0" styleClass="client-root" stylesheets="@../CSS/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SubscribeFormController">
+   <children>
+      <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+         <children>
+            
+            <!-- Header -->
+            <VBox spacing="5.0">
+               <children>
+                  <Label text="Complete your Subscription" styleClass="client-section-title" />
+                  <Label text="Please verify the details below before confirming." textFill="#805f43" />
+               </children>
+            </VBox>
+            
+            <!-- Plan Summary Card -->
+            <VBox styleClass="client-form-panel" style="-fx-padding: 15;">
+               <children>
+                  <Label text="Selected Plan" styleClass="plan-badge" style="-fx-font-size: 10px;" />
+                  <Label fx:id="planNameLabel" text="Plan Name" styleClass="client-card-title" style="-fx-font-size: 18px;" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label fx:id="planPriceLabel" text="0.00 DT" styleClass="client-card-price" style="-fx-font-size: 16px;" />
+                        <Label text="|" textFill="#d5ab88" />
+                        <Label fx:id="planDurationLabel" text="1 Month" styleClass="client-duration-label" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <!-- Input Fields -->
+            <VBox spacing="15.0">
+               <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Your Full Name" textFill="#6f4a2f" style="-fx-font-weight: bold;" />
+                        <TextField fx:id="clientNameField" promptText="e.g. John Doe" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-prompt-text-fill: #cbb49e; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #efc8a0; -fx-border-radius: 8;" />
+                        <Label fx:id="errorLabel" textFill="#ff4b4b" style="-fx-font-size: 12px;" visible="false" managed="false"/>
+                     </children>
+                  </VBox>
+                  
+                  <HBox spacing="15.0">
+                     <children>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="Start Date" textFill="#8b6a4d" style="-fx-font-size: 12px;" />
+                              <TextField fx:id="startDateField" editable="false" style="-fx-background-color: #fffaf4; -fx-text-fill: #2ECC71; -fx-border-color: #efc8a0; -fx-border-radius: 5; -fx-padding: 8; -fx-font-weight: bold;" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="End Date" textFill="#8b6a4d" style="-fx-font-size: 12px;" />
+                              <TextField fx:id="endDateField" editable="false" style="-fx-background-color: #fffaf4; -fx-text-fill: #f08f3a; -fx-border-color: #efc8a0; -fx-border-radius: 5; -fx-padding: 8; -fx-font-weight: bold;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <!-- Buttons -->
+            <HBox alignment="CENTER_RIGHT" spacing="15.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleCancel" styleClass="client-btn-secondary" text="Cancel" />
+                  <Button mnemonicParsing="false" onAction="#handleConfirm" styleClass="client-btn-primary" text="Confirm &amp; Pay" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

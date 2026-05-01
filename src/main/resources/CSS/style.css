@@ -1,0 +1,240 @@
+.root {
+    -fx-accent: #9b5dff;
+    -fx-base: #0f0b1f;
+    -fx-control-inner-background: #1a1430;
+    -fx-background-color: linear-gradient(to bottom right, #120d28, #0b0820);
+}
+
+.header-text {
+    -fx-text-fill: #f7f2ff;
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+}
+
+.section-title,
+.admin-section-title,
+.client-section-title {
+    -fx-text-fill: #f4ecff;
+    -fx-font-size: 24px;
+    -fx-font-weight: 800;
+}
+
+.muted-label {
+    -fx-text-fill: #bcaedb;
+    -fx-font-size: 13px;
+}
+
+.sidebar,
+.admin-sidebar {
+    -fx-background-color: linear-gradient(to bottom, #140f2f, #0f0b24);
+    -fx-padding: 22;
+    -fx-spacing: 14;
+    -fx-border-color: #2c2154;
+    -fx-border-width: 0 1 0 0;
+}
+
+.topbar,
+.admin-topbar,
+.client-topbar {
+    -fx-background-color: rgba(25, 19, 52, 0.95);
+    -fx-border-color: #2f2656;
+    -fx-border-width: 0 0 1 0;
+}
+
+.nav-button,
+.admin-nav,
+.switch-btn,
+.admin-switch-btn,
+.client-switch-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #b8a8dd;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-alignment: center-left;
+    -fx-padding: 10 15;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.nav-button:hover,
+.admin-nav:hover,
+.switch-btn:hover,
+.admin-switch-btn:hover,
+.client-switch-btn:hover {
+    -fx-background-color: #2a214d;
+    -fx-text-fill: #f6efff;
+}
+
+.nav-button-active,
+.admin-nav-active,
+.switch-btn-active,
+.admin-switch-btn-active,
+.client-switch-btn-active {
+    -fx-background-color: linear-gradient(to right, #a24dff, #ff4fd8);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 18;
+    -fx-background-radius: 12;
+}
+
+.switch-container,
+.admin-switch-container,
+.client-switch-container {
+    -fx-background-color: #1d1538;
+    -fx-background-radius: 30;
+    -fx-padding: 5;
+    -fx-border-color: #352a61;
+    -fx-border-radius: 30;
+}
+
+.card,
+.client-plan-card {
+    -fx-background-color: linear-gradient(to bottom, #1b1537, #14102d);
+    -fx-background-radius: 16;
+    -fx-border-color: #3a2d69;
+    -fx-border-radius: 16;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.35), 12, 0, 0, 6);
+}
+
+.card:hover,
+.client-plan-card:hover,
+.admin-root .card:hover {
+    -fx-border-color: #b964ff;
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+}
+
+.card-title,
+.client-card-title,
+.admin-root .card-title {
+    -fx-text-fill: #f8f3ff;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.card-price,
+.client-card-price,
+.admin-root .card-price {
+    -fx-text-fill: #c481ff;
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+}
+
+.card-desc,
+.client-card-desc,
+.admin-root .card-desc {
+    -fx-text-fill: #b5aad3;
+    -fx-font-size: 14px;
+}
+
+.client-duration-label {
+    -fx-text-fill: #d6b0ff;
+    -fx-font-weight: 700;
+}
+
+.plan-badge {
+    -fx-background-color: rgba(173, 101, 255, 0.2);
+    -fx-text-fill: #d8b3ff;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+    -fx-border-color: #7b49c4;
+    -fx-border-radius: 12;
+}
+
+.btn-primary,
+.admin-btn-primary,
+.client-btn-primary {
+    -fx-background-color: linear-gradient(to right, #9f4dff, #ff52d5);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 24;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover,
+.admin-btn-primary:hover,
+.client-btn-primary:hover {
+    -fx-background-color: linear-gradient(to right, #b46aff, #ff6de0);
+}
+
+.btn-secondary,
+.admin-btn-secondary,
+.client-btn-secondary {
+    -fx-background-color: #251b46;
+    -fx-text-fill: #d6c8f4;
+    -fx-font-weight: bold;
+    -fx-padding: 10 18;
+    -fx-border-color: #4a3a7f;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover,
+.admin-btn-secondary:hover,
+.client-btn-secondary:hover {
+    -fx-background-color: #30235a;
+}
+
+.form-panel,
+.admin-form-panel,
+.client-form-panel {
+    -fx-background-color: #1a1434;
+    -fx-background-radius: 12;
+    -fx-border-color: #3c2f6b;
+    -fx-border-radius: 12;
+}
+
+.form-title {
+    -fx-text-fill: #f0e7ff;
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+}
+
+.text-field,
+.text-area,
+.date-picker,
+.combo-box {
+    -fx-background-color: #231b43;
+    -fx-text-fill: #f3ebff;
+    -fx-prompt-text-fill: #9487bc;
+    -fx-background-radius: 8;
+    -fx-border-color: #443576;
+    -fx-border-radius: 8;
+}
+
+.date-picker > .text-field,
+.combo-box > .text-field {
+    -fx-background-color: #231b43;
+    -fx-text-fill: #f3ebff;
+}
+
+.error-label {
+    -fx-text-fill: #ff6b87;
+    -fx-font-size: 11px;
+    -fx-padding: -2 0 4 2;
+}
+
+.transparent-scroll,
+.admin-root .transparent-scroll,
+.client-root .transparent-scroll {
+    -fx-background-color: transparent;
+}
+
+.transparent-scroll .viewport,
+.admin-root .transparent-scroll .viewport,
+.client-root .transparent-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.admin-root,
+.client-root {
+    -fx-background-color: linear-gradient(to bottom right, #120d28, #0b0820);
+    -fx-base: #0f0b1f;
+    -fx-control-inner-background: #1a1430;
+}

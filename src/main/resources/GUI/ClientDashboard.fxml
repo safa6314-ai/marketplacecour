@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="820.0" prefWidth="1320.0" styleClass="client-root" stylesheets="@../CSS/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ClientController">
+   <children>
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" spacing="12.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="24.0" styleClass="client-topbar">
+               <children>
+                  <Label styleClass="header-text" text="ARTEVIA" textFill="#6c63ff" />
+                  <HBox styleClass="client-switch-container">
+                     <children>
+                        <Button fx:id="btnPlans" mnemonicParsing="false" onAction="#showPlans" styleClass="client-switch-btn-active" text="Plans" />
+                        <Button fx:id="btnMesSouscriptions" mnemonicParsing="false" onAction="#showMesSouscriptions" styleClass="client-switch-btn" text="Mes souscriptions" />
+                     </children>
+                  </HBox>
+                  <Pane HBox.hgrow="ALWAYS" />
+                  <Label styleClass="muted-label" text="Client ID: 2" />
+               </children>
+               <padding><Insets left="28.0" right="28.0" top="16.0" bottom="8.0" /></padding>
+            </HBox>
+
+            <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox HBox.hgrow="ALWAYS" spacing="12.0">
+                     <children>
+                        <Label fx:id="pageTitle" styleClass="client-section-title" text="Plans disponibles">
+                           <VBox.margin><Insets left="24.0" /></VBox.margin>
+                        </Label>
+                        <ScrollPane fitToWidth="true" styleClass="transparent-scroll" VBox.vgrow="ALWAYS">
+                           <content>
+                              <GridPane fx:id="grid" hgap="22.0" vgap="22.0">
+                                 <padding><Insets bottom="28.0" left="24.0" right="24.0" top="10.0" /></padding>
+                              </GridPane>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
+
+
+               </children>
+               <VBox.margin><Insets left="8.0" right="16.0" bottom="16.0" /></VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefWidth="350.0" styleClass="client-root" stylesheets="@../CSS/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ModifierSouscriptionController">
+   <children>
+      <VBox spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+         </padding>
+         <children>
+            <VBox spacing="5.0">
+               <children>
+                  <Label styleClass="client-section-title" text="Modifier Souscription" />
+                  <Label fx:id="clientNameLabel" text="Client Name" textFill="#805f43" />
+               </children>
+            </VBox>
+            
+            <VBox styleClass="client-form-panel" style="-fx-padding: 15;" spacing="10.0">
+               <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Statut" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                        <TextField fx:id="statutField" promptText="active / inactive" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #efc8a0; -fx-border-radius: 5; -fx-padding: 8;" />
+                        <Label fx:id="errorLabel" textFill="#ff4b4b" style="-fx-font-size: 12px;" visible="false" managed="false"/>
+                     </children>
+                  </VBox>
+                  
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Date fin" textFill="#8b6a4d" style="-fx-font-weight: bold;" />
+                        <DatePicker fx:id="dateFinPicker" style="-fx-background-color: white; -fx-text-fill: #5f3f25; -fx-border-color: #efc8a0; -fx-border-radius: 5; -fx-padding: 4;" maxWidth="1.7976931348623157E308" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            
+            <HBox alignment="CENTER_RIGHT" spacing="10.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleCancel" styleClass="client-btn-secondary" text="Annuler" />
+                  <Button mnemonicParsing="false" onAction="#handleSaveEdit" styleClass="client-btn-primary" text="Sauvegarder" />
+               </children>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

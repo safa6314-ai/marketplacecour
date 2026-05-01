@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="300.0" styleClass="card" stylesheets="@../CSS/style.css" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AbonnementCardController">
+   <children>
+      <Label fx:id="nameLabel" styleClass="card-title" text="Premium Plan" />
+      <HBox alignment="BASELINE_LEFT" spacing="5.0">
+         <children>
+            <Label fx:id="priceLabel" styleClass="card-price" text="99.99" />
+            <Label text="DT / month" textFill="#b0b0b0" />
+         </children>
+      </HBox>
+      <Label fx:id="durationLabel" text="12 Months" textFill="#6c63ff" />
+      <Label fx:id="descLabel" styleClass="card-desc" text="Unlock all features including exclusive artist auctions and 0% commission." wrapText="true" VBox.vgrow="ALWAYS" />
+      <HBox spacing="10.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#handleEdit" style="-fx-background-color: #2A2A2A; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20;" text="Edit" />
+            <Button mnemonicParsing="false" onAction="#handleDelete" style="-fx-background-color: #FF4B4B; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20;" text="Delete" />
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>
