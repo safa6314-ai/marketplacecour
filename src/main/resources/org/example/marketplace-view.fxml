@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14" styleClass="root-pane" stylesheets="@../../styles/scene-builder.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.MarketplaceController">
+    <padding>
+        <Insets bottom="18" left="18" right="18" top="18" />
+    </padding>
+    <VBox spacing="4" styleClass="panel-card">
+        <padding>
+            <Insets bottom="14" left="16" right="16" top="14" />
+        </padding>
+        <Label styleClass="heading-title" text="Marketplace Manager" />
+        <Label styleClass="heading-subtitle" text="Gestion visuelle des ventes et achats" />
+    </VBox>
+
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+            <Tab text="Ventes">
+                <content>
+                    <VBox spacing="12" styleClass="panel-card">
+                        <padding>
+                            <Insets bottom="14" left="14" right="14" top="14" />
+                        </padding>
+                        <Label styleClass="section-title" text="Liste des ventes" />
+                        <HBox spacing="8" styleClass="action-bar">
+                            <Button onAction="#onAddVente" styleClass="primary-btn" text="Ajoutar" />
+                            <Button onAction="#onEditVente" styleClass="secondary-btn" text="Modifier" />
+                            <Button onAction="#onDeleteVente" styleClass="danger-btn" text="Supprimer" />
+                            <Button onAction="#onRefreshVentes" styleClass="icon-btn" text="↻" />
+                            <Button onAction="#onClearVentesSelection" styleClass="icon-btn" text="✕" />
+                        </HBox>
+                        <TableView fx:id="ventesTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn prefWidth="70" text="ID" />
+                                <TableColumn prefWidth="140" text="Titre" />
+                                <TableColumn prefWidth="170" text="Description" />
+                                <TableColumn prefWidth="90" text="Prix" />
+                                <TableColumn prefWidth="130" text="Categorie" />
+                                <TableColumn prefWidth="120" text="Artiste" />
+                            </columns>
+                        </TableView>
+                        <Label fx:id="ventesStatus" styleClass="status-label" />
+                    </VBox>
+                </content>
+            </Tab>
+
+            <Tab text="Achats">
+                <content>
+                    <VBox spacing="12" styleClass="panel-card">
+                        <padding>
+                            <Insets bottom="14" left="14" right="14" top="14" />
+                        </padding>
+                        <Label styleClass="section-title" text="Liste des achats" />
+                        <HBox spacing="8" styleClass="action-bar">
+                            <Button onAction="#onAddAchat" styleClass="primary-btn" text="Ajouter" />
+                            <Button onAction="#onEditAchat" styleClass="secondary-btn" text="Modifier" />
+                            <Button onAction="#onDeleteAchat" styleClass="danger-btn" text="Supprimer" />
+                            <Button onAction="#onRefreshAchats" styleClass="icon-btn" text="↻" />
+                            <Button onAction="#onClearAchatsSelection" styleClass="icon-btn" text="✕" />
+                        </HBox>
+                        <TableView fx:id="achatsTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn prefWidth="80" text="ID" />
+                                <TableColumn prefWidth="180" text="Oeuvre" />
+                                <TableColumn prefWidth="150" text="Acheteur" />
+                                <TableColumn prefWidth="110" text="Prix" />
+                                <TableColumn prefWidth="120" text="Date" />
+                            </columns>
+                        </TableView>
+                        <Label fx:id="achatsStatus" styleClass="status-label" />
+                    </VBox>
+                </content>
+            </Tab>
+        </tabs>
+    </TabPane>
+</VBox>
