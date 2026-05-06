@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controllers.commentaire.AfficherCommentaireController"
+      spacing="0"
+      prefWidth="900"
+      prefHeight="620"
+      styleClass="root-pane"
+      stylesheets="@/css/style.css">
+
+    <!-- ── Titre ── -->
+    <Label text="Commentaires"
+           styleClass="heading-title"
+           style="-fx-padding: 24 32 2 32;"/>
+    <Label fx:id="lblPostInfo" text=""
+           styleClass="heading-subtitle"
+           style="-fx-padding: 0 32 8 32;"/>
+
+    <!-- ── Barre d'actions ── -->
+    <HBox spacing="8" styleClass="action-bar" style="-fx-padding: 8 32 8 32;">
+        <Button text="Ajouter"         onAction="#ouvrirDialogAjouter"  styleClass="primary-btn"/>
+        <Button text="Modifier"        onAction="#ouvrirDialogModifier" styleClass="secondary-btn"/>
+        <Button text="Supprimer"       onAction="#supprimerCommentaire" styleClass="danger-btn"/>
+        <Button text="🔄"              onAction="#rafraichir"           styleClass="icon-btn"/>
+        <Button text="↩️ Retour Posts" onAction="#allerVersPosts"       styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- ── TableView ── -->
+    <VBox VBox.vgrow="ALWAYS" style="-fx-padding: 0 32 16 32;">
+        <TableView fx:id="tableCommentaire" VBox.vgrow="ALWAYS" styleClass="table-view">
+            <columns>
+                <TableColumn fx:id="colId"      text="ID"       prefWidth="55"/>
+                <TableColumn fx:id="colContenu" text="Contenu"  prefWidth="460"/>
+                <TableColumn fx:id="colDate"    text="Date"     prefWidth="180"/>
+                <TableColumn fx:id="colPostId"  text="Post ID"  prefWidth="80"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+    <!-- ── Status bar ── -->
+    <Label fx:id="lblStatus" text="[INFO]"
+           styleClass="status-label"
+           style="-fx-padding: 4 32 8 32;"/>
+
+</VBox>
