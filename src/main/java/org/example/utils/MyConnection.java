@@ -1,13 +1,19 @@
 package org.example.utils;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MyConnection {
 
-    private static final String URL      = "jdbc:mysql://localhost:3306/marketplace_db";
-    private static final String USER     = "root";
+    private static final String URL = "jdbc:mysql://localhost:3306/marketplace_db"
+            + "?createDatabaseIfNotExist=true"
+            + "&useUnicode=true"
+            + "&characterEncoding=UTF-8"
+            + "&serverTimezone=UTC";
+    private static final String USER = "root";
     private static final String PASSWORD = "";
 
     private static MyConnection instance;
@@ -17,7 +23,8 @@ public class MyConnection {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Connexion à la base de données réussie.");
+            initializeSchema();
+            System.out.println("Connexion a la base de donnees reussie.");
         } catch (ClassNotFoundException e) {
             System.err.println("Driver MySQL introuvable : " + e.getMessage());
         } catch (SQLException e) {
@@ -34,5 +41,61 @@ public class MyConnection {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    private void initializeSchema() throws SQLException {
+        String createCoursTable = """
+                CREATE TABLE IF NOT EXISTS cours (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    titre VARCHAR(255) NOT NULL,
+                    description TEXT,
+                    prix DOUBLE DEFAULT 0,
+                    categorie VARCHAR(100),
+                    niveau VARCHAR(50) DEFAULT 'Debutant'
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """;
+
+        String createChapitresTable = """
+                CREATE TABLE IF NOT EXISTS chapitres (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    titre VARCHAR(255) NOT NULL,
+                    contenu TEXT,
+                    ordre INT,
+                    cours_id INT
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """;
+
+        try (var statement = connection.createStatement()) {
+            statement.executeUpdate(createCoursTable);
+            statement.executeUpdate(createChapitresTable);
+        }
+
+        addColumnIfMissing("cours", "titre", "VARCHAR(255) NOT NULL DEFAULT ''");
+        addColumnIfMissing("cours", "description", "TEXT");
+        addColumnIfMissing("cours", "prix", "DOUBLE DEFAULT 0");
+        addColumnIfMissing("cours", "categorie", "VARCHAR(100)");
+        addColumnIfMissing("cours", "niveau", "VARCHAR(50) DEFAULT 'Debutant'");
+
+        addColumnIfMissing("chapitres", "titre", "VARCHAR(255) NOT NULL DEFAULT ''");
+        addColumnIfMissing("chapitres", "contenu", "TEXT");
+        addColumnIfMissing("chapitres", "ordre", "INT");
+        addColumnIfMissing("chapitres", "cours_id", "INT");
+    }
+
+    private void addColumnIfMissing(String tableName, String columnName, String definition) throws SQLException {
+        if (columnExists(tableName, columnName)) {
+            return;
+        }
+
+        try (var statement = connection.createStatement()) {
+            statement.executeUpdate("ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + definition);
+        }
+    }
+
+    private boolean columnExists(String tableName, String columnName) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        try (ResultSet columns = metaData.getColumns(connection.getCatalog(), null, tableName, columnName)) {
+            return columns.next();
+        }
     }
 }

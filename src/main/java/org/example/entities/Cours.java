@@ -7,14 +7,20 @@ public class Cours {
     private String description;
     private double prix;
     private String categorie;
+    private String niveau;
 
     public Cours() {}
 
     public Cours(String titre, String description, double prix, String categorie) {
+        this(titre, description, prix, categorie, "Debutant");
+    }
+
+    public Cours(String titre, String description, double prix, String categorie, String niveau) {
         this.titre = titre;
         this.description = description;
         this.prix = prix;
         this.categorie = categorie;
+        this.niveau = niveau;
     }
 
     public int getId() { return id; }
@@ -32,8 +38,11 @@ public class Cours {
     public String getCategorie() { return categorie; }
     public void setCategorie(String categorie) { this.categorie = categorie; }
 
+    public String getNiveau() { return niveau; }
+    public void setNiveau(String niveau) { this.niveau = niveau; }
+
     @Override
     public String toString() {
-        return "Cours{id=" + id + ", titre='" + titre + "', prix=" + prix + "}";
+        return "Cours{id=" + id + ", titre='" + titre + "', niveau='" + niveau + "', prix=" + prix + "}";
     }
 }

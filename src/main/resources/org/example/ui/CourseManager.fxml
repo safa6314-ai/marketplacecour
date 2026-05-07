@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.CourseManagerController"
+            stylesheets="@course-manager.css"
+            prefWidth="1280"
+            prefHeight="820"
+            styleClass="root-pane">
+
+    <top>
+        <HBox styleClass="app-header" alignment="CENTER_LEFT" spacing="12">
+            <padding><Insets top="0" right="24" bottom="0" left="24"/></padding>
+            <Label text="⬡" styleClass="header-logo"/>
+            <VBox spacing="0">
+                <Label text="Artevia" styleClass="header-title"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusLabel" text="Ready" styleClass="status-badge"/>
+        </HBox>
+    </top>
+
+    <left>
+        <HBox spacing="0">
+            <VBox styleClass="nav-panel" spacing="10" prefWidth="110" minWidth="100">
+                <padding><Insets top="14" right="10" bottom="14" left="10"/></padding>
+                <Separator styleClass="nav-separator"/>
+                <Button text="Home" styleClass="nav-item" maxWidth="Infinity"/>
+                <Button text="Courses" styleClass="nav-item nav-item-active" maxWidth="Infinity"/>
+                <Button text="Students" styleClass="nav-item" maxWidth="Infinity"/>
+                <Button text="Reports" styleClass="nav-item" maxWidth="Infinity"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button text="Settings" styleClass="nav-item" maxWidth="Infinity"/>
+            </VBox>
+
+            <VBox styleClass="left-panel" spacing="0" prefWidth="320" minWidth="260">
+                <HBox styleClass="panel-header" alignment="CENTER_LEFT" spacing="10">
+                    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                    <Label text="Courses" styleClass="panel-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="courseCountLabel" text="0 courses" styleClass="count-chip"/>
+                </HBox>
+
+                <HBox styleClass="search-bar" alignment="CENTER_LEFT" spacing="8">
+                    <padding><Insets top="10" right="12" bottom="10" left="12"/></padding>
+                    <TextField fx:id="courseSearchField"
+                               promptText="Search courses..."
+                               styleClass="search-field"
+                               HBox.hgrow="ALWAYS"
+                               maxWidth="Infinity"/>
+                </HBox>
+
+                <TableView fx:id="courseTableView"
+                           styleClass="course-table"
+                           VBox.vgrow="ALWAYS">
+                    <placeholder>
+                        <Label text="No courses yet"/>
+                    </placeholder>
+                    <columns>
+                        <TableColumn fx:id="courseTitleColumn" text="Title" prefWidth="160"/>
+                        <TableColumn fx:id="courseCategoryColumn" text="Category" prefWidth="90"/>
+                        <TableColumn fx:id="courseLevelColumn" text="Level" prefWidth="70"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                </TableView>
+
+                <HBox styleClass="action-bar" spacing="8" alignment="CENTER">
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                    <Button fx:id="addCourseButton"
+                            text="Add"
+                            styleClass="btn-primary"
+                            onAction="#handleAddCourse"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"/>
+                    <Button fx:id="editCourseButton"
+                            text="Edit"
+                            styleClass="btn-secondary"
+                            onAction="#handleEditCourse"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"/>
+                    <Button fx:id="deleteCourseButton"
+                            text="Delete"
+                            styleClass="btn-danger"
+                            onAction="#handleDeleteCourse"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"/>
+                </HBox>
+            </VBox>
+        </HBox>
+    </left>
+
+    <center>
+        <SplitPane orientation="VERTICAL" dividerPositions="0.42" styleClass="main-split">
+            <ScrollPane fitToWidth="true" styleClass="scroll-section" hbarPolicy="NEVER">
+                <VBox styleClass="section-card" spacing="20">
+                    <padding><Insets top="28" right="32" bottom="28" left="32"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Course Details" styleClass="section-heading"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="courseIdLabel" text="" styleClass="id-chip"/>
+                    </HBox>
+                    <Separator styleClass="divider"/>
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="TITLE" styleClass="field-label"/>
+                            <TextField fx:id="courseTitleField" promptText="Enter course title..." styleClass="field-input"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="200">
+                            <Label text="CATEGORY" styleClass="field-label"/>
+                            <TextField fx:id="courseCategoryField" promptText="e.g. Programming" styleClass="field-input"/>
+                        </VBox>
+                        <VBox spacing="6" prefWidth="160">
+                            <Label text="LEVEL" styleClass="field-label"/>
+                            <ComboBox fx:id="courseLevelCombo" promptText="Select level" styleClass="field-combo" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Debutant"/>
+                                        <String fx:value="Intermediaire"/>
+                                        <String fx:value="Avance"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                    </HBox>
+                    <VBox spacing="6">
+                        <Label text="DESCRIPTION" styleClass="field-label"/>
+                        <TextArea fx:id="courseDescriptionArea"
+                                  promptText="Describe what students will learn..."
+                                  styleClass="field-textarea"
+                                  prefRowCount="4"
+                                  wrapText="true"/>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+
+            <SplitPane orientation="HORIZONTAL" dividerPositions="0.40" styleClass="inner-split">
+                <VBox styleClass="section-card" spacing="0" minWidth="260">
+                    <HBox styleClass="panel-header" alignment="CENTER_LEFT" spacing="10">
+                        <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+                        <Label text="Chapters" styleClass="section-heading"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="chapterCountLabel" text="0 chapters" styleClass="count-chip"/>
+                    </HBox>
+                    <TableView fx:id="chapterTableView"
+                               styleClass="chapter-table"
+                               VBox.vgrow="ALWAYS">
+                        <placeholder>
+                            <Label text="Select a course"/>
+                        </placeholder>
+                        <columns>
+                            <TableColumn fx:id="chapterOrderColumn" text="#" prefWidth="40"/>
+                            <TableColumn fx:id="chapterTitleColumn" text="Title" prefWidth="200"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                    <HBox styleClass="action-bar" spacing="8" alignment="CENTER">
+                        <padding><Insets top="10" right="12" bottom="10" left="12"/></padding>
+                        <Button fx:id="addChapterButton"
+                                text="Add"
+                                styleClass="btn-primary"
+                                onAction="#handleAddChapter"
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity"/>
+                        <Button fx:id="editChapterButton"
+                                text="Edit"
+                                styleClass="btn-secondary"
+                                onAction="#handleEditChapter"
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity"/>
+                        <Button fx:id="deleteChapterButton"
+                                text="Delete"
+                                styleClass="btn-danger"
+                                onAction="#handleDeleteChapter"
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity"/>
+                    </HBox>
+                </VBox>
+
+                <ScrollPane fitToWidth="true" styleClass="scroll-section" hbarPolicy="NEVER">
+                    <VBox styleClass="section-card" spacing="20">
+                        <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Chapter Details" styleClass="section-heading"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="chapterIdLabel" text="" styleClass="id-chip"/>
+                        </HBox>
+                        <Separator styleClass="divider"/>
+                        <HBox spacing="14" alignment="CENTER_LEFT">
+                            <VBox spacing="6" prefWidth="60">
+                                <Label text="ORDER" styleClass="field-label"/>
+                                <TextField fx:id="chapterOrderField" promptText="1" styleClass="field-input field-input-sm"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="TITLE" styleClass="field-label"/>
+                                <TextField fx:id="chapterTitleField" promptText="Chapter title..." styleClass="field-input"/>
+                            </VBox>
+                        </HBox>
+                        <VBox spacing="6">
+                            <Label text="DESCRIPTION" styleClass="field-label"/>
+                            <TextArea fx:id="chapterDescriptionArea"
+                                      promptText="Brief chapter overview..."
+                                      styleClass="field-textarea"
+                                      prefRowCount="3"
+                                      wrapText="true"/>
+                        </VBox>
+                        <VBox spacing="6" VBox.vgrow="ALWAYS">
+                            <Label text="CONTENT" styleClass="field-label"/>
+                            <TextArea fx:id="chapterContentArea"
+                                      promptText="Full chapter content..."
+                                      styleClass="field-textarea field-textarea-content"
+                                      prefRowCount="10"
+                                      wrapText="true"
+                                      VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                        <HBox alignment="CENTER_RIGHT">
+                            <Button fx:id="saveChapterButton"
+                                    text="Save Chapter"
+                                    styleClass="btn-primary btn-wide"
+                                    onAction="#handleSaveChapter"/>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </SplitPane>
+        </SplitPane>
+    </center>
+</BorderPane>
