@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="580.0" prefWidth="720.0"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.AjouterEvenement"
+            styleClass="admin-shell"
+            stylesheets="@styles.css">
+
+   <children>
+
+      <!-- Titre principal -->
+      <Label layoutX="30.0" layoutY="25.0"
+             text="Gestion des Événements"
+             styleClass="page-title" />
+
+      <Label layoutX="30.0" layoutY="65.0"
+             text="Ajouter un nouvel événement"
+             styleClass="page-subtitle" />
+
+      <!-- Panel Card -->
+      <AnchorPane layoutX="20.0" layoutY="95.0"
+                  prefWidth="680.0" prefHeight="440.0"
+                  styleClass="panel-card">
+
+         <!-- Titre -->
+         <Label layoutX="20.0" layoutY="20.0" text="Titre *"
+                styleClass="form-field-label" />
+         <TextField fx:id="tfTitre"
+                    layoutX="160.0" layoutY="15.0"
+                    prefWidth="350.0"
+                    promptText="Nom de l'événement"
+                    styleClass="admin-input" />
+         <Label fx:id="lblErrTitre"
+                layoutX="520.0" layoutY="20.0"
+                styleClass="error-label" />
+
+         <!-- Date Début -->
+         <Label layoutX="20.0" layoutY="75.0" text="Date Début *"
+                styleClass="form-field-label" />
+         <DatePicker fx:id="dpDateDebut"
+                     layoutX="160.0" layoutY="70.0"
+                     prefWidth="200.0"
+                     promptText="jj/mm/aaaa"
+                     styleClass="admin-date" />
+         <Label fx:id="lblErrDateDebut"
+                layoutX="370.0" layoutY="75.0"
+                styleClass="error-label" />
+
+         <!-- Date Fin -->
+         <Label layoutX="20.0" layoutY="130.0" text="Date Fin *"
+                styleClass="form-field-label" />
+         <DatePicker fx:id="dpDateFin"
+                     layoutX="160.0" layoutY="125.0"
+                     prefWidth="200.0"
+                     promptText="jj/mm/aaaa"
+                     styleClass="admin-date" />
+         <Label fx:id="lblErrDateFin"
+                layoutX="370.0" layoutY="130.0"
+                styleClass="error-label" />
+
+         <!-- Lieu -->
+         <Label layoutX="20.0" layoutY="185.0" text="Lieu *"
+                styleClass="form-field-label" />
+         <TextField fx:id="tfLieu"
+                    layoutX="160.0" layoutY="180.0"
+                    prefWidth="350.0"
+                    promptText="Entrez le lieu"
+                    styleClass="admin-input" />
+         <Label fx:id="lblErrLieu"
+                layoutX="520.0" layoutY="185.0"
+                styleClass="error-label" />
+
+         <!-- Capacité -->
+         <Label layoutX="20.0" layoutY="240.0" text="Capacité *"
+                styleClass="form-field-label" />
+         <Spinner fx:id="spCapacite"
+                  layoutX="160.0" layoutY="235.0"
+                  prefWidth="120.0" prefHeight="40.0"
+                  styleClass="admin-input" />
+         <Label layoutX="290.0" layoutY="240.0"
+                text="personnes"
+                styleClass="muted-label" />
+
+         <!-- Type -->
+         <Label layoutX="20.0" layoutY="295.0" text="Type *"
+                styleClass="form-field-label" />
+         <ComboBox fx:id="cbType"
+                   layoutX="160.0" layoutY="290.0"
+                   prefWidth="220.0"
+                   promptText="Choisir un type"
+                   styleClass="admin-combo" />
+         <Label fx:id="lblErrType"
+                layoutX="390.0" layoutY="295.0"
+                styleClass="error-label" />
+
+         <!-- Statut -->
+         <Label layoutX="20.0" layoutY="350.0" text="Statut"
+                styleClass="form-field-label" />
+         <CheckBox fx:id="cbStatut"
+                   layoutX="160.0" layoutY="348.0"
+                   text="Planifié" />
+
+         <!-- Message erreur global -->
+         <Label fx:id="lblErrGlobal"
+                layoutX="20.0" layoutY="390.0"
+                prefWidth="400.0"
+                styleClass="error-label" />
+
+      </AnchorPane>
+
+      <!-- Boutons -->
+      <Button layoutX="540.0" layoutY="545.0"
+              onAction="#ajouterEvent"
+              text="Ajouter"
+              styleClass="primary-action-button"
+              prefWidth="130.0" />
+
+      <Button layoutX="40.0" layoutY="545.0"
+              onAction="#voirEvenements"
+              text="Voir les événements"
+              styleClass="secondary-action-button"
+              prefWidth="170.0" />
+
+      <Button layoutX="230.0" layoutY="545.0"
+              onAction="#viderChamps"
+              text="Vider"
+              styleClass="secondary-action-button"
+              prefWidth="100.0" />
+
+   </children>
+</AnchorPane>
