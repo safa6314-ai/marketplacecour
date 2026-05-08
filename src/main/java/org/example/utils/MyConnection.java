@@ -65,9 +65,31 @@ public class MyConnection {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
                 """;
 
+        String createAvisTable = """
+                CREATE TABLE IF NOT EXISTS avis (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    chapitre_id INT NOT NULL,
+                    commentaire TEXT,
+                    note INT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """;
+
+        String createRendusTable = """
+                CREATE TABLE IF NOT EXISTS rendus (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    chapitre_id INT NOT NULL,
+                    nom_fichier VARCHAR(255),
+                    chemin_fichier TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+                """;
+
         try (var statement = connection.createStatement()) {
             statement.executeUpdate(createCoursTable);
             statement.executeUpdate(createChapitresTable);
+            statement.executeUpdate(createAvisTable);
+            statement.executeUpdate(createRendusTable);
         }
 
         addColumnIfMissing("cours", "titre", "VARCHAR(255) NOT NULL DEFAULT ''");
@@ -80,6 +102,16 @@ public class MyConnection {
         addColumnIfMissing("chapitres", "contenu", "TEXT");
         addColumnIfMissing("chapitres", "ordre", "INT");
         addColumnIfMissing("chapitres", "cours_id", "INT");
+
+        addColumnIfMissing("avis", "chapitre_id", "INT NOT NULL");
+        addColumnIfMissing("avis", "commentaire", "TEXT");
+        addColumnIfMissing("avis", "note", "INT NOT NULL DEFAULT 1");
+        addColumnIfMissing("avis", "created_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+
+        addColumnIfMissing("rendus", "chapitre_id", "INT NOT NULL");
+        addColumnIfMissing("rendus", "nom_fichier", "VARCHAR(255)");
+        addColumnIfMissing("rendus", "chemin_fichier", "TEXT");
+        addColumnIfMissing("rendus", "created_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
     }
 
     private void addColumnIfMissing(String tableName, String columnName, String definition) throws SQLException {

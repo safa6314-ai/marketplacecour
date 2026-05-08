@@ -23,6 +23,11 @@
                 <Label text="Artevia" styleClass="header-title"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
+            <ToggleButton fx:id="adminModeToggle"
+                          text="Admin ON"
+                          selected="true"
+                          styleClass="mode-toggle mode-toggle-active"
+                          onAction="#handleToggleAdminMode"/>
             <Label fx:id="statusLabel" text="Ready" styleClass="status-badge"/>
         </HBox>
     </top>
@@ -57,43 +62,18 @@
                                maxWidth="Infinity"/>
                 </HBox>
 
-                <TableView fx:id="courseTableView"
-                           styleClass="course-table"
-                           VBox.vgrow="ALWAYS">
+                <ListView fx:id="courseListView"
+                          styleClass="modern-list course-list"
+                          VBox.vgrow="ALWAYS">
                     <placeholder>
                         <Label text="No courses yet"/>
                     </placeholder>
-                    <columns>
-                        <TableColumn fx:id="courseTitleColumn" text="Title" prefWidth="160"/>
-                        <TableColumn fx:id="courseCategoryColumn" text="Category" prefWidth="90"/>
-                        <TableColumn fx:id="courseLevelColumn" text="Level" prefWidth="70"/>
-                    </columns>
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                    </columnResizePolicy>
-                </TableView>
+                </ListView>
 
-                <HBox styleClass="action-bar" spacing="8" alignment="CENTER">
-                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
-                    <Button fx:id="addCourseButton"
-                            text="Add"
-                            styleClass="btn-primary"
-                            onAction="#handleAddCourse"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"/>
-                    <Button fx:id="editCourseButton"
-                            text="Edit"
-                            styleClass="btn-secondary"
-                            onAction="#handleEditCourse"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"/>
-                    <Button fx:id="deleteCourseButton"
-                            text="Delete"
-                            styleClass="btn-danger"
-                            onAction="#handleDeleteCourse"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"/>
-                </HBox>
+                <VBox styleClass="side-hint" spacing="4">
+                    <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+                    <Label text="Select a course to manage its chapters." styleClass="status-label"/>
+                </VBox>
             </VBox>
         </HBox>
     </left>
@@ -109,6 +89,20 @@
                         <Label fx:id="courseIdLabel" text="" styleClass="id-chip"/>
                     </HBox>
                     <Separator styleClass="divider"/>
+                    <HBox styleClass="inline-action-bar" spacing="8" alignment="CENTER_RIGHT">
+                        <Button fx:id="addCourseButton"
+                                text="Add Course"
+                                styleClass="btn-primary"
+                                onAction="#handleAddCourse"/>
+                        <Button fx:id="editCourseButton"
+                                text="Edit"
+                                styleClass="btn-secondary"
+                                onAction="#handleEditCourse"/>
+                        <Button fx:id="deleteCourseButton"
+                                text="Delete"
+                                styleClass="btn-danger"
+                                onAction="#handleDeleteCourse"/>
+                    </HBox>
                     <HBox spacing="16" alignment="CENTER_LEFT">
                         <VBox spacing="6" HBox.hgrow="ALWAYS">
                             <Label text="TITLE" styleClass="field-label"/>
@@ -116,7 +110,21 @@
                         </VBox>
                         <VBox spacing="6" prefWidth="200">
                             <Label text="CATEGORY" styleClass="field-label"/>
-                            <TextField fx:id="courseCategoryField" promptText="e.g. Programming" styleClass="field-input"/>
+                            <ComboBox fx:id="courseCategoryCombo" promptText="Select category" styleClass="field-combo" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Java"/>
+                                        <String fx:value="IA"/>
+                                        <String fx:value="Web"/>
+                                        <String fx:value="Electronique"/>
+                                        <String fx:value="Design"/>
+                                        <String fx:value="Marketing"/>
+                                        <String fx:value="Business"/>
+                                        <String fx:value="Langues"/>
+                                        <String fx:value="General"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
                         </VBox>
                         <VBox spacing="6" prefWidth="160">
                             <Label text="LEVEL" styleClass="field-label"/>
@@ -150,20 +158,21 @@
                         <Region HBox.hgrow="ALWAYS"/>
                         <Label fx:id="chapterCountLabel" text="0 chapters" styleClass="count-chip"/>
                     </HBox>
-                    <TableView fx:id="chapterTableView"
-                               styleClass="chapter-table"
-                               VBox.vgrow="ALWAYS">
+                    <HBox styleClass="search-bar" alignment="CENTER_LEFT" spacing="8">
+                        <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+                        <TextField fx:id="chapterSearchField"
+                                   promptText="Search chapters..."
+                                   styleClass="search-field"
+                                   HBox.hgrow="ALWAYS"
+                                   maxWidth="Infinity"/>
+                    </HBox>
+                    <ListView fx:id="chapterListView"
+                              styleClass="modern-list chapter-list"
+                              VBox.vgrow="ALWAYS">
                         <placeholder>
                             <Label text="Select a course"/>
                         </placeholder>
-                        <columns>
-                            <TableColumn fx:id="chapterOrderColumn" text="#" prefWidth="40"/>
-                            <TableColumn fx:id="chapterTitleColumn" text="Title" prefWidth="200"/>
-                        </columns>
-                        <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                        </columnResizePolicy>
-                    </TableView>
+                    </ListView>
                     <HBox styleClass="action-bar" spacing="8" alignment="CENTER">
                         <padding><Insets top="10" right="12" bottom="10" left="12"/></padding>
                         <Button fx:id="addChapterButton"
@@ -229,6 +238,67 @@
                                     styleClass="btn-primary btn-wide"
                                     onAction="#handleSaveChapter"/>
                         </HBox>
+                        <Separator styleClass="divider"/>
+                        <VBox spacing="14" styleClass="student-space">
+                            <Label text="Student Space" styleClass="section-heading"/>
+                            <VBox spacing="6">
+                                <Label text="READ CHAPTER" styleClass="field-label"/>
+                                <TextArea fx:id="userChapterContentArea"
+                                          promptText="Select a chapter to read its content..."
+                                          styleClass="field-textarea field-textarea-content"
+                                          prefRowCount="6"
+                                          editable="false"
+                                          wrapText="true"/>
+                            </VBox>
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <VBox spacing="6" prefWidth="140">
+                                    <Label text="RATE" styleClass="field-label"/>
+                                    <ComboBox fx:id="ratingCombo" promptText="Rate" styleClass="field-combo" maxWidth="Infinity">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="1"/>
+                                                <String fx:value="2"/>
+                                                <String fx:value="3"/>
+                                                <String fx:value="4"/>
+                                                <String fx:value="5"/>
+                                            </FXCollections>
+                                        </items>
+                                    </ComboBox>
+                                </VBox>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="AVIS" styleClass="field-label"/>
+                                    <TextArea fx:id="feedbackCommentArea"
+                                              promptText="Write your feedback..."
+                                              styleClass="field-textarea"
+                                              prefRowCount="3"
+                                              wrapText="true"/>
+                                </VBox>
+                            </HBox>
+                            <HBox spacing="8" alignment="CENTER_RIGHT">
+                                <Button text="Download Chapter"
+                                        styleClass="btn-secondary"
+                                        onAction="#handleDownloadChapter"/>
+                                <Button text="Send Avis"
+                                        styleClass="btn-primary"
+                                        onAction="#handleSubmitFeedback"/>
+                            </HBox>
+                            <VBox spacing="6">
+                                <Label text="RENDU FILE" styleClass="field-label"/>
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <TextField fx:id="renduFileField"
+                                               promptText="Choose a file..."
+                                               styleClass="field-input"
+                                               editable="false"
+                                               HBox.hgrow="ALWAYS"/>
+                                    <Button text="Browse"
+                                            styleClass="btn-secondary"
+                                            onAction="#handleChooseRenduFile"/>
+                                    <Button text="Send"
+                                            styleClass="btn-primary"
+                                            onAction="#handleSubmitRendu"/>
+                                </HBox>
+                            </VBox>
+                        </VBox>
                     </VBox>
                 </ScrollPane>
             </SplitPane>

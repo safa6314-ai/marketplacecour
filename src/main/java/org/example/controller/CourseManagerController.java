@@ -1,37 +1,50 @@
 package org.example.controller;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.stage.FileChooser;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
+import org.example.entities.Avis;
 import org.example.entities.Cours;
 import org.example.entities.Chapitres;
+import org.example.entities.Rendu;
+import org.example.services.AvisService;
 import org.example.services.CoursService;
 import org.example.services.ChapitreService;
+import org.example.services.RenduService;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.function.UnaryOperator;
 
 public class CourseManagerController implements Initializable {
 
     // HEADER
     @FXML private Label statusLabel;
+    @FXML private ToggleButton adminModeToggle;
 
     // LEFT PANEL - Course list
     @FXML private TextField courseSearchField;
     @FXML private Label courseCountLabel;
 
-    @FXML private TableView<Cours> courseTableView;
-    @FXML private TableColumn<Cours, String> courseTitleColumn;
-    @FXML private TableColumn<Cours, String> courseCategoryColumn;
-    @FXML private TableColumn<Cours, String> courseLevelColumn;
+    @FXML private ListView<Cours> courseListView;
 
     @FXML private Button addCourseButton;
     @FXML private Button editCourseButton;
@@ -40,16 +53,15 @@ public class CourseManagerController implements Initializable {
     // CENTER TOP - Course details
     @FXML private Label courseIdLabel;
     @FXML private TextField courseTitleField;
-    @FXML private TextField courseCategoryField;
+    @FXML private ComboBox<String> courseCategoryCombo;
     @FXML private ComboBox<String> courseLevelCombo;
     @FXML private TextArea courseDescriptionArea;
 
     // CENTER BOTTOM LEFT - Chapter list
     @FXML private Label chapterCountLabel;
+    @FXML private TextField chapterSearchField;
 
-    @FXML private TableView<Chapitres> chapterTableView;
-    @FXML private TableColumn<Chapitres, Integer> chapterOrderColumn;
-    @FXML private TableColumn<Chapitres, String> chapterTitleColumn;
+    @FXML private ListView<Chapitres> chapterListView;
 
     @FXML private Button addChapterButton;
     @FXML private Button editChapterButton;
@@ -61,21 +73,33 @@ public class CourseManagerController implements Initializable {
     @FXML private TextField chapterTitleField;
     @FXML private TextArea chapterDescriptionArea;
     @FXML private TextArea chapterContentArea;
+    @FXML private TextArea userChapterContentArea;
+    @FXML private ComboBox<String> ratingCombo;
+    @FXML private TextArea feedbackCommentArea;
+    @FXML private TextField renduFileField;
 
     @FXML private Button saveChapterButton;
 
     private final ObservableList<Cours> allCourses = FXCollections.observableArrayList();
     private final ObservableList<Cours> filteredCourses = FXCollections.observableArrayList();
+    private final ObservableList<Chapitres> allChaptersForCourse = FXCollections.observableArrayList();
     private final ObservableList<Chapitres> visibleChapters = FXCollections.observableArrayList();
     
     private final CoursService coursService = new CoursService();
     private final ChapitreService chapitreService = new ChapitreService();
+    private final AvisService avisService = new AvisService();
+    private final RenduService renduService = new RenduService();
+    private File selectedRenduFile;
+    private boolean adminMode = true;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        wireTables();
+        wireLists();
         wireListeners();
+        wireInputFilters();
+        ensureCategoryOptions();
         ensureLevelOptions();
+        setAdminMode(adminModeToggle == null || adminModeToggle.isSelected());
 
         try {
             loadCoursesFromDb();
@@ -83,6 +107,7 @@ public class CourseManagerController implements Initializable {
         } catch (RuntimeException e) {
             allCourses.clear();
             filteredCourses.clear();
+            allChaptersForCourse.clear();
             visibleChapters.clear();
             updateCourseCount();
             updateChapterCount();
@@ -99,12 +124,12 @@ public class CourseManagerController implements Initializable {
         if (selected != null) {
             for (Cours c : filteredCourses) {
                 if (c.getId() == selected.getId()) {
-                    courseTableView.getSelectionModel().select(c);
+                    courseListView.getSelectionModel().select(c);
                     break;
                 }
             }
         } else if (!filteredCourses.isEmpty()) {
-            courseTableView.getSelectionModel().selectFirst();
+            courseListView.getSelectionModel().selectFirst();
         }
     }
 
@@ -112,9 +137,11 @@ public class CourseManagerController implements Initializable {
         Chapitres selectedChapter = getSelectedChapter();
         
         if (cours == null) {
+            allChaptersForCourse.clear();
             visibleChapters.clear();
             updateChapterCount();
             clearChapterForm();
+            clearStudentSpace();
             return;
         }
         
@@ -122,29 +149,36 @@ public class CourseManagerController implements Initializable {
         try {
             chapitresList = chapitreService.getByCoursId(cours.getId());
         } catch (RuntimeException e) {
+            allChaptersForCourse.clear();
             visibleChapters.clear();
             updateChapterCount();
             clearChapterForm();
+            clearStudentSpace();
             setStatus(cleanError(e));
             return;
         }
-        visibleChapters.setAll(chapitresList);
-        updateChapterCount();
+        allChaptersForCourse.setAll(chapitresList);
+        applyChapterFilter();
         
         if (selectedChapter != null) {
             for (Chapitres c : visibleChapters) {
                 if (c.getId() == selectedChapter.getId()) {
-                    chapterTableView.getSelectionModel().select(c);
+                    chapterListView.getSelectionModel().select(c);
                     return;
                 }
             }
         }
         
         clearChapterForm();
+        clearStudentSpace();
     }
 
     @FXML
     private void handleAddCourse(ActionEvent event) {
+        if (!requireAdminMode()) {
+            return;
+        }
+
         String title = text(courseTitleField);
         if (title.isEmpty()) {
             setStatus("Course title is required.");
@@ -155,7 +189,7 @@ public class CourseManagerController implements Initializable {
                 title,
                 text(courseDescriptionArea),
                 0.0,
-                textOrDefault(courseCategoryField, "General"),
+                comboValueOrDefault(courseCategoryCombo, "General"),
                 comboValueOrDefault(courseLevelCombo, "Debutant")
         );
 
@@ -180,6 +214,10 @@ public class CourseManagerController implements Initializable {
 
     @FXML
     private void handleEditCourse(ActionEvent event) {
+        if (!requireAdminMode()) {
+            return;
+        }
+
         Cours selected = getSelectedCourse();
         if (selected == null) {
             setStatus("Select a course to edit.");
@@ -193,7 +231,7 @@ public class CourseManagerController implements Initializable {
         }
 
         selected.setTitre(title);
-        selected.setCategorie(textOrDefault(courseCategoryField, "General"));
+        selected.setCategorie(comboValueOrDefault(courseCategoryCombo, "General"));
         selected.setDescription(text(courseDescriptionArea));
         selected.setNiveau(comboValueOrDefault(courseLevelCombo, "Debutant"));
 
@@ -209,6 +247,10 @@ public class CourseManagerController implements Initializable {
 
     @FXML
     private void handleDeleteCourse(ActionEvent event) {
+        if (!requireAdminMode()) {
+            return;
+        }
+
         Cours selected = getSelectedCourse();
         if (selected == null) {
             setStatus("Select a course to delete.");
@@ -219,8 +261,10 @@ public class CourseManagerController implements Initializable {
             coursService.supprimer(selected.getId());
 
             clearCourseForm();
+            allChaptersForCourse.clear();
             visibleChapters.clear();
             clearChapterForm();
+            clearStudentSpace();
             updateChapterCount();
 
             loadCoursesFromDb();
@@ -233,6 +277,10 @@ public class CourseManagerController implements Initializable {
 
     @FXML
     private void handleAddChapter(ActionEvent event) {
+        if (!requireAdminMode()) {
+            return;
+        }
+
         Cours course = getSelectedCourse();
         if (course == null) {
             setStatus("Select a course first.");
@@ -269,6 +317,10 @@ public class CourseManagerController implements Initializable {
 
     @FXML
     private void handleEditChapter(ActionEvent event) {
+        if (!requireAdminMode()) {
+            return;
+        }
+
         Cours course = getSelectedCourse();
         Chapitres chapter = getSelectedChapter();
         if (course == null || chapter == null) {
@@ -298,6 +350,10 @@ public class CourseManagerController implements Initializable {
 
     @FXML
     private void handleDeleteChapter(ActionEvent event) {
+        if (!requireAdminMode()) {
+            return;
+        }
+
         Cours course = getSelectedCourse();
         Chapitres chapter = getSelectedChapter();
         if (course == null || chapter == null) {
@@ -318,6 +374,10 @@ public class CourseManagerController implements Initializable {
 
     @FXML
     private void handleSaveChapter(ActionEvent event) {
+        if (!requireAdminMode()) {
+            return;
+        }
+
         if (getSelectedChapter() == null) {
             handleAddChapter(event);
         } else {
@@ -330,33 +390,246 @@ public class CourseManagerController implements Initializable {
         applyCourseFilter();
     }
 
+    @FXML
+    private void handleChapterSearch() {
+        applyChapterFilter();
+    }
+
+    @FXML
+    private void handleToggleAdminMode(ActionEvent event) {
+        setAdminMode(adminModeToggle.isSelected());
+    }
+
+    @FXML
+    private void handleSubmitFeedback(ActionEvent event) {
+        Chapitres chapter = getSelectedChapter();
+        if (chapter == null) {
+            setStatus("Select a chapter before sending feedback.");
+            return;
+        }
+
+        String rating = comboValueOrDefault(ratingCombo, "");
+        if (rating.isEmpty()) {
+            setStatus("Choose a rating from 1 to 5.");
+            return;
+        }
+
+        try {
+            int note = Math.max(1, Math.min(5, Integer.parseInt(rating)));
+            avisService.ajouter(new Avis(chapter.getId(), text(feedbackCommentArea), note));
+            feedbackCommentArea.clear();
+            ratingCombo.getSelectionModel().clearSelection();
+            setStatus("Avis sent for chapter: " + chapter.getTitre());
+        } catch (RuntimeException e) {
+            showError("Could not send feedback", e);
+        }
+    }
+
+    @FXML
+    private void handleDownloadChapter(ActionEvent event) {
+        Chapitres chapter = getSelectedChapter();
+        if (chapter == null) {
+            setStatus("Select a chapter before downloading.");
+            return;
+        }
+
+        downloadChapterToFile(chapter, userChapterContentArea);
+    }
+
+    private void downloadChapterToFile(Chapitres chapter, Node ownerNode) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Download chapter");
+        fileChooser.setInitialFileName(safeFileName(valueOrFallback(chapter.getTitre(), "chapter")) + ".txt");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text files", "*.txt"));
+
+        File destination = fileChooser.showSaveDialog(ownerNode.getScene().getWindow());
+        if (destination == null) {
+            return;
+        }
+
+        String content = valueOrFallback(chapter.getTitre(), "Untitled chapter")
+                + System.lineSeparator()
+                + System.lineSeparator()
+                + valueOrFallback(chapter.getContenu(), "");
+
+        try {
+            Files.writeString(destination.toPath(), content, StandardCharsets.UTF_8);
+            setStatus("Chapter downloaded: " + destination.getName());
+        } catch (IOException e) {
+            showError("Could not download chapter", new IllegalStateException(e.getMessage(), e));
+        }
+    }
+
+    @FXML
+    private void handleChooseRenduFile(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose rendu file");
+        selectedRenduFile = fileChooser.showOpenDialog(renduFileField.getScene().getWindow());
+        if (selectedRenduFile != null) {
+            renduFileField.setText(selectedRenduFile.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void handleSubmitRendu(ActionEvent event) {
+        Chapitres chapter = getSelectedChapter();
+        if (chapter == null) {
+            setStatus("Select a chapter before sending a file.");
+            return;
+        }
+        if (selectedRenduFile == null) {
+            setStatus("Choose a rendu file first.");
+            return;
+        }
+
+        try {
+            renduService.ajouter(new Rendu(
+                    chapter.getId(),
+                    selectedRenduFile.getName(),
+                    selectedRenduFile.getAbsolutePath()
+            ));
+            selectedRenduFile = null;
+            renduFileField.clear();
+            setStatus("Rendu sent for chapter: " + chapter.getTitre());
+        } catch (RuntimeException e) {
+            showError("Could not send rendu", e);
+        }
+    }
+
     private void setStatus(String message) {
         statusLabel.setText(message);
     }
 
-    private void wireTables() {
-        courseTitleColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(c.getValue().getTitre()));
-        courseCategoryColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(c.getValue().getCategorie()));
-        courseLevelColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(c.getValue().getNiveau()));
-        
-        chapterOrderColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getOrdre()));
-        chapterTitleColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(c.getValue().getTitre()));
+    private void openChapterReader(Chapitres chapter) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Chapter Reader");
+        dialog.setHeaderText(valueOrFallback(chapter.getTitre(), "Untitled chapter"));
+        dialog.getDialogPane().getStyleClass().add("dialog-theme");
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
-        courseTableView.setItems(filteredCourses);
-        chapterTableView.setItems(visibleChapters);
+        Label orderLabel = new Label("Chapter " + chapter.getOrdre());
+        orderLabel.getStyleClass().add("reader-order-badge");
+
+        Label titleLabel = new Label(valueOrFallback(chapter.getTitre(), "Untitled chapter"));
+        titleLabel.getStyleClass().add("reader-title");
+        titleLabel.setWrapText(true);
+
+        TextArea contentArea = new TextArea(valueOrFallback(chapter.getContenu(), ""));
+        contentArea.setEditable(false);
+        contentArea.setWrapText(true);
+        contentArea.setPrefRowCount(16);
+        contentArea.getStyleClass().add("reader-content-area");
+
+        Button downloadButton = new Button("Download Chapter");
+        downloadButton.getStyleClass().add("reader-download-btn");
+        downloadButton.setOnAction(event -> downloadChapterToFile(chapter, dialog.getDialogPane()));
+
+        HBox header = new HBox(10, orderLabel, titleLabel);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.getStyleClass().add("reader-header");
+
+        HBox actions = new HBox(downloadButton);
+        actions.setAlignment(Pos.CENTER_RIGHT);
+        actions.getStyleClass().add("reader-actions");
+
+        VBox content = new VBox(14, header, contentArea, actions);
+        content.getStyleClass().add("reader-dialog-content");
+        dialog.getDialogPane().setContent(content);
+        dialog.showAndWait();
+    }
+
+    private void setAdminMode(boolean enabled) {
+        adminMode = enabled;
+        if (adminModeToggle != null) {
+            adminModeToggle.setSelected(enabled);
+            adminModeToggle.setText(enabled ? "Admin ON" : "Admin OFF");
+            adminModeToggle.getStyleClass().removeAll("mode-toggle-active", "mode-toggle-user");
+            adminModeToggle.getStyleClass().add(enabled ? "mode-toggle-active" : "mode-toggle-user");
+        }
+
+        addCourseButton.setDisable(!enabled);
+        editCourseButton.setDisable(!enabled);
+        deleteCourseButton.setDisable(!enabled);
+        addChapterButton.setDisable(!enabled);
+        editChapterButton.setDisable(!enabled);
+        deleteChapterButton.setDisable(!enabled);
+        saveChapterButton.setDisable(!enabled);
+
+        courseTitleField.setDisable(!enabled);
+        courseCategoryCombo.setDisable(!enabled);
+        courseLevelCombo.setDisable(!enabled);
+        courseDescriptionArea.setDisable(!enabled);
+        chapterOrderField.setDisable(!enabled);
+        chapterTitleField.setDisable(!enabled);
+        chapterDescriptionArea.setDisable(!enabled);
+        chapterContentArea.setDisable(!enabled);
+
+        setStatus(enabled
+                ? "Admin mode enabled. Course and chapter management is available."
+                : "User mode enabled. You can read chapters, send feedback, upload rendus, and download chapters.");
+    }
+
+    private boolean requireAdminMode() {
+        if (adminMode) {
+            return true;
+        }
+
+        setStatus("Admin mode is OFF. This action is locked.");
+        return false;
+    }
+
+    private void wireLists() {
+        courseListView.setItems(filteredCourses);
+        chapterListView.setItems(visibleChapters);
+        courseListView.setCellFactory(list -> new CourseCardCell());
+        chapterListView.setCellFactory(list -> new ChapterCardCell());
     }
 
     private void wireListeners() {
-        courseTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, selected) -> {
+        courseListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, selected) -> {
             showCourse(selected);
             loadChaptersForCourse(selected);
         });
 
-        chapterTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, selected) -> {
+        chapterListView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, selected) -> {
             showChapter(selected);
         });
 
+        chapterListView.setOnMouseClicked(event -> {
+            if (!adminMode && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+                Chapitres selected = getSelectedChapter();
+                if (selected != null) {
+                    openChapterReader(selected);
+                }
+            }
+        });
+
         courseSearchField.textProperty().addListener((obs, oldValue, newValue) -> applyCourseFilter());
+        chapterSearchField.textProperty().addListener((obs, oldValue, newValue) -> applyChapterFilter());
+    }
+
+    private void wireInputFilters() {
+        courseSearchField.setTextFormatter(new TextFormatter<>(lettersOnlyFilter()));
+        chapterSearchField.setTextFormatter(new TextFormatter<>(lettersOnlyFilter()));
+        courseTitleField.setTextFormatter(new TextFormatter<>(lettersOnlyFilter()));
+        chapterTitleField.setTextFormatter(new TextFormatter<>(lettersOnlyFilter()));
+        chapterOrderField.setTextFormatter(new TextFormatter<>(digitsOnlyFilter()));
+    }
+
+    private void ensureCategoryOptions() {
+        if (courseCategoryCombo.getItems().isEmpty()) {
+            courseCategoryCombo.getItems().setAll(
+                    "Java",
+                    "IA",
+                    "Web",
+                    "Electronique",
+                    "Design",
+                    "Marketing",
+                    "Business",
+                    "Langues",
+                    "General"
+            );
+        }
     }
 
     private void ensureLevelOptions() {
@@ -378,9 +651,31 @@ public class CourseManagerController implements Initializable {
         updateCourseCount();
         
         if (selected != null && filteredCourses.contains(selected)) {
-            courseTableView.getSelectionModel().select(selected);
+            courseListView.getSelectionModel().select(selected);
         } else if (!filteredCourses.isEmpty()) {
-            courseTableView.getSelectionModel().selectFirst();
+            courseListView.getSelectionModel().selectFirst();
+        }
+    }
+
+    private void applyChapterFilter() {
+        String query = chapterSearchField == null ? "" : text(chapterSearchField).toLowerCase(Locale.ROOT);
+        Chapitres selected = getSelectedChapter();
+
+        visibleChapters.setAll(allChaptersForCourse.filtered(ch -> {
+            boolean matchTitle = ch.getTitre() != null && ch.getTitre().toLowerCase(Locale.ROOT).contains(query);
+            boolean matchContent = ch.getContenu() != null && ch.getContenu().toLowerCase(Locale.ROOT).contains(query);
+            return query.isBlank() || matchTitle || matchContent;
+        }));
+
+        updateChapterCount();
+
+        if (selected != null && visibleChapters.contains(selected)) {
+            chapterListView.getSelectionModel().select(selected);
+        } else if (!visibleChapters.isEmpty()) {
+            chapterListView.getSelectionModel().selectFirst();
+        } else {
+            clearChapterForm();
+            clearStudentSpace();
         }
     }
 
@@ -391,7 +686,7 @@ public class CourseManagerController implements Initializable {
         }
         courseIdLabel.setText("#" + course.getId());
         courseTitleField.setText(course.getTitre());
-        courseCategoryField.setText(course.getCategorie());
+        setComboValue(courseCategoryCombo, course.getCategorie());
         if (course.getNiveau() == null || course.getNiveau().isBlank()) {
             courseLevelCombo.getSelectionModel().clearSelection();
         } else {
@@ -410,12 +705,17 @@ public class CourseManagerController implements Initializable {
         chapterTitleField.setText(chapter.getTitre());
         chapterDescriptionArea.setText("");
         chapterContentArea.setText(chapter.getContenu());
+        userChapterContentArea.setText(chapter.getContenu());
+        feedbackCommentArea.clear();
+        ratingCombo.getSelectionModel().clearSelection();
+        selectedRenduFile = null;
+        renduFileField.clear();
     }
 
     private void clearCourseForm() {
         courseIdLabel.setText("");
         courseTitleField.clear();
-        courseCategoryField.clear();
+        courseCategoryCombo.getSelectionModel().clearSelection();
         courseDescriptionArea.clear();
         courseLevelCombo.getSelectionModel().clearSelection();
     }
@@ -428,6 +728,14 @@ public class CourseManagerController implements Initializable {
         chapterContentArea.clear();
     }
 
+    private void clearStudentSpace() {
+        userChapterContentArea.clear();
+        feedbackCommentArea.clear();
+        ratingCombo.getSelectionModel().clearSelection();
+        selectedRenduFile = null;
+        renduFileField.clear();
+    }
+
     private void updateCourseCount() {
         courseCountLabel.setText(filteredCourses.size() + " courses");
     }
@@ -437,11 +745,11 @@ public class CourseManagerController implements Initializable {
     }
 
     private Cours getSelectedCourse() {
-        return courseTableView.getSelectionModel().getSelectedItem();
+        return courseListView.getSelectionModel().getSelectedItem();
     }
 
     private Chapitres getSelectedChapter() {
-        return chapterTableView.getSelectionModel().getSelectedItem();
+        return chapterListView.getSelectionModel().getSelectedItem();
     }
 
     private boolean selectCourseById(int id) {
@@ -450,7 +758,7 @@ public class CourseManagerController implements Initializable {
         }
         for (Cours c : filteredCourses) {
             if (c.getId() == id) {
-                courseTableView.getSelectionModel().select(c);
+                courseListView.getSelectionModel().select(c);
                 return true;
             }
         }
@@ -460,7 +768,7 @@ public class CourseManagerController implements Initializable {
     private boolean selectCourseByTitle(String title) {
         for (Cours c : filteredCourses) {
             if (title.equals(c.getTitre())) {
-                courseTableView.getSelectionModel().select(c);
+                courseListView.getSelectionModel().select(c);
                 return true;
             }
         }
@@ -473,7 +781,7 @@ public class CourseManagerController implements Initializable {
         }
         for (Chapitres c : visibleChapters) {
             if (c.getId() == id) {
-                chapterTableView.getSelectionModel().select(c);
+                chapterListView.getSelectionModel().select(c);
                 return true;
             }
         }
@@ -483,7 +791,7 @@ public class CourseManagerController implements Initializable {
     private boolean selectChapterByTitle(String title) {
         for (Chapitres c : visibleChapters) {
             if (title.equals(c.getTitre())) {
-                chapterTableView.getSelectionModel().select(c);
+                chapterListView.getSelectionModel().select(c);
                 return true;
             }
         }
@@ -513,14 +821,34 @@ public class CourseManagerController implements Initializable {
         return input.getText() == null ? "" : input.getText().trim();
     }
 
-    private static String textOrDefault(TextInputControl input, String fallback) {
-        String value = text(input);
-        return value.isEmpty() ? fallback : value;
-    }
-
     private static String comboValueOrDefault(ComboBox<String> comboBox, String fallback) {
         String value = comboBox.getValue();
         return value == null || value.isBlank() ? fallback : value.trim();
+    }
+
+    private static void setComboValue(ComboBox<String> comboBox, String value) {
+        if (value == null || value.isBlank()) {
+            comboBox.getSelectionModel().clearSelection();
+            return;
+        }
+
+        String trimmed = value.trim();
+        if (!comboBox.getItems().contains(trimmed)) {
+            comboBox.getItems().add(trimmed);
+        }
+        comboBox.setValue(trimmed);
+    }
+
+    private static UnaryOperator<TextFormatter.Change> lettersOnlyFilter() {
+        return change -> containsOnlyLettersAndSpaces(change.getControlNewText()) ? change : null;
+    }
+
+    private static UnaryOperator<TextFormatter.Change> digitsOnlyFilter() {
+        return change -> change.getControlNewText().chars().allMatch(Character::isDigit) ? change : null;
+    }
+
+    private static boolean containsOnlyLettersAndSpaces(String value) {
+        return value.chars().allMatch(ch -> Character.isLetter(ch) || Character.isWhitespace(ch));
     }
 
     private static int parseOrder(String raw, int fallback) {
@@ -530,5 +858,85 @@ public class CourseManagerController implements Initializable {
         } catch (Exception ignored) {
             return fallback;
         }
+    }
+
+    private static final class CourseCardCell extends ListCell<Cours> {
+        @Override
+        protected void updateItem(Cours course, boolean empty) {
+            super.updateItem(course, empty);
+
+            if (empty || course == null) {
+                setText(null);
+                setGraphic(null);
+                return;
+            }
+
+            Label titleLabel = new Label(valueOrFallback(course.getTitre(), "Untitled course"));
+            titleLabel.getStyleClass().add("modern-card-title");
+            titleLabel.setWrapText(true);
+
+            Label categoryLabel = new Label(valueOrFallback(course.getCategorie(), "General"));
+            categoryLabel.getStyleClass().add("modern-card-chip");
+
+            Label levelLabel = new Label(valueOrFallback(course.getNiveau(), "Debutant"));
+            levelLabel.getStyleClass().add("modern-card-chip-muted");
+
+            HBox metaBox = new HBox(6, categoryLabel, levelLabel);
+            metaBox.setAlignment(Pos.CENTER_LEFT);
+
+            VBox textBox = new VBox(8, titleLabel, metaBox);
+            textBox.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(textBox, Priority.ALWAYS);
+
+            Label idLabel = new Label("#" + course.getId());
+            idLabel.getStyleClass().add("modern-card-id");
+
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+
+            HBox card = new HBox(10, textBox, spacer, idLabel);
+            card.setAlignment(Pos.CENTER_LEFT);
+            card.getStyleClass().add("modern-card");
+
+            setText(null);
+            setGraphic(card);
+        }
+    }
+
+    private static final class ChapterCardCell extends ListCell<Chapitres> {
+        @Override
+        protected void updateItem(Chapitres chapter, boolean empty) {
+            super.updateItem(chapter, empty);
+
+            if (empty || chapter == null) {
+                setText(null);
+                setGraphic(null);
+                return;
+            }
+
+            Label orderLabel = new Label(String.valueOf(chapter.getOrdre()));
+            orderLabel.getStyleClass().add("chapter-order-badge");
+
+            Label titleLabel = new Label(valueOrFallback(chapter.getTitre(), "Untitled chapter"));
+            titleLabel.getStyleClass().add("modern-card-title");
+            titleLabel.setWrapText(true);
+            HBox.setHgrow(titleLabel, Priority.ALWAYS);
+
+            HBox card = new HBox(10, orderLabel, titleLabel);
+            card.setAlignment(Pos.CENTER_LEFT);
+            card.getStyleClass().add("modern-card");
+
+            setText(null);
+            setGraphic(card);
+        }
+    }
+
+    private static String valueOrFallback(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value.trim();
+    }
+
+    private static String safeFileName(String value) {
+        String safe = value.replaceAll("[\\\\/:*?\"<>|]", "_").trim();
+        return safe.isEmpty() ? "chapter" : safe;
     }
 }
