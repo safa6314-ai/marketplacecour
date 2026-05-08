@@ -1,0 +1,494 @@
+/* Artevia Marketplace - theme violet dashboard */
+
+.root,
+.root-pane {
+    -fx-background-color: #f6f8fc;
+    -fx-font-family: "Segoe UI", "Inter", "Arial", sans-serif;
+}
+
+.app-header,
+.workspace,
+.admin-panel,
+.mode-switcher,
+.article-card,
+.form-card,
+.product-form-grid,
+.filter-bar,
+.cart-summary {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #dfe6f1;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(28, 39, 64, 0.06), 14, 0.12, 0, 5);
+}
+
+.app-header {
+    -fx-padding: 20 24 20 24;
+}
+
+.workspace {
+    -fx-padding: 18;
+}
+
+.admin-panel {
+    -fx-padding: 16;
+}
+
+.admin-panel:hover,
+.article-card:hover,
+.form-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(91, 43, 145, 0.16), 20, 0.18, 0, 7);
+}
+
+.mode-switcher {
+    -fx-padding: 10 12 12 12;
+    -fx-background-color: #fbf8ff;
+    -fx-border-color: #e6d9f8;
+}
+
+.filter-bar {
+    -fx-padding: 12;
+    -fx-effect: dropshadow(gaussian, rgba(28, 39, 64, 0.04), 10, 0.10, 0, 3);
+}
+
+.cart-summary {
+    -fx-background-color: #fbf8ff;
+    -fx-border-color: #e6d9f8;
+    -fx-padding: 12 14 12 14;
+}
+
+.cart-total {
+    -fx-font-size: 21px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #5b2b91;
+}
+
+.heading-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e1f2f;
+}
+
+.heading-subtitle,
+.muted-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #8a8fa3;
+}
+
+.section-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e1f2f;
+}
+
+.panel-title,
+.form-section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e1f2f;
+}
+
+.input-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #5b2b91;
+}
+
+.empty-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #8a8fa3;
+    -fx-padding: 22;
+}
+
+.button {
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+    -fx-padding: 10 15 10 15;
+}
+
+.primary-btn {
+    -fx-background-color: linear-gradient(to right, #6f2dbd, #8e43e7);
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(111, 45, 189, 0.25), 14, 0.22, 0, 5);
+}
+
+.primary-btn:hover {
+    -fx-background-color: linear-gradient(to right, #7b35d1, #9b50f1);
+}
+
+.secondary-btn {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #5b2b91;
+    -fx-border-color: #d8e0ec;
+    -fx-border-width: 1;
+}
+
+.secondary-btn:hover {
+    -fx-background-color: #f3edf9;
+}
+
+.danger-btn {
+    -fx-background-color: #ECBBFA;
+    -fx-text-fill: #5b2b91;
+}
+
+.danger-btn:hover {
+    -fx-background-color: #e3a7f7;
+    -fx-effect: dropshadow(gaussian, rgba(236, 187, 250, 0.35), 12, 0.20, 0, 5);
+}
+
+.nav-btn {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #5b2b91;
+    -fx-border-color: #d8e0ec;
+    -fx-border-width: 1;
+}
+
+.nav-btn:hover {
+    -fx-background-color: #f3edf9;
+}
+
+.nav-btn-active {
+    -fx-background-color: #5b2b91;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #5b2b91;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(91, 43, 145, 0.16), 14, 0.16, 0, 6);
+}
+
+.combo-box,
+.text-field,
+.text-area,
+.date-picker {
+    -fx-pref-height: 40;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8e0ec;
+    -fx-border-width: 1;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-text-fill: #1e1f2f;
+    -fx-prompt-text-fill: #8a8fa3;
+    -fx-font-size: 12px;
+}
+
+.combo-box:focused,
+.text-field:focused,
+.text-area:focused,
+.date-picker:focused {
+    -fx-border-color: #5b2b91;
+    -fx-effect: dropshadow(gaussian, rgba(91, 43, 145, 0.14), 10, 0.18, 0, 0);
+}
+
+.field-error {
+    -fx-border-color: #ff5a5f;
+    -fx-border-width: 2;
+    -fx-background-color: #fff0f1;
+    -fx-effect: dropshadow(gaussian, rgba(255, 90, 95, 0.16), 8, 0, 0, 0);
+}
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 10 0;
+}
+
+.list-cell:filled {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #dfe6f1;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(28, 39, 64, 0.05), 12, 0.12, 0, 4);
+}
+
+.list-cell:filled:hover {
+    -fx-border-color: #cbb8e8;
+    -fx-effect: dropshadow(gaussian, rgba(91, 43, 145, 0.13), 18, 0.18, 0, 6);
+}
+
+.list-cell:filled:selected {
+    -fx-border-color: #5b2b91;
+    -fx-background-color: #fbf8ff;
+}
+
+.list-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e1f2f;
+}
+
+.list-description,
+.article-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #8a8fa3;
+}
+
+.price-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #5b2b91;
+}
+
+.stock-label {
+    -fx-background-color: #e9fbf2;
+    -fx-text-fill: #28c76f;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+    -fx-padding: 5 10 5 10;
+    -fx-background-radius: 999;
+}
+
+.stock-empty {
+    -fx-background-color: #ECBBFA;
+    -fx-text-fill: #5b2b91;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+    -fx-padding: 5 10 5 10;
+    -fx-background-radius: 999;
+}
+
+.status-pending,
+.status-confirmed,
+.status-refused {
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 999;
+    -fx-alignment: center;
+}
+
+.status-pending {
+    -fx-background-color: #fff3e8;
+    -fx-text-fill: #ff9f43;
+}
+
+.status-confirmed {
+    -fx-background-color: #e9fbf2;
+    -fx-text-fill: #28c76f;
+}
+
+.status-refused {
+    -fx-background-color: #ECBBFA;
+    -fx-text-fill: #5b2b91;
+}
+
+.admin-thumb {
+    -fx-min-width: 72;
+    -fx-pref-width: 72;
+    -fx-max-width: 72;
+    -fx-min-height: 62;
+    -fx-pref-height: 62;
+    -fx-max-height: 62;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #dfe6f1;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(28, 39, 64, 0.05), 12, 0.12, 0, 4);
+}
+
+.catalog-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0;
+}
+
+.catalog-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.tile-pane {
+    -fx-padding: 4 2 16 2;
+}
+
+.article-card {
+    -fx-padding: 13;
+}
+
+.article-card:hover {
+    -fx-translate-y: -2;
+    -fx-border-color: #cbb8e8;
+}
+
+.article-card-empty {
+    -fx-opacity: 0.72;
+}
+
+.article-photo {
+    -fx-min-height: 142;
+    -fx-pref-height: 142;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #dfe6f1;
+    -fx-border-width: 1;
+}
+
+.category-pill {
+    -fx-background-color: #f1edff;
+    -fx-text-fill: #5b2b91;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+    -fx-padding: 5 12 5 12;
+    -fx-background-radius: 999;
+}
+
+.article-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e1f2f;
+}
+
+.image-caption {
+    -fx-background-color: rgba(91, 43, 145, 0.86);
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+    -fx-padding: 5 9 5 9;
+    -fx-background-radius: 999;
+}
+
+.form-preview {
+    -fx-pref-width: 278;
+}
+
+.form-card {
+    -fx-background-color: #fbf8ff;
+    -fx-border-color: #e6d9f8;
+    -fx-padding: 12;
+}
+
+.product-dialog-content {
+    -fx-padding: 6;
+}
+
+.product-form-grid {
+    -fx-background-color: #ffffff;
+    -fx-padding: 14;
+}
+
+.dialog-theme {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #dfe6f1;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(28, 39, 64, 0.18), 26, 0.16, 0, 8);
+}
+
+.dialog-theme > .content {
+    -fx-padding: 18 22 18 22;
+}
+
+.dialog-theme > .content.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #3a3d52;
+    -fx-line-spacing: 4;
+}
+
+.dialog-theme .header-panel {
+    -fx-background-radius: 18 18 0 0;
+    -fx-padding: 18 22 16 22;
+}
+
+.dialog-theme .header-panel .label {
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+}
+
+.dialog-theme .button-bar {
+    -fx-padding: 8 18 18 18;
+}
+
+.dialog-theme .button {
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-padding: 10 18 10 18;
+    -fx-cursor: hand;
+}
+
+.dialog-theme .button:default {
+    -fx-background-color: linear-gradient(to right, #6f2dbd, #8e43e7);
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(111, 45, 189, 0.22), 12, 0.18, 0, 4);
+}
+
+.dialog-theme .button:cancel {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #5b2b91;
+    -fx-border-color: #d8e0ec;
+    -fx-border-width: 1;
+}
+
+.validation-dialog {
+    -fx-border-color: #ff9f43;
+}
+
+.validation-dialog .header-panel {
+    -fx-background-color: linear-gradient(to right, #fff3e8, #ffffff);
+}
+
+.validation-dialog .header-panel .label {
+    -fx-text-fill: #ff9f43;
+}
+
+.confirm-dialog {
+    -fx-border-color: #cbb8e8;
+}
+
+.confirm-dialog .header-panel {
+    -fx-background-color: linear-gradient(to right, #f1edff, #ffffff);
+}
+
+.confirm-dialog .header-panel .label {
+    -fx-text-fill: #5b2b91;
+}
+
+.success-dialog {
+    -fx-border-color: #28c76f;
+}
+
+.success-dialog .header-panel {
+    -fx-background-color: linear-gradient(to right, #e9fbf2, #ffffff);
+}
+
+.success-dialog .header-panel .label {
+    -fx-text-fill: #28c76f;
+}
+
+.error-dialog {
+    -fx-border-color: #ECBBFA;
+}
+
+.error-dialog .header-panel {
+    -fx-background-color: linear-gradient(to right, #fbf0ff, #ffffff);
+}
+
+.error-dialog .header-panel .label {
+    -fx-text-fill: #5b2b91;
+}
+
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #d8d2ee;
+    -fx-background-radius: 999;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #b8a8f8;
+}
