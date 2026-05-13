@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class MyBD {
 
-    String url = "jdbc:mysql://localhost:3306/forum_artevia";
-    String user = "root";
-    String password = "";
+    private final String url = "jdbc:mysql://localhost:3306/" + System.getProperty("db.name", "artevia");
+    private final String user = "root";
+    private final String password = "";
 
     private Connection conn;
 
@@ -17,7 +17,7 @@ public class MyBD {
     private MyBD() {
         try {
             conn = DriverManager.getConnection(url, user, password);
-            System.out.println("✅ Connection établie !!");
+            System.out.println("Connection etablie !!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
