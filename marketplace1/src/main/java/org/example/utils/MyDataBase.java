@@ -51,6 +51,16 @@ public class MyDataBase {
                             "prix DOUBLE NOT NULL, " +
                             "date_achat DATE NOT NULL)"
             );
+            st.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS loyalty_transactions (" +
+                            "id_transaction INT AUTO_INCREMENT PRIMARY KEY, " +
+                            "customer_id VARCHAR(100) NOT NULL, " +
+                            "points INT NOT NULL, " +
+                            "type VARCHAR(40) NOT NULL, " +
+                            "reason VARCHAR(255), " +
+                            "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
+                            "external_ref VARCHAR(120) UNIQUE)"
+            );
         }
     }
 

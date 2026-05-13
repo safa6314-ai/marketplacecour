@@ -58,10 +58,49 @@
     -fx-padding: 12 14 12 14;
 }
 
+.loyalty-inline-panel {
+    -fx-background-color: #f8fffd;
+    -fx-background-radius: 8;
+    -fx-border-color: #b9d9d6;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 12;
+}
+
+.loyalty-chip,
+.loyalty-chip-vip {
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 999;
+}
+
+.loyalty-chip {
+    -fx-background-color: #e8f7f4;
+    -fx-text-fill: #0f766e;
+}
+
+.loyalty-chip-vip {
+    -fx-background-color: #fff7d6;
+    -fx-text-fill: #a16207;
+}
+
 .cart-total {
     -fx-font-size: 21px;
     -fx-font-weight: 900;
     -fx-text-fill: #5b2b91;
+}
+
+.summary-value {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e1f2f;
+}
+
+.summary-discount {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #28c76f;
 }
 
 .heading-title {
@@ -142,6 +181,66 @@
     -fx-effect: dropshadow(gaussian, rgba(236, 187, 250, 0.35), 12, 0.20, 0, 5);
 }
 
+.api-btn {
+    -fx-background-color: #0f766e;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(15, 118, 110, 0.18), 12, 0.20, 0, 4);
+}
+
+.api-btn:hover {
+    -fx-background-color: #128b82;
+}
+
+.card-payment-btn {
+    -fx-background-color: #00a884;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 168, 132, 0.20), 12, 0.20, 0, 4);
+}
+
+.card-payment-btn:hover {
+    -fx-background-color: #009172;
+}
+
+.payment-status {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f766e;
+    -fx-padding: 0 0 0 8;
+}
+
+.rating-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #a16207;
+}
+
+.star-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 1 2 1 2;
+    -fx-min-width: 20;
+    -fx-pref-width: 20;
+    -fx-min-height: 20;
+    -fx-pref-height: 20;
+}
+
+.star-btn:hover {
+    -fx-background-color: #fff7d6;
+    -fx-background-radius: 999;
+}
+
+.star-icon-filled {
+    -fx-fill: #f6b21a;
+    -fx-stroke: #d98a00;
+    -fx-stroke-width: 0.7;
+}
+
+.star-icon-empty {
+    -fx-fill: #fff8db;
+    -fx-stroke: #d98a00;
+    -fx-stroke-width: 0.9;
+}
+
 .nav-btn {
     -fx-background-color: #ffffff;
     -fx-text-fill: #5b2b91;
@@ -182,6 +281,38 @@
 .date-picker:focused {
     -fx-border-color: #5b2b91;
     -fx-effect: dropshadow(gaussian, rgba(91, 43, 145, 0.14), 10, 0.18, 0, 0);
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #1e1f2f;
+    -fx-background-color: transparent;
+    -fx-padding: 8 10 8 10;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8e0ec;
+    -fx-border-width: 1;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #1e1f2f;
+    -fx-padding: 9 12 9 12;
+}
+
+.combo-box-popup .list-cell:hover,
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: #f3edf9;
+    -fx-text-fill: #1e1f2f;
+}
+
+.combo-box-popup .list-cell:selected,
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #fbf8ff;
+    -fx-text-fill: #1e1f2f;
 }
 
 .field-error {

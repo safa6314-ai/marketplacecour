@@ -19,26 +19,46 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.stage.FileChooser;
 import org.example.entities.Achat;
 import org.example.entities.Vente;
+import org.example.services.CurrencyApiService;
+import org.example.services.InvoicePdfService;
+import org.example.services.MetMuseumApiService;
+import org.example.services.QrCodeApiService;
+import org.example.services.RatingService;
 import org.example.services.ServiceAchat;
 import org.example.services.ServiceVente;
+import org.example.utils.MyDataBase;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,14 +69,23 @@ public class MarketplaceController {
 
     private static final String MODE_ADMIN = "Admin";
     private static final String MODE_CLIENT = "Client";
+    private static final String CURRENT_CUSTOMER_ID = "Client test";
 
     private final ServiceVente serviceVente = new ServiceVente();
     private final ServiceAchat serviceAchat = new ServiceAchat();
+    private final RatingService ratingService = new RatingService();
+    private final MetMuseumApiService metMuseumApiService = new MetMuseumApiService();
+    private final QrCodeApiService qrCodeApiService = new QrCodeApiService();
+    private final CurrencyApiService currencyApiService = new CurrencyApiService();
+    private final InvoicePdfService invoicePdfService = new InvoicePdfService();
+    private final HttpClient talonHttpClient = HttpClient.newHttpClient();
     private final ObservableList<Vente> ventesData = FXCollections.observableArrayList();
     private final ObservableList<Achat> achatsData = FXCollections.observableArrayList();
     private final ObservableList<Vente> cartData = FXCollections.observableArrayList();
     private final FilteredList<Vente> filteredVentesData = new FilteredList<>(ventesData, vente -> true);
     private final FilteredList<Achat> filteredAchatsData = new FilteredList<>(achatsData, achat -> true);
+    private String appliedCouponCode = "";
+    private double appliedDiscountRate;
 
     @FXML private ComboBox<String> modeComboBox;
     @FXML private VBox adminView;
@@ -74,6 +103,19 @@ public class MarketplaceController {
     @FXML private ListView<Vente> cartListView;
     @FXML private TilePane clientGrid;
     @FXML private Label cartTotalLabel;
+    @FXML private TextField couponCodeField;
+    @FXML private Label cartSubtotalLabel;
+    @FXML private Label cartDiscountLabel;
+    @FXML private Label couponStatusLabel;
+    @FXML private Label cardPaymentStatusLabel;
+    @FXML private Label currencyConversionLabel;
+    @FXML private Label clientLoyaltyPointsLabel;
+    @FXML private Label clientVipLevelLabel;
+    @FXML private Label loyaltyAdminSummaryLabel;
+    @FXML private ListView<String> loyaltyHistoryListView;
+    @FXML private TextField referralFriendField;
+    @FXML private TextField adminBonusCustomerField;
+    @FXML private TextField adminBonusPointsField;
     @FXML private TextField adminArticleSearchField;
     @FXML private ComboBox<String> adminStockFilterComboBox;
     @FXML private TextField achatSearchField;
@@ -95,10 +137,12 @@ public class MarketplaceController {
         cartListView.setCellFactory(list -> new CartCell());
         cartData.addListener((javafx.collections.ListChangeListener<Vente>) change -> updateCartTotal());
         setupFilters();
+        ensureSimpleLoyaltyTable();
 
         seedDemoData();
         refreshVentes();
         refreshAchats();
+        refreshLoyaltyUi();
         showAdminArticles();
         showClientCatalog();
         updateMode(MODE_ADMIN);
@@ -154,6 +198,27 @@ public class MarketplaceController {
     }
 
     @FXML
+    private void onImportMetMuseumArticle() {
+        TextInputDialog dialog = new TextInputDialog("painting");
+        styleDialog(dialog.getDialogPane());
+        dialog.setTitle("Import MET Museum");
+        dialog.setHeaderText("Importer une oeuvre depuis l'API MET Museum");
+        dialog.setContentText("Mot-cle de recherche");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isEmpty()) {
+            return;
+        }
+        try {
+            Vente imported = metMuseumApiService.importFirstArtwork(result.get());
+            serviceVente.ajouter(imported);
+            refreshVentes();
+            showSuccess("Import MET Museum", "Oeuvre importee: " + imported.getTitre());
+        } catch (Exception ex) {
+            showError("Import MET Museum", ex.getMessage());
+        }
+    }
+
+    @FXML
     private void onAddAchat() {
         openAchatDialog(null).ifPresent(achat -> {
             try {
@@ -164,6 +229,21 @@ public class MarketplaceController {
                 showError("Erreur ajout achat", ex.getMessage());
             }
         });
+    }
+
+    @FXML
+    private void onDownloadInvoicePdf() {
+        Achat selected = achatsListView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showError("Selection obligatoire", "Selectionnez un achat pour generer sa facture PDF.");
+            return;
+        }
+        try {
+            java.nio.file.Path path = invoicePdfService.generateInvoice(selected);
+            showSuccess("Facture PDF", "Facture generee avec succes:\n" + path);
+        } catch (Exception ex) {
+            showError("Facture PDF", ex.getMessage());
+        }
     }
 
     @FXML
@@ -249,6 +329,7 @@ public class MarketplaceController {
     @FXML
     private void onShowAdminAchats() {
         refreshAchats();
+        refreshLoyaltyUi();
         showAdminAchats();
     }
 
@@ -261,7 +342,52 @@ public class MarketplaceController {
     @FXML
     private void onShowClientCart() {
         updateCartTotal();
+        refreshLoyaltyUi();
         showClientCart();
+    }
+
+    @FXML
+    private void onAddReferralBonus() {
+        String friendId = referralFriendField == null ? "" : referralFriendField.getText().trim();
+        if (friendId.isEmpty()) {
+            showError("Parrainage", "Saisissez l'identifiant de l'ami a parrainer.");
+            return;
+        }
+        if (CURRENT_CUSTOMER_ID.equalsIgnoreCase(friendId)) {
+            showError("Parrainage", "Un client ne peut pas se parrainer lui-meme.");
+            return;
+        }
+        try {
+            String externalRef = "REF-" + CURRENT_CUSTOMER_ID + "-" + friendId;
+            addLoyaltyPoints(CURRENT_CUSTOMER_ID, 150, "REFERRAL", "Bonus parrainage de " + friendId, externalRef);
+            addLoyaltyPoints(friendId, 75, "REFERRAL", "Bonus filleul par " + CURRENT_CUSTOMER_ID, externalRef + "-FRIEND");
+            callTalonOneMock(CURRENT_CUSTOMER_ID, "referral", 0, "");
+            refreshLoyaltyUi();
+            showSuccess("Parrainage valide", "Bonus attribue: +150 pts parrain, +75 pts filleul.");
+        } catch (Exception ex) {
+            showError("Parrainage", ex.getMessage());
+        }
+    }
+
+    @FXML
+    private void onAddManualLoyaltyBonus() {
+        String customerId = adminBonusCustomerField == null ? "" : adminBonusCustomerField.getText().trim();
+        String pointsText = adminBonusPointsField == null ? "" : adminBonusPointsField.getText().trim();
+        if (customerId.isEmpty()) {
+            customerId = CURRENT_CUSTOMER_ID;
+        }
+        try {
+            int points = Integer.parseInt(pointsText);
+            if (points <= 0) {
+                throw new IllegalArgumentException("Le bonus doit etre strictement positif.");
+            }
+            addLoyaltyPoints(customerId, points, "ADMIN_BONUS", "Bonus manuel admin", null);
+            callTalonOneMock(customerId, "manual_bonus", 0, "");
+            refreshLoyaltyUi();
+            showSuccess("Bonus fidelite", points + " points ajoutes a " + customerId + ".");
+        } catch (Exception ex) {
+            showError("Bonus fidelite", ex.getMessage());
+        }
     }
 
     @FXML
@@ -282,7 +408,69 @@ public class MarketplaceController {
         }
         if (confirmAction("Confirmation", "Vider le panier", "Voulez-vous retirer tous les articles du panier ?")) {
             cartData.clear();
+            clearCoupon();
         }
+    }
+
+    @FXML
+    private void onApplyCoupon() {
+        if (cartData.isEmpty()) {
+            showError("Panier vide", "Ajoutez au moins un article avant d'appliquer un coupon.");
+            return;
+        }
+        String code = couponCodeField == null ? "" : couponCodeField.getText().trim().toUpperCase();
+        if (code.isEmpty()) {
+            clearCoupon();
+            showSuccess("Coupon retire", "Aucun coupon n'est applique au panier.");
+            return;
+        }
+        Double rate = couponRateFor(code);
+        if (rate == null) {
+            appliedCouponCode = "";
+            appliedDiscountRate = 0;
+            updateCartTotal();
+            showError("Coupon invalide", "Codes disponibles pour le test: ARTEVIA10, VIP20, WELCOME5.");
+            return;
+        }
+        appliedCouponCode = code;
+        appliedDiscountRate = rate;
+        updateCartTotal();
+        showSuccess("Coupon applique", code + " applique: -" + Math.round(rate * 100) + "%.");
+    }
+
+    @FXML
+    private void onConvertCartCurrency() {
+        double total = cartFinalTotal();
+        if (total <= 0) {
+            showError("Conversion devise", "Le total du panier doit etre superieur a 0.");
+            return;
+        }
+        CurrencyApiService.CurrencyResult result = currencyApiService.convertFromTnd(total);
+        String suffix = result.isFallback() ? " (mode secours)" : " (API live)";
+        if (currencyConversionLabel != null) {
+            currencyConversionLabel.setText(String.format("EUR %.2f | USD %.2f%s", result.getEur(), result.getUsd(), suffix));
+        }
+    }
+
+    @FXML
+    private void onPayWithCard() {
+        if (cartData.isEmpty()) {
+            showError("Panier vide", "Ajoutez au moins un article avant de payer par carte.");
+            return;
+        }
+        refreshVentes();
+        String stockError = validateCartStock();
+        if (stockError != null) {
+            showError("Stock insuffisant", stockError);
+            return;
+        }
+        double finalTotal = cartFinalTotal();
+        if (finalTotal <= 0) {
+            showError("Montant invalide", "Le montant du paiement doit etre superieur a 0 DT.");
+            return;
+        }
+
+        showCardPaymentDialog(finalTotal);
     }
 
     @FXML
@@ -301,20 +489,30 @@ public class MarketplaceController {
             return;
         }
         try {
+            double finalTotal = cartFinalTotal();
+            String loyaltySessionRef = "ORDER-" + System.currentTimeMillis();
             for (Vente vente : new ArrayList<>(cartData)) {
                 serviceVente.diminuerQuantite(vente.getId());
                 serviceAchat.ajouter(new Achat(
                         safeText(vente.getTitre(), "Article"),
-                        "Client test",
+                        CURRENT_CUSTOMER_ID,
                         vente.getPrix(),
                         Date.valueOf(LocalDate.now()),
                         "En attente"
                 ));
             }
+            int earnedPoints = calculateCashbackPoints(finalTotal);
+            addLoyaltyPoints(CURRENT_CUSTOMER_ID, earnedPoints, "PURCHASE", "Cashback automatique sur achat", loyaltySessionRef);
+            callTalonOneMock(CURRENT_CUSTOMER_ID, "purchase", finalTotal, appliedCouponCode);
+            String couponMessage = appliedCouponCode == null || appliedCouponCode.isEmpty()
+                    ? ""
+                    : "\nCoupon applique: " + appliedCouponCode + " | Total final: " + formatPrice(cartFinalTotal());
             cartData.clear();
+            clearCoupon();
             refreshVentes();
             refreshAchats();
-            showSuccess("Commande en attente", "Votre panier a ete envoye a l'admin pour confirmation.");
+            refreshLoyaltyUi();
+            showSuccess("Commande en attente", "Votre panier a ete envoye a l'admin pour confirmation.\nPoints fidelite gagnes: +" + earnedPoints + couponMessage);
             showClientCatalog();
         } catch (Exception ex) {
             showError("Commande impossible", ex.getMessage());
@@ -536,6 +734,21 @@ public class MarketplaceController {
         Label stock = new Label(stockText(vente));
         stock.getStyleClass().add(vente.getQuantite() <= 0 ? "stock-empty" : "stock-label");
 
+        Label rating = new Label(ratingText(vente));
+        rating.getStyleClass().add("rating-label");
+
+        HBox ratingButtons = new HBox(3);
+        ratingButtons.setAlignment(Pos.CENTER_LEFT);
+        int currentRating = currentUserRating(vente.getId());
+        for (int note = 1; note <= 5; note++) {
+            final int selectedNote = note;
+            Button star = new Button();
+            star.getStyleClass().add("star-btn");
+            star.setGraphic(createStarIcon(note <= currentRating));
+            star.setOnAction(event -> rateArticle(vente, selectedNote));
+            ratingButtons.getChildren().add(star);
+        }
+
         HBox footer = new HBox(10);
         footer.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         Label price = new Label(formatPrice(vente.getPrix()));
@@ -544,14 +757,83 @@ public class MarketplaceController {
         buyButton.getStyleClass().add("primary-btn");
         buyButton.setDisable(vente.getQuantite() <= 0);
         buyButton.setOnAction(event -> addToCart(vente));
-        footer.getChildren().addAll(price, buyButton);
+        Button qrButton = new Button("QR");
+        qrButton.getStyleClass().add("secondary-btn");
+        qrButton.setOnAction(event -> showArticleQrCode(vente));
+        footer.getChildren().addAll(price, qrButton, buyButton);
         HBox.setHgrow(price, javafx.scene.layout.Priority.ALWAYS);
 
         if (vente.getQuantite() <= 0) {
             card.getStyleClass().add("article-card-empty");
         }
-        card.getChildren().addAll(photo, category, title, artist, description, stock, footer);
+        card.getChildren().addAll(photo, category, title, artist, description, stock, rating, ratingButtons, footer);
         return card;
+    }
+
+    private Polygon createStarIcon(boolean filled) {
+        Polygon star = new Polygon();
+        double centerX = 8;
+        double centerY = 8;
+        double outerRadius = 8;
+        double innerRadius = 3.5;
+        for (int i = 0; i < 10; i++) {
+            double angle = Math.toRadians(-90 + i * 36);
+            double radius = i % 2 == 0 ? outerRadius : innerRadius;
+            star.getPoints().addAll(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
+        }
+        star.getStyleClass().add(filled ? "star-icon-filled" : "star-icon-empty");
+        return star;
+    }
+
+    private int currentUserRating(int venteId) {
+        try {
+            return ratingService.noteUtilisateur(venteId, CURRENT_CUSTOMER_ID);
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    private String ratingText(Vente vente) {
+        try {
+            double moyenne = ratingService.moyenne(vente.getId());
+            int count = ratingService.nombreNotes(vente.getId());
+            return count == 0 ? "Pas encore note" : String.format("Note %.1f/5 (%d avis)", moyenne, count);
+        } catch (Exception ex) {
+            return "Note indisponible";
+        }
+    }
+
+    private void rateArticle(Vente vente, int note) {
+        try {
+            ratingService.ajouterOuModifier(vente.getId(), CURRENT_CUSTOMER_ID, note);
+            renderClientGrid();
+        } catch (Exception ex) {
+            showError("Notation", ex.getMessage());
+        }
+    }
+
+    private void showArticleQrCode(Vente vente) {
+        Dialog<Void> dialog = new Dialog<>();
+        styleDialog(dialog.getDialogPane());
+        dialog.setTitle("QR Code article");
+        dialog.setHeaderText("QR Code - " + safeText(vente.getTitre(), "Article"));
+        ImageView qrView = new ImageView(new Image(qrCodeApiService.createQrCodeUrl(articleQrData(vente)), true));
+        qrView.setFitWidth(240);
+        qrView.setFitHeight(240);
+        qrView.setPreserveRatio(true);
+        VBox content = new VBox(12, qrView, new Label("Scannez pour voir les infos de l'article."));
+        content.setAlignment(Pos.CENTER);
+        content.setPadding(new Insets(16));
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.getDialogPane().setPrefSize(360, 380);
+        dialog.showAndWait();
+    }
+
+    private String articleQrData(Vente vente) {
+        return safeText(vente.getTitre(), "Article") + " | " +
+                safeText(vente.getNomArtiste(), "Artiste inconnu") + " | " +
+                formatPrice(vente.getPrix());
     }
 
     private void addToCart(Vente vente) {
@@ -604,17 +886,421 @@ public class MarketplaceController {
         return null;
     }
 
+    private void showCardPaymentDialog(double amount) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        styleDialog(dialog.getDialogPane());
+        dialog.setTitle("Paiement par carte");
+        dialog.setHeaderText("Paiement simule par carte bancaire");
+
+        TextField holderField = new TextField();
+        holderField.setPromptText("Nom du titulaire");
+        TextField cardNumberField = new TextField();
+        cardNumberField.setPromptText("16 chiffres");
+        TextField expiryField = new TextField();
+        expiryField.setPromptText("MM/AA");
+        PasswordField cvvField = new PasswordField();
+        cvvField.setPromptText("CVV");
+        Label amountLabel = new Label(formatPrice(amount));
+        amountLabel.getStyleClass().add("cart-total");
+
+        GridPane form = new GridPane();
+        form.setHgap(12);
+        form.setVgap(12);
+        form.setPadding(new Insets(16, 8, 8, 8));
+        form.add(new Label("Nom du titulaire"), 0, 0);
+        form.add(holderField, 1, 0);
+        form.add(new Label("Numero de carte"), 0, 1);
+        form.add(cardNumberField, 1, 1);
+        form.add(new Label("Expiration"), 0, 2);
+        form.add(expiryField, 1, 2);
+        form.add(new Label("CVV"), 0, 3);
+        form.add(cvvField, 1, 3);
+        form.add(new Label("Montant total"), 0, 4);
+        form.add(amountLabel, 1, 4);
+
+        ButtonType payType = new ButtonType("Valider le paiement", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(payType, ButtonType.CANCEL);
+        dialog.getDialogPane().setContent(form);
+
+        Button payButton = (Button) dialog.getDialogPane().lookupButton(payType);
+        payButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            clearValidation(holderField, cardNumberField, expiryField, cvvField);
+            List<String> errors = validateCardPaymentForm(holderField, cardNumberField, expiryField, cvvField, amount);
+            if (!errors.isEmpty()) {
+                showValidationAlert(errors);
+                event.consume();
+                return;
+            }
+            try {
+                String cardDigits = digitsOnly(cardNumberField.getText());
+                String cardLast4 = cardDigits.substring(cardDigits.length() - 4);
+                String paymentRef = "CARD-" + System.currentTimeMillis();
+                processPaidCart(paymentRef, holderField.getText().trim(), cardLast4, amount);
+                updateCardPaymentStatus("Paiement accepte | Carte **** " + cardLast4);
+                showSuccess("Paiement accepte", "Paiement simule accepte. La commande est marquee PAYE.");
+            } catch (Exception ex) {
+                showError("Paiement refuse", ex.getMessage());
+                event.consume();
+            }
+        });
+
+        dialog.showAndWait();
+    }
+
+    private List<String> validateCardPaymentForm(TextField holderField, TextField cardNumberField,
+                                                 TextField expiryField, PasswordField cvvField, double amount) {
+        List<String> errors = new ArrayList<>();
+        if (holderField.getText() == null || holderField.getText().trim().isEmpty()) {
+            markInvalid(holderField);
+            errors.add("Le nom du titulaire est obligatoire.");
+        }
+        String cardDigits = digitsOnly(cardNumberField.getText());
+        if (!cardDigits.matches("\\d{16}")) {
+            markInvalid(cardNumberField);
+            errors.add("Le numero de carte doit contenir exactement 16 chiffres.");
+        }
+        String expiry = expiryField.getText() == null ? "" : expiryField.getText().trim();
+        if (!expiry.matches("\\d{2}/\\d{2}") || !validExpiryMonth(expiry)) {
+            markInvalid(expiryField);
+            errors.add("La date d'expiration est obligatoire au format MM/AA.");
+        }
+        String cvv = cvvField.getText() == null ? "" : cvvField.getText().trim();
+        if (!cvv.matches("\\d{3}")) {
+            markInvalid(cvvField);
+            errors.add("Le CVV doit contenir exactement 3 chiffres.");
+        }
+        if (amount <= 0) {
+            errors.add("Le montant doit etre superieur a 0.");
+        }
+        return errors;
+    }
+
+    private boolean validExpiryMonth(String expiry) {
+        try {
+            int month = Integer.parseInt(expiry.substring(0, 2));
+            return month >= 1 && month <= 12;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private String digitsOnly(String value) {
+        return value == null ? "" : value.replaceAll("\\D", "");
+    }
+
+    private void processPaidCart(String paymentRef, String cardHolder, String cardLast4, double finalTotal) throws SQLException {
+        refreshVentes();
+        String stockError = validateCartStock();
+        if (stockError != null) {
+            throw new SQLException(stockError);
+        }
+
+        String loyaltySessionRef = "ORDER-" + System.currentTimeMillis();
+        for (Vente vente : new ArrayList<>(cartData)) {
+            serviceVente.diminuerQuantite(vente.getId());
+            serviceAchat.ajouter(new Achat(
+                    safeText(vente.getTitre(), "Article"),
+                    CURRENT_CUSTOMER_ID,
+                    vente.getPrix(),
+                    Date.valueOf(LocalDate.now()),
+                    "PAYE"
+            ));
+        }
+
+        saveSimulatedPayment(paymentRef, cardHolder, cardLast4, finalTotal);
+        int earnedPoints = calculateCashbackPoints(finalTotal);
+        addLoyaltyPoints(CURRENT_CUSTOMER_ID, earnedPoints, "PURCHASE", "Paiement carte simule", loyaltySessionRef);
+        callTalonOneMock(CURRENT_CUSTOMER_ID, "local_card_payment", finalTotal, appliedCouponCode);
+        cartData.clear();
+        clearCoupon();
+        refreshVentes();
+        refreshAchats();
+        refreshLoyaltyUi();
+        showClientCatalog();
+    }
+
+    private void saveSimulatedPayment(String paymentRef, String cardHolder, String cardLast4, double amount) throws SQLException {
+        Connection connection = loyaltyConnection();
+        try (java.sql.Statement st = connection.createStatement()) {
+            st.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS simulated_card_payments (" +
+                            "id_payment INT AUTO_INCREMENT PRIMARY KEY, " +
+                            "payment_ref VARCHAR(120) NOT NULL UNIQUE, " +
+                            "customer_id VARCHAR(100) NOT NULL, " +
+                            "amount DOUBLE NOT NULL, " +
+                            "card_holder VARCHAR(150) NOT NULL, " +
+                            "card_last4 VARCHAR(4) NOT NULL, " +
+                            "status VARCHAR(20) NOT NULL, " +
+                            "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+            );
+        }
+        String sql = "INSERT INTO simulated_card_payments (payment_ref, customer_id, amount, card_holder, card_last4, status) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, paymentRef);
+            ps.setString(2, CURRENT_CUSTOMER_ID);
+            ps.setDouble(3, amount);
+            ps.setString(4, cardHolder);
+            ps.setString(5, cardLast4);
+            ps.setString(6, "PAYE");
+            ps.executeUpdate();
+        }
+    }
+
+    private void updateCardPaymentStatus(String status) {
+        if (cardPaymentStatusLabel != null) {
+            cardPaymentStatusLabel.setText(status);
+        }
+    }
+
     private void updateCartTotal() {
-        double total = 0;
-        for (Vente vente : cartData) {
-            total += vente.getPrix();
+        double subtotal = cartSubtotal();
+        double discount = cartDiscount();
+        double total = cartFinalTotal();
+        if (cartSubtotalLabel != null) {
+            cartSubtotalLabel.setText(formatPrice(subtotal));
+        }
+        if (cartDiscountLabel != null) {
+            cartDiscountLabel.setText("-" + formatPrice(discount));
         }
         if (cartTotalLabel != null) {
             cartTotalLabel.setText(formatPrice(total));
         }
+        if (couponStatusLabel != null) {
+            if (appliedCouponCode == null || appliedCouponCode.isEmpty()) {
+                couponStatusLabel.setText("Aucun coupon applique");
+            } else {
+                couponStatusLabel.setText("Coupon " + appliedCouponCode + " applique: -" + Math.round(appliedDiscountRate * 100) + "%");
+            }
+        }
         if (clientCartButton != null) {
             clientCartButton.setText("Panier (" + cartData.size() + ")");
         }
+    }
+
+    private double cartSubtotal() {
+        double subtotal = 0;
+        for (Vente vente : cartData) {
+            subtotal += vente.getPrix();
+        }
+        return subtotal;
+    }
+
+    private double cartDiscount() {
+        return cartSubtotal() * appliedDiscountRate;
+    }
+
+    private double cartFinalTotal() {
+        return Math.max(0, cartSubtotal() - cartDiscount());
+    }
+
+    private void clearCoupon() {
+        appliedCouponCode = "";
+        appliedDiscountRate = 0;
+        if (couponCodeField != null) {
+            couponCodeField.clear();
+        }
+        updateCartTotal();
+    }
+
+    private Double couponRateFor(String code) {
+        if ("ARTEVIA10".equals(code)) {
+            return 0.10;
+        }
+        if ("VIP20".equals(code) && cartSubtotal() >= 500) {
+            return 0.20;
+        }
+        if ("WELCOME5".equals(code)) {
+            return 0.05;
+        }
+        if ("POINTS1000".equals(code) && safeLoyaltyPoints(CURRENT_CUSTOMER_ID) >= 1000) {
+            return 0.12;
+        }
+        if ("VIPAUTO".equals(code)) {
+            String level = vipLevelForPoints(safeLoyaltyPoints(CURRENT_CUSTOMER_ID));
+            if ("VIP".equals(level)) {
+                return 0.25;
+            }
+            if ("Gold".equals(level)) {
+                return 0.18;
+            }
+            if ("Silver".equals(level)) {
+                return 0.10;
+            }
+        }
+        return null;
+    }
+
+    private void ensureSimpleLoyaltyTable() {
+        try (java.sql.Statement st = loyaltyConnection().createStatement()) {
+            st.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS loyalty_transactions (" +
+                            "id_transaction INT AUTO_INCREMENT PRIMARY KEY, " +
+                            "customer_id VARCHAR(100) NOT NULL, " +
+                            "points INT NOT NULL, " +
+                            "type VARCHAR(40) NOT NULL, " +
+                            "reason VARCHAR(255), " +
+                            "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
+                            "external_ref VARCHAR(120) UNIQUE)"
+            );
+        } catch (Exception ex) {
+            showError("Fidelite", "Initialisation fidelite impossible: " + ex.getMessage());
+        }
+    }
+
+    private void addLoyaltyPoints(String customerId, int points, String type, String reason, String externalRef) throws SQLException {
+        if (customerId == null || customerId.trim().isEmpty()) {
+            throw new SQLException("Client fidelite obligatoire.");
+        }
+        if (points == 0) {
+            throw new SQLException("Le nombre de points ne peut pas etre zero.");
+        }
+        if (externalRef != null && loyaltyExternalRefExists(externalRef)) {
+            throw new SQLException("Cette recompense fidelite a deja ete appliquee.");
+        }
+        String sql = "INSERT INTO loyalty_transactions (customer_id, points, type, reason, created_at, external_ref) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = loyaltyConnection().prepareStatement(sql)) {
+            ps.setString(1, customerId.trim());
+            ps.setInt(2, points);
+            ps.setString(3, type);
+            ps.setString(4, reason);
+            ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setString(6, externalRef);
+            ps.executeUpdate();
+        }
+    }
+
+    private boolean loyaltyExternalRefExists(String externalRef) throws SQLException {
+        String sql = "SELECT id_transaction FROM loyalty_transactions WHERE external_ref = ? LIMIT 1";
+        try (PreparedStatement ps = loyaltyConnection().prepareStatement(sql)) {
+            ps.setString(1, externalRef);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    private void refreshLoyaltyUi() {
+        int points = safeLoyaltyPoints(CURRENT_CUSTOMER_ID);
+        String vip = vipLevelForPoints(points);
+        if (clientLoyaltyPointsLabel != null) {
+            clientLoyaltyPointsLabel.setText(points + " pts");
+        }
+        if (clientVipLevelLabel != null) {
+            clientVipLevelLabel.setText(vip);
+        }
+        if (loyaltyAdminSummaryLabel != null) {
+            loyaltyAdminSummaryLabel.setText(totalDistributedPoints() + " pts distribues");
+        }
+        if (loyaltyHistoryListView != null) {
+            loyaltyHistoryListView.setItems(FXCollections.observableArrayList(simpleLoyaltyHistory()));
+        }
+    }
+
+    private int safeLoyaltyPoints(String customerId) {
+        try {
+            return loyaltyPoints(customerId);
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    private int loyaltyPoints(String customerId) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(points), 0) AS total FROM loyalty_transactions WHERE customer_id = ?";
+        try (PreparedStatement ps = loyaltyConnection().prepareStatement(sql)) {
+            ps.setString(1, customerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Math.max(0, rs.getInt("total")) : 0;
+            }
+        }
+    }
+
+    private int totalDistributedPoints() {
+        String sql = "SELECT COALESCE(SUM(CASE WHEN points > 0 THEN points ELSE 0 END), 0) AS total FROM loyalty_transactions";
+        try (PreparedStatement ps = loyaltyConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getInt("total") : 0;
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    private List<String> simpleLoyaltyHistory() {
+        List<String> history = new ArrayList<>();
+        String sql = "SELECT customer_id, points, type, reason, created_at FROM loyalty_transactions ORDER BY created_at DESC, id_transaction DESC LIMIT 12";
+        try (PreparedStatement ps = loyaltyConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                history.add(rs.getTimestamp("created_at") + " | " + rs.getString("customer_id") + " | " +
+                        rs.getInt("points") + " pts | " + rs.getString("type") + " | " + safeText(rs.getString("reason"), ""));
+            }
+        } catch (Exception ex) {
+            history.add("Historique fidelite indisponible: " + ex.getMessage());
+        }
+        return history;
+    }
+
+    private int calculateCashbackPoints(double amount) {
+        String vip = vipLevelForPoints(safeLoyaltyPoints(CURRENT_CUSTOMER_ID));
+        double rate = "VIP".equals(vip) ? 0.10 : "Gold".equals(vip) ? 0.07 : "Silver".equals(vip) ? 0.05 : 0.03;
+        return Math.max(1, (int) Math.round(amount * rate));
+    }
+
+    private String vipLevelForPoints(int points) {
+        if (points >= 7000) {
+            return "VIP";
+        }
+        if (points >= 3000) {
+            return "Gold";
+        }
+        if (points >= 1000) {
+            return "Silver";
+        }
+        return "Bronze";
+    }
+
+    private Connection loyaltyConnection() throws SQLException {
+        Connection connection = MyDataBase.getInstance().getConnection();
+        if (connection == null) {
+            String details = MyDataBase.getLastError() == null ? "" : " Cause: " + MyDataBase.getLastError();
+            throw new SQLException("Connexion MySQL indisponible." + details);
+        }
+        return connection;
+    }
+
+    private void callTalonOneMock(String customerId, String eventType, double amount, String couponCode) {
+        String baseUrl = System.getenv("TALON_ONE_BASE_URL");
+        String apiKey = System.getenv("TALON_ONE_API_KEY");
+        if (baseUrl == null || baseUrl.isBlank() || apiKey == null || apiKey.isBlank()) {
+            return;
+        }
+        try {
+            String sessionId = "marketplace-" + System.currentTimeMillis();
+            String body = "{\"customerSession\":{\"profileId\":\"" + json(customerId) + "\",\"state\":\"closed\",\"attributes\":{" +
+                    "\"eventType\":\"" + json(eventType) + "\",\"amount\":" + amount + ",\"coupon\":\"" + json(couponCode) + "\"}}}";
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(trimTrailingSlash(baseUrl) + "/v2/customer_sessions/" + sessionId))
+                    .header("Authorization", "ApiKey-v1 " + apiKey)
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(body))
+                    .build();
+            HttpResponse<String> response = talonHttpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                System.out.println("Talon.One API erreur HTTP " + response.statusCode() + ": " + response.body());
+            }
+        } catch (IOException | InterruptedException ex) {
+            System.out.println("Talon.One indisponible, mode local conserve: " + ex.getMessage());
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private String trimTrailingSlash(String value) {
+        return value.endsWith("/") ? value.substring(0, value.length() - 1) : value;
+    }
+
+    private String json(String value) {
+        return value == null ? "" : value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     private Optional<Vente> openVenteDialog(Vente existing) {
@@ -912,10 +1598,13 @@ public class MarketplaceController {
             errors.add(message);
             return;
         }
+        if (isWebImage(value)) {
+            return;
+        }
         File file = new File(value.trim());
         if (!file.exists() || !file.isFile()) {
             markInvalid(field);
-            errors.add("Le fichier image selectionne est introuvable.");
+            errors.add("Le fichier image selectionne est introuvable ou l'URL image est invalide.");
         }
     }
 
@@ -1015,12 +1704,20 @@ public class MarketplaceController {
 
     private Image createPreviewImage(String imagePath, String title, String category, int width, int height) {
         if (imagePath != null && !imagePath.trim().isEmpty()) {
+            if (isWebImage(imagePath)) {
+                return new Image(imagePath.trim(), width, height, false, true, true);
+            }
             File file = new File(imagePath.trim());
             if (file.exists() && file.isFile()) {
                 return new Image(file.toURI().toString(), width, height, false, true);
             }
         }
         return createArtworkImage(safeText(title, "Article"), safeText(category, "Catalogue"), width, height);
+    }
+
+    private boolean isWebImage(String value) {
+        String lower = value == null ? "" : value.trim().toLowerCase();
+        return lower.startsWith("http://") || lower.startsWith("https://");
     }
 
     private WritableImage createArtworkImage(String title, String category, int width, int height) {
