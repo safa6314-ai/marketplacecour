@@ -1,89 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Controllers.post.AfficherPostController"
-      spacing="0"
-      prefWidth="900"
-      prefHeight="700"
-      styleClass="root-pane"
-      stylesheets="@/css/style.css">
-
-    <!-- Titre -->
-    <Label text="Forum Artevia"
-           styleClass="heading-title"
-           style="-fx-padding: 20 32 4 32;"/>
-    <Label text="Gérez vos posts, commentaires et likes"
-           styleClass="heading-subtitle"
-           style="-fx-padding: 0 32 8 32;"/>
-
-    <!-- Post en vedette -->
-    <VBox fx:id="vedettePanneau" styleClass="panel-card"
-          style="-fx-padding: 14 18 14 18; -fx-margin: 0 32 0 32;">
-        <padding><Insets top="0" right="32" bottom="8" left="32"/></padding>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="⭐ Post en vedette"
-                   styleClass="section-title"
-                   style="-fx-text-fill: #f9c74f;"/>
-            <Label fx:id="lblVedetteLikes"
-                   text=""
-                   styleClass="status-label"/>
-        </HBox>
-        <Label fx:id="lblVedetteContenu"
-               text=""
-               wrapText="true"
-               styleClass="label"
-               style="-fx-font-size: 13px; -fx-padding: 4 0 0 0;"/>
-    </VBox>
-
-    <!-- Barre de recherche -->
-    <HBox spacing="8" style="-fx-padding: 10 32 4 32;" alignment="CENTER_LEFT">
-        <Label text="🔍" style="-fx-font-size: 16px; -fx-text-fill: #bbc4e6;"/>
-        <TextField fx:id="tfRecherche"
-                   promptText="Rechercher un post..."
-                   prefWidth="400"
-                   prefHeight="36"/>
-        <Button text="✖ Effacer" onAction="#effacerRecherche" styleClass="secondary-btn"/>
-    </HBox>
-
-    <!-- Barre d'actions -->
-    <HBox spacing="8" styleClass="action-bar" style="-fx-padding: 8 32 8 32;">
-        <Button text="Ajouter"      onAction="#ouvrirDialogAjouter"  styleClass="primary-btn"/>
-        <Button text="Modifier"     onAction="#ouvrirDialogModifier" styleClass="secondary-btn"/>
-        <Button text="Supprimer"    onAction="#supprimerPost"        styleClass="danger-btn"/>
-        <Button text="💬 Commenter" onAction="#ouvrirCommentaires"   styleClass="secondary-btn"/>
-        <Button text="🔄"           onAction="#rafraichir"           styleClass="icon-btn"/>
-    </HBox>
-
-    <!-- TableView -->
-    <VBox VBox.vgrow="ALWAYS" style="-fx-padding: 0 32 8 32;">
-        <TableView fx:id="tablePost" VBox.vgrow="ALWAYS" styleClass="table-view">
-            <columns>
-                <TableColumn fx:id="colId"       text="ID"       prefWidth="55"/>
-                <TableColumn fx:id="colContenu"  text="Contenu"  prefWidth="360"/>
-                <TableColumn fx:id="colDate"     text="Date"     prefWidth="170"/>
-                <TableColumn fx:id="colLikes"    text="❤️ Likes" prefWidth="90"/>
-                <TableColumn fx:id="colComments" text="💬"       prefWidth="55"/>
-                <TableColumn fx:id="colSentiment" text="😊" prefWidth="55"/>
-            </columns>
-        </TableView>
-    </VBox>
-
-    <!-- Pagination -->
-    <HBox spacing="12" alignment="CENTER" style="-fx-padding: 8 32 8 32;">
-        <Button text="◀ Précédent" onAction="#pagePrecedente" styleClass="secondary-btn"/>
-        <Label fx:id="lblPage" text="Page 1 / 1"
-               styleClass="section-title"
-               style="-fx-min-width: 100; -fx-alignment: CENTER;"/>
-        <Button text="Suivant ▶" onAction="#pageSuivante" styleClass="secondary-btn"/>
-    </HBox>
-
-    <!-- Status bar -->
-    <Label fx:id="lblStatus" text="[INFO]"
-           styleClass="status-label"
-           style="-fx-padding: 2 32 8 32;"/>
-
-</VBox>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml">
+    <center>
+        <fx:include source="AfficherPostAdmin.fxml"/>
+    </center>
+</BorderPane>

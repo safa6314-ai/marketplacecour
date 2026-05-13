@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.post.AfficherPostAdminController"
+            prefWidth="1180"
+            prefHeight="780"
+            styleClass="root-pane"
+            stylesheets="@/css/style.css">
+
+    <left>
+        <VBox spacing="10" prefWidth="220" styleClass="sidebar">
+            <padding><Insets top="24" right="18" bottom="24" left="18"/></padding>
+            <Label text="Artevia" styleClass="sidebar-brand"/>
+            <Label text="Administration" styleClass="status-label"/>
+            <Separator/>
+            <Button text="Posts" onAction="#afficherPosts" styleClass="sidebar-btn"/>
+            <Button text="Commentaires" onAction="#ouvrirCommentairesSidebar" styleClass="sidebar-btn"/>
+            <Button text="Likes" onAction="#ouvrirLikes" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="14" styleClass="main-surface">
+            <padding><Insets top="22" right="26" bottom="16" left="26"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Espace Admin" styleClass="heading-title"/>
+                    <Label text="Gerer les publications, suivre les reactions et moderer les commentaires" styleClass="heading-subtitle"/>
+                </VBox>
+                <Button text="Ajouter" onAction="#ouvrirDialogAjouter" styleClass="primary-btn"/>
+                <Button text="Actualiser" onAction="#rafraichir" styleClass="secondary-btn"/>
+            </HBox>
+
+            <HBox spacing="12">
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <Label text="Posts" styleClass="stat-label"/>
+                    <Label fx:id="lblDashboardPosts" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <Label text="Likes" styleClass="stat-label"/>
+                    <Label fx:id="lblDashboardLikes" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <Label text="Commentaires" styleClass="stat-label"/>
+                    <Label fx:id="lblDashboardCommentaires" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <Label text="Post le plus actif" styleClass="stat-label"/>
+                    <Label fx:id="lblMostActivePost" text="Aucun" styleClass="stat-small-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <Label text="Sentiment dominant" styleClass="stat-label"/>
+                    <Label fx:id="lblDominantSentiment" text="Analyse" styleClass="stat-small-value"/>
+                </VBox>
+            </HBox>
+
+            <VBox styleClass="panel-card" spacing="8">
+                <padding><Insets top="16" right="18" bottom="16" left="18"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Post en vedette" styleClass="section-title"/>
+                    <Label fx:id="lblVedetteLikes" text="0 like" styleClass="status-label"/>
+                </HBox>
+                <Label fx:id="lblVedetteContenu" text="Aucun post en vedette." wrapText="true" styleClass="post-content"/>
+            </VBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <TextField fx:id="tfRecherche" promptText="Rechercher une publication..." HBox.hgrow="ALWAYS"/>
+                <Button text="Effacer" onAction="#effacerRecherche" styleClass="secondary-btn"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="action-bar">
+                <Button text="Commentaires" onAction="#ouvrirCommentaires" styleClass="secondary-btn"/>
+            </HBox>
+
+            <ListView fx:id="listPosts" VBox.vgrow="ALWAYS" styleClass="post-list"/>
+
+            <HBox spacing="12" alignment="CENTER">
+                <Button text="Precedent" onAction="#pagePrecedente" styleClass="secondary-btn"/>
+                <Label fx:id="lblPage" text="Page 1 / 1" styleClass="section-title"/>
+                <Button text="Suivant" onAction="#pageSuivante" styleClass="secondary-btn"/>
+            </HBox>
+
+            <Label fx:id="lblStatus" text="Pret." styleClass="status-label"/>
+        </VBox>
+    </center>
+</BorderPane>

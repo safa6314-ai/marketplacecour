@@ -1,49 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="Controllers.commentaire.AfficherCommentaireController"
-      spacing="0"
-      prefWidth="900"
+      spacing="12"
+      prefWidth="520"
       prefHeight="620"
-      styleClass="root-pane"
+      styleClass="comments-panel"
       stylesheets="@/css/style.css">
 
-    <!-- ── Titre ── -->
-    <Label text="Commentaires"
-           styleClass="heading-title"
-           style="-fx-padding: 24 32 2 32;"/>
-    <Label fx:id="lblPostInfo" text=""
-           styleClass="heading-subtitle"
-           style="-fx-padding: 0 32 8 32;"/>
+    <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
 
-    <!-- ── Barre d'actions ── -->
-    <HBox spacing="8" styleClass="action-bar" style="-fx-padding: 8 32 8 32;">
-        <Button text="Ajouter"         onAction="#ouvrirDialogAjouter"  styleClass="primary-btn"/>
-        <Button text="Modifier"        onAction="#ouvrirDialogModifier" styleClass="secondary-btn"/>
-        <Button text="Supprimer"       onAction="#supprimerCommentaire" styleClass="danger-btn"/>
-        <Button text="🔄"              onAction="#rafraichir"           styleClass="icon-btn"/>
-        <Button text="↩️ Retour Posts" onAction="#allerVersPosts"       styleClass="secondary-btn"/>
-    </HBox>
+    <Label text="Commentaires" styleClass="heading-title"/>
+    <Label fx:id="lblPostInfo" text="" wrapText="true" styleClass="heading-subtitle"/>
 
-    <!-- ── TableView ── -->
-    <VBox VBox.vgrow="ALWAYS" style="-fx-padding: 0 32 16 32;">
-        <TableView fx:id="tableCommentaire" VBox.vgrow="ALWAYS" styleClass="table-view">
-            <columns>
-                <TableColumn fx:id="colId"      text="ID"       prefWidth="55"/>
-                <TableColumn fx:id="colContenu" text="Contenu"  prefWidth="460"/>
-                <TableColumn fx:id="colDate"    text="Date"     prefWidth="180"/>
-                <TableColumn fx:id="colPostId"  text="Post ID"  prefWidth="80"/>
-            </columns>
-        </TableView>
+    <ListView fx:id="listCommentaires" VBox.vgrow="ALWAYS" styleClass="comment-list"/>
+
+    <VBox spacing="8" styleClass="panel-card">
+        <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+        <Label text="Ajouter un commentaire" styleClass="section-title"/>
+        <TextArea fx:id="tfNouveauCommentaire" promptText="Votre commentaire..." prefHeight="82" wrapText="true"/>
+        <Button text="Publier" onAction="#ajouterCommentaire" styleClass="primary-btn"/>
     </VBox>
 
-    <!-- ── Status bar ── -->
-    <Label fx:id="lblStatus" text="[INFO]"
-           styleClass="status-label"
-           style="-fx-padding: 4 32 8 32;"/>
+    <HBox fx:id="adminActions" spacing="8" alignment="CENTER_LEFT">
+        <Button text="Actualiser" onAction="#rafraichir" styleClass="secondary-btn"/>
+    </HBox>
 
+    <Label fx:id="lblStatus" text="Pret." styleClass="status-label"/>
 </VBox>
