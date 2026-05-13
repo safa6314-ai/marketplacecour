@@ -5,13 +5,13 @@ import java.util.List;
 
 public interface InterfaceCRUD<T> {
 
-    public void ajouter(T t) throws SQLException;
+    void ajouter(T t) throws SQLException;
 
-    public void modifier(T t) throws SQLException;
+    void modifier(T t) throws SQLException;
 
-    public void supprimer(int id) throws SQLException;
+    void supprimer(int id) throws SQLException;
 
-    public List<T> afficher() throws SQLException;
+    List<T> afficher() throws SQLException;
 
     default T getById(int id) throws SQLException {
         return null;

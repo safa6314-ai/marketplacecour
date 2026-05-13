@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controllers.commentaire.AfficherCommentaireController"
+      spacing="12"
+      prefWidth="520"
+      prefHeight="620"
+      styleClass="comments-panel"
+      stylesheets="@/css/style.css">
+
+    <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+
+    <Label text="Commentaires" styleClass="heading-title"/>
+    <Label fx:id="lblPostInfo" text="" wrapText="true" styleClass="heading-subtitle"/>
+
+    <ListView fx:id="listCommentaires" VBox.vgrow="ALWAYS" styleClass="comment-list"/>
+
+    <VBox spacing="8" styleClass="panel-card">
+        <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+        <Label text="Ajouter un commentaire" styleClass="section-title"/>
+        <TextArea fx:id="tfNouveauCommentaire" promptText="Votre commentaire..." prefHeight="82" wrapText="true"/>
+        <Button text="Publier" onAction="#ajouterCommentaire" styleClass="primary-btn"/>
+    </VBox>
+
+    <HBox fx:id="adminActions" spacing="8" alignment="CENTER_LEFT">
+        <Button text="Actualiser" onAction="#rafraichir" styleClass="secondary-btn"/>
+    </HBox>
+
+    <Label fx:id="lblStatus" text="Pret." styleClass="status-label"/>
+</VBox>
