@@ -7,10 +7,8 @@ public class Question {
     private String categorie;
     private String niveau;
 
-    // Constructeur vide
     public Question() {}
 
-    // Constructeur avec paramètres
     public Question(int id, String contenu, String categorie, String niveau) {
         this.id = id;
         this.contenu = contenu;
@@ -24,7 +22,6 @@ public class Question {
         this.niveau = niveau;
     }
 
-    // Getters & Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

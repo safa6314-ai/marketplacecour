@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package Utils;
 
 import java.sql.Connection;
@@ -19,9 +14,8 @@ public class MyBD {
     private MyBD() {
         try {
             this.cnx = DriverManager.getConnection(this.url, this.user, this.password);
-            System.out.println("Connection établie !!");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            this.cnx = null;
         }
 
     }

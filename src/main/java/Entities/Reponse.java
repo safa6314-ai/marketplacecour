@@ -1,16 +1,17 @@
 package Entities;
 
+import java.time.LocalDateTime;
+
 public class Reponse {
 
     private int id;
     private String contenu;
     private boolean isCorrect;
     private int question_id;
+    private LocalDateTime dateCreation;
 
-    // Constructeur vide
     public Reponse() {}
 
-    // Constructeur avec paramètres
     public Reponse(int id, String contenu, boolean isCorrect, int question_id) {
         this.id = id;
         this.contenu = contenu;
@@ -24,7 +25,6 @@ public class Reponse {
         this.question_id = question_id;
     }
 
-    // Getters & Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -37,6 +37,9 @@ public class Reponse {
     public int getQuestion_id() { return question_id; }
     public void setQuestion_id(int question_id) { this.question_id = question_id; }
 
+    public LocalDateTime getDateCreation() { return dateCreation; }
+    public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
+
     @Override
     public String toString() {
         return "Reponse{" +
@@ -44,6 +47,7 @@ public class Reponse {
                 ", contenu='" + contenu + '\'' +
                 ", isCorrect=" + isCorrect +
                 ", question_id=" + question_id +
+                ", dateCreation=" + dateCreation +
                 '}';
     }
 }
