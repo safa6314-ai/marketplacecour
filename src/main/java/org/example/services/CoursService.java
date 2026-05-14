@@ -125,7 +125,7 @@ public class CoursService {
             }
             return connection;
         } catch (SQLException e) {
-            throw new IllegalStateException("Connexion MySQL indisponiblee : " + e.getMessage(), e);
+            throw new IllegalStateException("Connexiion MySQL indisponiblee : " + e.getMessage(), e);
         }
     }
 }
