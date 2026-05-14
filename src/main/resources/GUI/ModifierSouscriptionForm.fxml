@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefWidth="380.0" styleClass="client-root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ModifierSouscriptionController">
+   <children>
+      <VBox spacing="18.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="28.0" left="28.0" right="28.0" top="28.0" />
+         </padding>
+         <children>
+            <!-- Header -->
+            <VBox spacing="4.0">
+               <children>
+                  <Label styleClass="client-section-title" text="Modifier Souscription" />
+                  <Label fx:id="clientNameLabel" text="Client Name" styleClass="muted-label" />
+               </children>
+            </VBox>
+
+            <!-- Form Fields -->
+            <VBox styleClass="client-form-panel" style="-fx-padding: 18;" spacing="14.0">
+               <children>
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label text="Statut" styleClass="form-field-label" />
+                        <TextField fx:id="statutField" promptText="active / inactive" />
+                        <Label fx:id="errorLabel" styleClass="error-label" visible="false" managed="false"/>
+                     </children>
+                  </VBox>
+
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label text="Date fin" styleClass="form-field-label" />
+                        <DatePicker fx:id="dateFinPicker" maxWidth="1.7976931348623157E308" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+
+            <!-- Actions -->
+            <Pane styleClass="card-divider">
+               <VBox.margin><Insets top="2.0" bottom="2.0" /></VBox.margin>
+            </Pane>
+            <HBox alignment="CENTER_RIGHT" spacing="12.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleCancel" styleClass="client-btn-secondary" text="Annuler" />
+                  <Button mnemonicParsing="false" onAction="#handleSaveEdit" styleClass="client-btn-primary" text="💾  Sauvegarder" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
