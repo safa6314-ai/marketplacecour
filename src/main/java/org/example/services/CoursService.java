@@ -107,7 +107,7 @@ public class CoursService {
                     c.setTitre(rs.getString("titre"));
                     c.setDescription(rs.getString("description"));
                     c.setPrix(rs.getDouble("prix"));
-                    c.setCategorie(rs.getString("categorie"));
+                    c.setCategorie(rs.getString("catègorie"));
                     c.setNiveau(rs.getString("niveau"));
                     return c;
                 }
