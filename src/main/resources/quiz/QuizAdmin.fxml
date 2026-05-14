@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.quiz.QuizAdminController"
+            prefWidth="1180"
+            prefHeight="780"
+            styleClass="root-pane"
+            stylesheets="@/css/style.css">
+
+    <left>
+        <VBox spacing="10" prefWidth="240" styleClass="sidebar">
+            <padding><Insets top="24" right="18" bottom="24" left="18"/></padding>
+            <Label text="Artevia" styleClass="sidebar-brand"/>
+            <Label text="Quiz Admin" styleClass="status-label"/>
+            <Separator/>
+            <Button text="Questions" styleClass="sidebar-btn"/>
+            <Button text="Reponses" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="14" styleClass="main-surface">
+            <padding><Insets top="22" right="26" bottom="16" left="26"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Dashboard Quiz" styleClass="heading-title"/>
+                    <Label text="Gerer les questions, les reponses et les niveaux" styleClass="heading-subtitle"/>
+                </VBox>
+                <Button text="Nouveau" onAction="#nouvelleQuestion" styleClass="primary-btn"/>
+                <Button text="Actualiser" onAction="#rafraichir" styleClass="secondary-btn"/>
+            </HBox>
+
+            <HBox spacing="12">
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <Label text="Questions" styleClass="stat-label"/>
+                    <Label fx:id="lblTotalQuestions" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <Label text="Reponses" styleClass="stat-label"/>
+                    <Label fx:id="lblTotalReponses" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <Label text="Correctes" styleClass="stat-label"/>
+                    <Label fx:id="lblTotalCorrectes" text="0" styleClass="stat-value"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="14" VBox.vgrow="ALWAYS">
+                <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="panel-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Questions" styleClass="section-title"/>
+                        <TextField fx:id="searchField" promptText="Rechercher..." HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <ListView fx:id="listQuestions" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <VBox spacing="10" prefWidth="390" styleClass="panel-card">
+                    <Label text="Formulaire Question" styleClass="section-title"/>
+                    <Label text="Question" styleClass="form-field-label"/>
+                    <TextArea fx:id="questionField" prefRowCount="4" wrapText="true"/>
+                    <Label text="Categorie" styleClass="form-field-label"/>
+                    <TextField fx:id="categorieField"/>
+                    <Label text="Niveau" styleClass="form-field-label"/>
+                    <ComboBox fx:id="niveauCombo" maxWidth="1.7976931348623157E308"/>
+                    <HBox spacing="8">
+                        <Button text="Ajouter" onAction="#ajouterQuestion" styleClass="primary-btn"/>
+                        <Button text="Modifier" onAction="#modifierQuestion" styleClass="secondary-btn"/>
+                        <Button text="Supprimer" onAction="#supprimerQuestion" styleClass="danger-btn"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="14">
+                <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="panel-card">
+                    <Label text="Reponses de la question selectionnee" styleClass="section-title"/>
+                    <ListView fx:id="listReponses" prefHeight="150"/>
+                </VBox>
+
+                <VBox spacing="10" prefWidth="390" styleClass="panel-card">
+                    <Label text="Formulaire Reponse" styleClass="section-title"/>
+                    <TextField fx:id="reponseField" promptText="Contenu de la reponse"/>
+                    <CheckBox fx:id="correctCheck" text="Reponse correcte"/>
+                    <HBox spacing="8">
+                        <Button text="Ajouter" onAction="#ajouterReponse" styleClass="primary-btn"/>
+                        <Button text="Modifier" onAction="#modifierReponse" styleClass="secondary-btn"/>
+                        <Button text="Supprimer" onAction="#supprimerReponse" styleClass="danger-btn"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <Label fx:id="lblStatus" text="Pret." styleClass="status-label"/>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,6 +1,7 @@
 package Controllers.post;
 
 import Controllers.commentaire.AfficherCommentaireController;
+import Controllers.shared.NavigationService;
 import Entities.Like;
 import Entities.Post;
 import Services.CommentaireCRUD;
@@ -19,9 +20,11 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -45,6 +48,7 @@ public class AfficherPostClientController implements Initializable {
 
     @FXML private FlowPane feedGrid;
     @FXML private TextField tfRecherche;
+    @FXML private ComboBox<String> cbCategorieFiltre;
     @FXML private Label lblPage;
     @FXML private Label lblStatus;
 
@@ -65,9 +69,15 @@ public class AfficherPostClientController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        cbCategorieFiltre.getItems().setAll(categoriesAvecTous());
+        cbCategorieFiltre.getSelectionModel().selectFirst();
         tfRecherche.textProperty().addListener((obs, oldValue, newValue) -> {
             pageActuelle = 0;
             appliquerFiltre(newValue);
+        });
+        cbCategorieFiltre.valueProperty().addListener((obs, oldValue, newValue) -> {
+            pageActuelle = 0;
+            appliquerFiltre(tfRecherche.getText());
         });
         chargerLikesPrecedents();
         charger();
@@ -79,7 +89,7 @@ public class AfficherPostClientController implements Initializable {
         dialog.showAndWait().ifPresent(post -> {
             try {
                 postCRUD.ajouter(post);
-                lblStatus.setText("Publication envoyee. Elle apparaitra apres acceptation.");
+                lblStatus.setText("Publication envoyee: " + post.getModerationReason());
                 charger();
             } catch (SQLException e) {
                 lblStatus.setText("Erreur : " + e.getMessage());
@@ -96,8 +106,14 @@ public class AfficherPostClientController implements Initializable {
     }
 
     @FXML
+    public void allerVersAdmin(ActionEvent event) {
+        chargerDansShell(event, "/post/AfficherPostAdmin.fxml");
+    }
+
+    @FXML
     public void effacerRecherche(ActionEvent event) {
         tfRecherche.clear();
+        cbCategorieFiltre.getSelectionModel().selectFirst();
         appliquerFiltre("");
     }
 
@@ -146,7 +162,14 @@ public class AfficherPostClientController implements Initializable {
         } else {
             String filtre = motCle.toLowerCase().trim();
             postsFiltres = tousLesPosts.stream()
-                    .filter(post -> post.getContenu().toLowerCase().contains(filtre))
+                    .filter(post -> post.getContenu().toLowerCase().contains(filtre)
+                            || post.getCategorie().toLowerCase().contains(filtre))
+                    .collect(Collectors.toList());
+        }
+        String categorie = cbCategorieFiltre == null ? "Toutes" : cbCategorieFiltre.getValue();
+        if (categorie != null && !"Toutes".equals(categorie)) {
+            postsFiltres = postsFiltres.stream()
+                    .filter(post -> categorie.equals(post.getCategorie()))
                     .collect(Collectors.toList());
         }
         afficherPage();
@@ -186,10 +209,13 @@ public class AfficherPostClientController implements Initializable {
         Label sentiment = new Label(sentimentPour(post));
         sentiment.getStyleClass().add("sentiment-badge");
 
+        Label categorie = new Label(post.getCategorie());
+        categorie.getStyleClass().add("category-badge");
+
         Label date = new Label(formatDate(post));
         date.getStyleClass().add("status-label");
 
-        HBox header = new HBox(10, new Label("Forum Artevia"), date, sentiment);
+        HBox header = new HBox(10, new Label("Forum Artevia"), categorie, date, sentiment);
         header.getStyleClass().add("feed-card-header");
         header.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(date, Priority.ALWAYS);
@@ -240,7 +266,7 @@ public class AfficherPostClientController implements Initializable {
             try {
                 postCRUD.modifier(updated);
                 sentimentCache.remove(updated.getId());
-                lblStatus.setText("Publication modifiee.");
+                lblStatus.setText("Publication modifiee: " + updated.getModerationReason());
                 charger();
             } catch (SQLException e) {
                 lblStatus.setText("Erreur : " + e.getMessage());
@@ -277,6 +303,13 @@ public class AfficherPostClientController implements Initializable {
 
         Label label = new Label("Contenu");
         label.getStyleClass().add("input-label");
+        Label categorieLabel = new Label("Categorie");
+        categorieLabel.getStyleClass().add("input-label");
+        ComboBox<String> categorieCombo = new ComboBox<>();
+        categorieCombo.getItems().setAll(Post.categoriesDisponibles());
+        categorieCombo.setMaxWidth(Double.MAX_VALUE);
+        categorieCombo.getSelectionModel().select(existing == null ? Post.CATEGORIE_DISCUSSION_GENERALE : existing.getCategorie());
+
         TextArea contenu = new TextArea();
         contenu.setPromptText("Partagez une idee, une oeuvre ou une question...");
         contenu.setWrapText(true);
@@ -319,7 +352,7 @@ public class AfficherPostClientController implements Initializable {
         });
         refreshImageBox[0].run();
 
-        VBox form = new VBox(10, label, contenu, imageBox);
+        VBox form = new VBox(10, categorieLabel, categorieCombo, label, contenu, imageBox);
         form.setPadding(new Insets(16));
         form.setPrefWidth(480);
         dialog.getDialogPane().setContent(form);
@@ -340,13 +373,22 @@ public class AfficherPostClientController implements Initializable {
                 existing.setContenu(texte);
                 existing.setDateCreation(new Timestamp(System.currentTimeMillis()));
                 existing.setImagePath(imageRemoved[0] ? null : imagePath[0]);
+                existing.setCategorie(categorieCombo.getValue());
                 return existing;
             }
             Post post = new Post(texte, new Timestamp(System.currentTimeMillis()));
+            post.setCategorie(categorieCombo.getValue());
             post.setImagePath(imagePath[0]);
             return post;
         });
         return dialog;
+    }
+
+    private List<String> categoriesAvecTous() {
+        List<String> categories = new ArrayList<>();
+        categories.add("Toutes");
+        categories.addAll(Post.categoriesDisponibles());
+        return categories;
     }
 
     private void choisirPhoto(Dialog<Post> dialog, String[] imagePath, boolean[] imageRemoved, Runnable refreshImageBox) {
@@ -577,6 +619,10 @@ public class AfficherPostClientController implements Initializable {
     private void styliserDialog(DialogPane pane) {
         pane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         pane.getStyleClass().add("dialog-theme");
+    }
+
+    private void chargerDansShell(ActionEvent event, String fxml) {
+        NavigationService.navigate(fxml, "forum");
     }
 
     private String formatDate(Post post) {

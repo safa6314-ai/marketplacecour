@@ -1,5 +1,7 @@
 package Controllers;
 
+import Controllers.shared.AppState;
+import Controllers.shared.NavigationService;
 import Utils.NotificationHelper;
 
 import Entities.Abonnement;
@@ -36,7 +38,11 @@ public class ClientController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        showPlans(null);
+        if ("souscriptions".equals(AppState.getCurrentSection())) {
+            showMesSouscriptions(null);
+        } else {
+            showPlans(null);
+        }
     }
 
     @FXML
@@ -138,15 +144,8 @@ public class ClientController implements Initializable {
 
     @FXML
     void switchToAdminView(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/GUI/AdminDashboard.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Artevia - Admin Dashboard");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            showError("Navigation erreur", e.getMessage());
-        }
+        AppState.setAdminMode(true);
+        NavigationService.navigate("/GUI/AdminDashboard.fxml", "abonnement");
     }
 
     private void showError(String title, String message) {

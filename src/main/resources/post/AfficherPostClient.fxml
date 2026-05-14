@@ -11,41 +11,63 @@
             styleClass="root-pane"
             stylesheets="@/css/style.css">
 
-    <top>
-        <VBox spacing="10" styleClass="topbar">
-            <padding><Insets top="18" right="28" bottom="14" left="28"/></padding>
-            <HBox alignment="CENTER_LEFT" spacing="14">
-                <VBox HBox.hgrow="ALWAYS">
-                    <Label text="ForumInArtevia" styleClass="heading-title"/>
-                    <Label text="Fil artistique de la communaute" styleClass="heading-subtitle"/>
-                </VBox>
-                <Button text="Nouveau Post" onAction="#ouvrirDialogAjouter" styleClass="primary-btn"/>
-                <Button text="Actualiser" onAction="#rafraichir" styleClass="secondary-btn"/>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="10">
-                <TextField fx:id="tfRecherche" promptText="Rechercher dans les publications..." HBox.hgrow="ALWAYS"/>
-                <Button text="Effacer" onAction="#effacerRecherche" styleClass="secondary-btn"/>
-            </HBox>
+    <left>
+        <VBox spacing="10" prefWidth="240" styleClass="sidebar">
+            <padding><Insets top="24" right="18" bottom="24" left="18"/></padding>
+            <Label text="Artevia" styleClass="sidebar-brand"/>
+            <Label text="Forum Client" styleClass="status-label"/>
+            <Separator/>
+            <Button text="Fil des posts" onAction="#rafraichir" styleClass="sidebar-btn"/>
+            <Button text="Nouveau Post" onAction="#ouvrirDialogAjouter" styleClass="sidebar-btn"/>
+            <Pane VBox.vgrow="ALWAYS"/>
+            <Separator styleClass="sidebar-separator"/>
+            <VBox spacing="8" styleClass="sidebar-bottom-bar">
+                <Label text="ESPACE" styleClass="sidebar-kicker"/>
+                <Button text="Vers Admin" onAction="#allerVersAdmin" maxWidth="1.7976931348623157E308" styleClass="sidebar-switch-btn"/>
+            </VBox>
         </VBox>
-    </top>
+    </left>
 
     <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="feed-scroll">
-            <FlowPane fx:id="feedGrid" hgap="18" vgap="18" prefWrapLength="900" styleClass="feed-grid">
-                <padding><Insets top="22" right="28" bottom="22" left="28"/></padding>
-            </FlowPane>
-        </ScrollPane>
-    </center>
+        <BorderPane>
+            <top>
+                <VBox spacing="10" styleClass="topbar">
+                    <padding><Insets top="18" right="28" bottom="14" left="28"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="ForumInArtevia" styleClass="heading-title"/>
+                            <Label text="Fil artistique de la communaute" styleClass="heading-subtitle"/>
+                        </VBox>
+                        <Button text="Nouveau Post" onAction="#ouvrirDialogAjouter" styleClass="primary-btn"/>
+                        <Button text="Actualiser" onAction="#rafraichir" styleClass="secondary-btn"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <TextField fx:id="tfRecherche" promptText="Rechercher dans les publications..." HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="cbCategorieFiltre" prefWidth="190" promptText="Categorie"/>
+                        <Button text="Effacer" onAction="#effacerRecherche" styleClass="secondary-btn"/>
+                    </HBox>
+                </VBox>
+            </top>
 
-    <bottom>
-        <VBox spacing="8" styleClass="bottom-bar">
-            <padding><Insets top="10" right="28" bottom="12" left="28"/></padding>
-            <HBox spacing="12" alignment="CENTER">
-                <Button text="Precedent" onAction="#pagePrecedente" styleClass="secondary-btn"/>
-                <Label fx:id="lblPage" text="Page 1 / 1" styleClass="section-title"/>
-                <Button text="Suivant" onAction="#pageSuivante" styleClass="secondary-btn"/>
-            </HBox>
-            <Label fx:id="lblStatus" text="Pret." styleClass="status-label"/>
-        </VBox>
-    </bottom>
+            <center>
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="feed-scroll">
+                    <FlowPane fx:id="feedGrid" hgap="18" vgap="18" prefWrapLength="900" styleClass="feed-grid">
+                        <padding><Insets top="22" right="28" bottom="22" left="28"/></padding>
+                    </FlowPane>
+                </ScrollPane>
+            </center>
+
+            <bottom>
+                <VBox spacing="8" styleClass="bottom-bar">
+                    <padding><Insets top="10" right="28" bottom="12" left="28"/></padding>
+                    <HBox spacing="12" alignment="CENTER">
+                        <Button text="Precedent" onAction="#pagePrecedente" styleClass="secondary-btn"/>
+                        <Label fx:id="lblPage" text="Page 1 / 1" styleClass="section-title"/>
+                        <Button text="Suivant" onAction="#pageSuivante" styleClass="secondary-btn"/>
+                    </HBox>
+                    <Label fx:id="lblStatus" text="Pret." styleClass="status-label"/>
+                </VBox>
+            </bottom>
+        </BorderPane>
+    </center>
 </BorderPane>

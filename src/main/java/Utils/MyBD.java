@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class MyBD {
 
-    private final String url = "jdbc:mysql://localhost:3306/" + System.getProperty("db.name", "artevia");
+    private final String url = "jdbc:mysql://localhost:3306/" + System.getProperty("db.name", "forum_artevia");
     private final String user = "root";
     private final String password = "";
 
@@ -36,5 +36,13 @@ public class MyBD {
 
     public void setConn(Connection conn) {
         this.conn = conn;
+    }
+
+    public Connection getCnx() {
+        return conn;
+    }
+
+    public void setCnx(Connection cnx) {
+        this.conn = cnx;
     }
 }

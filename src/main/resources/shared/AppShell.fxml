@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="appRoot"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.shared.AppShellController"
+            prefWidth="1400"
+            prefHeight="860"
+            styleClass="app-shell"
+            stylesheets="@../css/style.css">
+    <left>
+        <fx:include fx:id="sidebar" source="Sidebar.fxml"/>
+    </left>
+    <top>
+        <fx:include fx:id="topbar" source="TopBar.fxml"/>
+    </top>
+    <center>
+        <BorderPane fx:id="contentHost" styleClass="shell-content"/>
+    </center>
+</BorderPane>

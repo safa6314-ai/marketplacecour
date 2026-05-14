@@ -1,5 +1,7 @@
 package Controllers;
 
+import Controllers.shared.AppState;
+import Controllers.shared.NavigationService;
 import Entities.Abonnement;
 import Entities.Souscription;
 import Services.AbonnementCRUD;
@@ -82,7 +84,14 @@ public class AdminController implements Initializable {
         searchField.textProperty().addListener((obs, old, newValue) -> applyFilters());
         filterCombo.valueProperty().addListener((obs, old, newValue) -> applyFilters());
 
-        showDashboard(null);
+        String section = AppState.getCurrentSection();
+        if ("abonnements".equals(section)) {
+            showAbonnements(null);
+        } else if ("souscriptions".equals(section)) {
+            showSouscriptions(null);
+        } else {
+            showDashboard(null);
+        }
     }
 
     // ==================== VIEW SWITCHING ====================
@@ -475,10 +484,7 @@ public class AdminController implements Initializable {
     }
 
     @FXML void switchToClientView(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/GUI/ClientDashboard.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Artevia - Client Dashboard"); stage.setScene(new Scene(root)); stage.show();
-        } catch (IOException e) { showError("Navigation erreur", e.getMessage()); }
+        AppState.setAdminMode(false);
+        NavigationService.navigate("/GUI/ClientDashboard.fxml", "abonnement");
     }
 }

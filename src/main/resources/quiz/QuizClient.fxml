@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.quiz.QuizClientController"
+            prefWidth="1120"
+            prefHeight="780"
+            styleClass="root-pane"
+            stylesheets="@/css/style.css">
+
+    <top>
+        <VBox spacing="8" styleClass="topbar">
+            <padding><Insets top="18" right="28" bottom="14" left="28"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Artevia Quiz" styleClass="heading-title"/>
+                    <Label text="Repondez aux questions et testez vos connaissances" styleClass="heading-subtitle"/>
+                </VBox>
+                <Label fx:id="progressLabel" text="Question 0 / 0" styleClass="status-pending"/>
+                <Label fx:id="scoreLabel" text="Score 0 / 0" styleClass="section-title"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="16" styleClass="main-surface">
+            <padding><Insets top="28" right="28" bottom="28" left="28"/></padding>
+            <VBox spacing="14" maxWidth="760" styleClass="panel-card">
+                <Label fx:id="metaLabel" text="Categorie - Niveau" styleClass="status-label"/>
+                <Label fx:id="questionLabel" text="Question" wrapText="true" styleClass="heading-title"/>
+                <VBox fx:id="reponsesBox" spacing="10"/>
+                <Label fx:id="statusLabel" text="Choisissez une reponse." styleClass="status-pending"/>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Verifier" onAction="#verifier" styleClass="primary-btn"/>
+                    <Button text="Precedente" onAction="#precedente" styleClass="secondary-btn"/>
+                    <Button text="Suivante" onAction="#suivante" styleClass="secondary-btn"/>
+                    <Button text="Recommencer" onAction="#recommencer" styleClass="danger-btn"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

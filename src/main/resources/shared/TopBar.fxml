@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controllers.shared.TopBarController"
+      alignment="CENTER_LEFT"
+      spacing="14"
+      styleClass="unified-topbar">
+    <padding>
+        <Insets top="12" right="22" bottom="12" left="22"/>
+    </padding>
+    <Label fx:id="contextLabel" text="Forum - Admin" styleClass="unified-topbar-title"/>
+    <Pane HBox.hgrow="ALWAYS"/>
+    <Button fx:id="switchModeButton" text="Switch To Client View" onAction="#switchMode" styleClass="unified-topbar-switch"/>
+</HBox>

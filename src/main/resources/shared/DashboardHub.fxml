@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controllers.shared.DashboardHubController"
+      spacing="22"
+      styleClass="content-page">
+    <padding>
+        <Insets top="34" right="38" bottom="34" left="38"/>
+    </padding>
+    <VBox spacing="6">
+        <Label text="Dashboard" styleClass="heading-title"/>
+        <Label text="Choisissez le dashboard du module a consulter." styleClass="heading-subtitle"/>
+    </VBox>
+
+    <HBox spacing="18">
+        <VBox spacing="14" styleClass="panel-card" HBox.hgrow="ALWAYS">
+            <Label text="Forum" styleClass="section-title"/>
+            <Label text="Posts, commentaires, likes, moderation et statistiques forum." wrapText="true" styleClass="status-label"/>
+            <Button text="Ouvrir Dashboard Forum" onAction="#openForumDashboard" styleClass="primary-btn"/>
+        </VBox>
+        <VBox spacing="14" styleClass="panel-card" HBox.hgrow="ALWAYS">
+            <Label text="Quiz" styleClass="section-title"/>
+            <Label text="Questions, reponses, categories et parcours de creation quiz." wrapText="true" styleClass="status-label"/>
+            <Button text="Ouvrir Dashboard Quiz" onAction="#openQuizDashboard" styleClass="primary-btn"/>
+        </VBox>
+        <VBox spacing="14" styleClass="panel-card" HBox.hgrow="ALWAYS">
+            <Label text="Abonnement" styleClass="section-title"/>
+            <Label text="Plans, souscriptions, revenus et statistiques abonnement." wrapText="true" styleClass="status-label"/>
+            <Button text="Ouvrir Dashboard Abonnement" onAction="#openAbonnementDashboard" styleClass="primary-btn"/>
+        </VBox>
+    </HBox>
+</VBox>

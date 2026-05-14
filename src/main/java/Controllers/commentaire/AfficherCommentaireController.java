@@ -261,6 +261,7 @@ public class AfficherCommentaireController implements Initializable {
             contenu.setText(commentaire.getContenu());
             meta.setText(formatDate(commentaire));
             statut.setText(libelleStatut(commentaire.getStatut()));
+            appliquerStyleStatut(statut, commentaire.getStatut());
             actions.getChildren().clear();
             if (adminMode) {
                 accepter.setOnAction(event -> accepterCommentaire(commentaire));
@@ -282,6 +283,15 @@ public class AfficherCommentaireController implements Initializable {
             case "refuse" -> "Refuse";
             default -> "En attente";
         };
+    }
+
+    private void appliquerStyleStatut(Label label, String statut) {
+        label.getStyleClass().removeAll("status-accepted", "status-refused", "status-pending");
+        switch (statut) {
+            case "accepte" -> label.getStyleClass().add("status-accepted");
+            case "refuse" -> label.getStyleClass().add("status-refused");
+            default -> label.getStyleClass().add("status-pending");
+        }
     }
 
     private String formatDate(Commentaire commentaire) {

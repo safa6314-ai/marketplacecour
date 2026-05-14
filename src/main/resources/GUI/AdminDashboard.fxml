@@ -15,8 +15,8 @@
                   <!-- Brand -->
                   <VBox styleClass="sidebar-brand" spacing="2.0">
                      <children>
-                        <Label styleClass="header-text" text="✦ ARTEVIA" />
-                        <Label styleClass="muted-label" text="Marketplace Admin" />
+                        <Label styleClass="header-text" text="Artevia" />
+                        <Label styleClass="muted-label" text="Administration" />
                      </children>
                   </VBox>
 
@@ -24,15 +24,15 @@
                   <Label text="NAVIGATION" styleClass="muted-label" style="-fx-font-size: 10px; -fx-padding: 8 0 4 4;">
                      <VBox.margin><Insets top="8.0" /></VBox.margin>
                   </Label>
-                  <Button fx:id="btnDashboardNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showDashboard" styleClass="admin-nav-active" text="📊  Dashboard" />
-                  <Button fx:id="btnAbonnementNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showAbonnements" styleClass="admin-nav" text="📦  Abonnements" />
-                  <Button fx:id="btnSouscriptionNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showSouscriptions" styleClass="admin-nav" text="📋  Souscriptions" />
+                  <Button fx:id="btnDashboardNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showDashboard" styleClass="admin-nav-active" text="Dashboard" />
+                  <Button fx:id="btnAbonnementNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showAbonnements" styleClass="admin-nav" text="Abonnements" />
+                  <Button fx:id="btnSouscriptionNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showSouscriptions" styleClass="admin-nav" text="Souscriptions" />
 
                   <Pane VBox.vgrow="ALWAYS" />
 
                   <!-- Switch to Client -->
                   <Separator style="-fx-padding: 8 0;" />
-                  <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToClientView" styleClass="admin-btn-primary" text="↗  Switch To Client View" />
+                  <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToClientView" styleClass="admin-btn-primary" text="Client" />
                </children>
             </VBox>
 

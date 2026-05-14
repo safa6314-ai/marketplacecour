@@ -1,6 +1,8 @@
 package Controllers.post;
 
 import Controllers.commentaire.AfficherCommentaireController;
+import Controllers.shared.AppState;
+import Controllers.shared.NavigationService;
 import Entities.Like;
 import Entities.Post;
 import Services.CommentaireCRUD;
@@ -18,12 +20,14 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +42,7 @@ public class AfficherPostAdminController implements Initializable {
 
     @FXML private ListView<Post> listPosts;
     @FXML private TextField tfRecherche;
+    @FXML private ComboBox<String> cbCategorieFiltre;
     @FXML private Label lblPage;
     @FXML private Label lblStatus;
     @FXML private Label lblVedetteContenu;
@@ -66,11 +71,18 @@ public class AfficherPostAdminController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         listPosts.setItems(pageCourante);
         listPosts.setCellFactory(view -> new PostAdminCell());
+        cbCategorieFiltre.getItems().setAll(categoriesAvecTous());
+        cbCategorieFiltre.getSelectionModel().selectFirst();
         tfRecherche.textProperty().addListener((obs, oldValue, newValue) -> {
             pageActuelle = 0;
             appliquerFiltre(newValue);
         });
+        cbCategorieFiltre.valueProperty().addListener((obs, oldValue, newValue) -> {
+            pageActuelle = 0;
+            appliquerFiltre(tfRecherche.getText());
+        });
         charger();
+        Platform.runLater(this::appliquerActionSidebar);
     }
 
     @FXML
@@ -79,7 +91,7 @@ public class AfficherPostAdminController implements Initializable {
         dialog.showAndWait().ifPresent(post -> {
             try {
                 postCRUD.ajouter(post);
-                lblStatus.setText("Post ajoute avec succes.");
+                lblStatus.setText("Post ajoute: " + post.getModerationReason());
                 charger();
             } catch (SQLException e) {
                 afficherErreur(e);
@@ -100,7 +112,7 @@ public class AfficherPostAdminController implements Initializable {
             try {
                 postCRUD.modifier(post);
                 sentimentCache.remove(post.getId());
-                lblStatus.setText("Post modifie.");
+                lblStatus.setText("Post modifie: " + post.getModerationReason());
                 charger();
             } catch (SQLException e) {
                 afficherErreur(e);
@@ -204,6 +216,21 @@ public class AfficherPostAdminController implements Initializable {
         }
     }
 
+    private void appliquerActionSidebar() {
+        if ("likes".equals(AppState.getCurrentSection())) {
+            ouvrirLikes(null);
+            return;
+        }
+        if ("comments".equals(AppState.getCurrentSection())) {
+            ouvrirCommentairesSidebar(null);
+        }
+    }
+
+    @FXML
+    public void allerVersClient(ActionEvent event) {
+        chargerDansShell(event, "/post/AfficherPostClient.fxml");
+    }
+
     @FXML
     public void rafraichir(ActionEvent event) {
         sentimentCache.clear();
@@ -211,8 +238,21 @@ public class AfficherPostAdminController implements Initializable {
     }
 
     @FXML
+    public void lancerModerationAutomatique(ActionEvent event) {
+        try {
+            int total = postCRUD.appliquerModerationAutomatique();
+            sentimentCache.clear();
+            charger();
+            lblStatus.setText(total + " post(s) moderes automatiquement.");
+        } catch (SQLException e) {
+            afficherErreur(e);
+        }
+    }
+
+    @FXML
     public void effacerRecherche(ActionEvent event) {
         tfRecherche.clear();
+        cbCategorieFiltre.getSelectionModel().selectFirst();
         appliquerFiltre("");
     }
 
@@ -252,7 +292,15 @@ public class AfficherPostAdminController implements Initializable {
         } else {
             String filtre = motCle.toLowerCase().trim();
             postsFiltres = tousLesPosts.stream()
-                    .filter(post -> post.getContenu().toLowerCase().contains(filtre))
+                    .filter(post -> post.getContenu().toLowerCase().contains(filtre)
+                            || post.getCategorie().toLowerCase().contains(filtre)
+                            || post.getModerationReason().toLowerCase().contains(filtre))
+                    .collect(Collectors.toList());
+        }
+        String categorie = cbCategorieFiltre == null ? "Toutes" : cbCategorieFiltre.getValue();
+        if (categorie != null && !"Toutes".equals(categorie)) {
+            postsFiltres = postsFiltres.stream()
+                    .filter(post -> categorie.equals(post.getCategorie()))
                     .collect(Collectors.toList());
         }
         afficherPage();
@@ -415,13 +463,20 @@ public class AfficherPostAdminController implements Initializable {
 
         Label label = new Label("Contenu");
         label.getStyleClass().add("input-label");
+        Label categorieLabel = new Label("Categorie");
+        categorieLabel.getStyleClass().add("input-label");
+        ComboBox<String> categorieCombo = new ComboBox<>();
+        categorieCombo.getItems().setAll(Post.categoriesDisponibles());
+        categorieCombo.setMaxWidth(Double.MAX_VALUE);
+        categorieCombo.getSelectionModel().select(existing == null ? Post.CATEGORIE_DISCUSSION_GENERALE : existing.getCategorie());
+
         TextArea contenu = new TextArea();
         contenu.setPromptText("Ecrivez votre publication...");
         contenu.setWrapText(true);
         contenu.setPrefHeight(150);
         if (existing != null) contenu.setText(existing.getContenu());
 
-        VBox form = new VBox(10, label, contenu);
+        VBox form = new VBox(10, categorieLabel, categorieCombo, label, contenu);
         form.setPadding(new Insets(16));
         form.setPrefWidth(480);
         dialog.getDialogPane().setContent(form);
@@ -441,11 +496,21 @@ public class AfficherPostAdminController implements Initializable {
             if (existing != null) {
                 existing.setContenu(texte);
                 existing.setDateCreation(new Timestamp(System.currentTimeMillis()));
+                existing.setCategorie(categorieCombo.getValue());
                 return existing;
             }
-            return new Post(texte, new Timestamp(System.currentTimeMillis()));
+            Post post = new Post(texte, new Timestamp(System.currentTimeMillis()));
+            post.setCategorie(categorieCombo.getValue());
+            return post;
         });
         return dialog;
+    }
+
+    private List<String> categoriesAvecTous() {
+        List<String> categories = new ArrayList<>();
+        categories.add("Toutes");
+        categories.addAll(Post.categoriesDisponibles());
+        return categories;
     }
 
     private void ouvrirCommentairesDialog(Post post, boolean adminMode) {
@@ -475,6 +540,10 @@ public class AfficherPostAdminController implements Initializable {
         pane.getStyleClass().add("dialog-theme");
     }
 
+    private void chargerDansShell(ActionEvent event, String fxml) {
+        NavigationService.navigate(fxml, "forum");
+    }
+
     private void afficherErreur(Exception e) {
         lblStatus.setText("Erreur : " + e.getMessage());
     }
@@ -491,6 +560,8 @@ public class AfficherPostAdminController implements Initializable {
         private final Label stats = new Label();
         private final Label sentiment = new Label();
         private final Label statut = new Label();
+        private final Label categorie = new Label();
+        private final Label moderation = new Label();
         private final ImageView thumbnail = new ImageView();
         private final VBox textBox = new VBox(10);
         private final HBox body = new HBox(12);
@@ -508,19 +579,22 @@ public class AfficherPostAdminController implements Initializable {
             stats.getStyleClass().add("status-label");
             sentiment.getStyleClass().add("sentiment-badge");
             statut.getStyleClass().add("status-badge");
+            categorie.getStyleClass().add("category-badge");
+            moderation.getStyleClass().add("status-label");
+            moderation.setWrapText(true);
             accepter.getStyleClass().add("primary-btn");
             refuser.getStyleClass().add("secondary-btn");
             supprimer.getStyleClass().add("danger-btn");
 
             HBox bottom = new HBox(14, meta, stats, sentiment);
             bottom.setAlignment(Pos.CENTER_LEFT);
-            HBox actions = new HBox(8, statut, accepter, refuser, supprimer);
+            HBox actions = new HBox(8, statut, categorie, accepter, refuser, supprimer);
             actions.setAlignment(Pos.CENTER_LEFT);
             thumbnail.setFitWidth(80);
             thumbnail.setFitHeight(60);
             thumbnail.setPreserveRatio(false);
             thumbnail.setSmooth(true);
-            textBox.getChildren().addAll(contenu, bottom, actions);
+            textBox.getChildren().addAll(contenu, bottom, moderation, actions);
             HBox.setHgrow(textBox, Priority.ALWAYS);
             body.getChildren().add(textBox);
             card.getChildren().add(body);
@@ -538,6 +612,9 @@ public class AfficherPostAdminController implements Initializable {
             stats.setText(compterLikes(post) + " like(s) - " + compterCommentaires(post) + " commentaire(s)");
             sentiment.setText(sentimentPour(post));
             statut.setText(libelleStatut(post.getStatut()));
+            categorie.setText(post.getCategorie());
+            moderation.setText("Moderation: " + post.getModerationReason());
+            appliquerStyleStatut(statut, post.getStatut());
             accepter.setOnAction(event -> accepterPost(post));
             refuser.setOnAction(event -> refuserPost(post));
             supprimer.setOnAction(event -> confirmerSupprimerPost(post));
@@ -566,6 +643,15 @@ public class AfficherPostAdminController implements Initializable {
             case "refuse" -> "Refuse";
             default -> "En attente";
         };
+    }
+
+    private void appliquerStyleStatut(Label label, String statut) {
+        label.getStyleClass().removeAll("status-accepted", "status-refused", "status-pending");
+        switch (statut) {
+            case "accepte" -> label.getStyleClass().add("status-accepted");
+            case "refuse" -> label.getStyleClass().add("status-refused");
+            default -> label.getStyleClass().add("status-pending");
+        }
     }
 
     private String formatDate(Post post) {

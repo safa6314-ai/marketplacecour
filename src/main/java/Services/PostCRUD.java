@@ -15,6 +15,7 @@ import java.util.List;
 public class PostCRUD implements InterfaceCRUD<Post> {
 
     Connection conn;
+    private final PostModerationService moderationService = new PostModerationService();
 
     public PostCRUD() {
         conn = MyBD.getInstance().getConn();
@@ -25,6 +26,8 @@ public class PostCRUD implements InterfaceCRUD<Post> {
         try {
             ensureImagePathColumn();
             ensureStatutColumn();
+            ensureCategorieColumn();
+            ensureModerationReasonColumn();
         } catch (SQLException e) {
             System.out.println("Impossible de verifier les colonnes post: " + e.getMessage());
         }
@@ -50,6 +53,29 @@ public class PostCRUD implements InterfaceCRUD<Post> {
         }
     }
 
+    private void ensureCategorieColumn() throws SQLException {
+        try (ResultSet rs = conn.createStatement().executeQuery("SHOW COLUMNS FROM post LIKE 'categorie'")) {
+            if (rs.next()) return;
+
+            try (Statement st = conn.createStatement()) {
+                st.executeUpdate("ALTER TABLE post ADD COLUMN categorie VARCHAR(40) DEFAULT 'Discussion generale'");
+            }
+        }
+        try (Statement st = conn.createStatement()) {
+            st.executeUpdate("UPDATE post SET categorie='Discussion generale' WHERE categorie='Question generale'");
+        }
+    }
+
+    private void ensureModerationReasonColumn() throws SQLException {
+        try (ResultSet rs = conn.createStatement().executeQuery("SHOW COLUMNS FROM post LIKE 'moderation_reason'")) {
+            if (rs.next()) return;
+
+            try (Statement st = conn.createStatement()) {
+                st.executeUpdate("ALTER TABLE post ADD COLUMN moderation_reason VARCHAR(255) DEFAULT 'En attente de moderation.'");
+            }
+        }
+    }
+
     private void requireConnection() throws SQLException {
         if (conn == null) {
             throw new SQLException("Connexion base de donnees indisponible.");
@@ -60,14 +86,17 @@ public class PostCRUD implements InterfaceCRUD<Post> {
     @Override
     public void ajouter(Post post) throws SQLException {
         requireConnection();
+        appliquerModeration(post);
 
-        String req = "INSERT INTO post(contenu, date_creation, image_path, statut) VALUES (?, ?, ?, ?)";
+        String req = "INSERT INTO post(contenu, date_creation, image_path, statut, categorie, moderation_reason) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(req)) {
             ps.setString(1, post.getContenu());
             ps.setTimestamp(2, post.getDateCreation());
             ps.setString(3, post.getImagePath());
             ps.setString(4, post.getStatut());
+            ps.setString(5, post.getCategorie());
+            ps.setString(6, post.getModerationReason());
             ps.executeUpdate();
         }
 
@@ -78,15 +107,18 @@ public class PostCRUD implements InterfaceCRUD<Post> {
     @Override
     public void modifier(Post post) throws SQLException {
         requireConnection();
+        appliquerModeration(post);
 
-        String req = "UPDATE post SET contenu=?, date_creation=?, image_path=?, statut=? WHERE id=?";
+        String req = "UPDATE post SET contenu=?, date_creation=?, image_path=?, statut=?, categorie=?, moderation_reason=? WHERE id=?";
 
         try (PreparedStatement ps = conn.prepareStatement(req)) {
             ps.setString(1, post.getContenu());
             ps.setTimestamp(2, post.getDateCreation());
             ps.setString(3, post.getImagePath());
             ps.setString(4, post.getStatut());
-            ps.setInt(5, post.getId());
+            ps.setString(5, post.getCategorie());
+            ps.setString(6, post.getModerationReason());
+            ps.setInt(7, post.getId());
             ps.executeUpdate();
         }
 
@@ -105,6 +137,23 @@ public class PostCRUD implements InterfaceCRUD<Post> {
         }
 
         System.out.println("Statut post modifie !");
+    }
+
+    public int appliquerModerationAutomatique() throws SQLException {
+        requireConnection();
+        int updated = 0;
+        for (Post post : afficher()) {
+            appliquerModeration(post);
+            String req = "UPDATE post SET statut=?, categorie=?, moderation_reason=? WHERE id=?";
+            try (PreparedStatement ps = conn.prepareStatement(req)) {
+                ps.setString(1, post.getStatut());
+                ps.setString(2, post.getCategorie());
+                ps.setString(3, post.getModerationReason());
+                ps.setInt(4, post.getId());
+                updated += ps.executeUpdate();
+            }
+        }
+        return updated;
     }
 
 
@@ -145,11 +194,20 @@ public class PostCRUD implements InterfaceCRUD<Post> {
                 p.setDateCreation(rs.getTimestamp("date_creation"));
                 p.setImagePath(rs.getString("image_path"));
                 p.setStatut(rs.getString("statut"));
+                p.setCategorie(rs.getString("categorie"));
+                p.setModerationReason(rs.getString("moderation_reason"));
 
                 posts.add(p);
             }
         }
 
         return posts;
+    }
+
+    private void appliquerModeration(Post post) {
+        PostModerationService.ModerationResult result = moderationService.moderer(post.getContenu());
+        post.setStatut(result.statut());
+        post.setModerationReason(result.raison());
+        post.setCategorie(Post.normaliserCategorie(post.getCategorie()));
     }
 }
