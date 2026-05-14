@@ -137,7 +137,7 @@ public class AdminDashboardController {
 
     @FXML
     private void showSubscriptions() {
-        loadPlaceholder("Subscriptions", "Manage plans, subscriptions and member access.", btnSubscriptions);
+        loadPage("/GUI/AdminDashboard.fxml", btnSubscriptions);
     }
 
     @FXML
