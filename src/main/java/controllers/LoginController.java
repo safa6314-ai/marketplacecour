@@ -112,12 +112,17 @@ public class LoginController {
             }
 
             if ("BLOCKED".equalsIgnoreCase(User.getStatus())) {
-                showAlert(Alert.AlertType.ERROR, "Compte bloque", "Compte bloque.");
+                showAlert(Alert.AlertType.ERROR, "Compte bloque", "Votre compte est bloque.");
                 return;
             }
 
-            if (!"ADMIN".equalsIgnoreCase(User.getRole())) {
-                showAlert(Alert.AlertType.ERROR, "Acces refuse", "Seul un administrateur peut acceder a cet espace.");
+            if ("PENDING".equalsIgnoreCase(User.getStatus())) {
+                showAlert(Alert.AlertType.WARNING, "Compte en attente", "Compte en attente de validation.");
+                return;
+            }
+
+            if (!"ACTIVE".equalsIgnoreCase(User.getStatus())) {
+                showAlert(Alert.AlertType.ERROR, "Acces refuse", "Votre compte n'est pas actif.");
                 return;
             }
 
@@ -228,12 +233,17 @@ public class LoginController {
             }
 
             if ("BLOCKED".equalsIgnoreCase(User.getStatus())) {
-                showAlert(Alert.AlertType.ERROR, "Compte bloque", "Compte bloque.");
+                showAlert(Alert.AlertType.ERROR, "Compte bloque", "Votre compte est bloque.");
                 return;
             }
 
-            if (!"ADMIN".equalsIgnoreCase(User.getRole())) {
-                showAlert(Alert.AlertType.ERROR, "Acces refuse", "Seul un administrateur peut acceder a cet espace.");
+            if ("PENDING".equalsIgnoreCase(User.getStatus())) {
+                showAlert(Alert.AlertType.WARNING, "Compte en attente", "Compte en attente de validation.");
+                return;
+            }
+
+            if (!"ACTIVE".equalsIgnoreCase(User.getStatus())) {
+                showAlert(Alert.AlertType.ERROR, "Acces refuse", "Votre compte n'est pas actif.");
                 return;
             }
 

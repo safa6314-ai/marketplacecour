@@ -105,12 +105,7 @@ public class signin {
             }
 
             User User = new User(username, email, password, firstName, lastName, role, status, phone, false);
-            boolean sent = SmsVerificationService.sendVerificationCode(phone);
-
-            if (!sent) {
-                showAlert(Alert.AlertType.ERROR, "Erreur SMS", "Impossible d'envoyer le code OTP.");
-                return;
-            }
+            SmsVerificationService.sendVerificationCode(phone);
 
             openVerifyPhonePopup(event, User);
         } catch (SQLException e) {

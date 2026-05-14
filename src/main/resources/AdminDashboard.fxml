@@ -74,6 +74,83 @@
                 </graphic>
             </Button>
 
+            <Button fx:id="btnMarketplace"
+                    text="Marketplace"
+                    onAction="#showMarketplace"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-store"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Button fx:id="btnCourses"
+                    text="Courses"
+                    onAction="#showCourses"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-graduation-cap"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Button fx:id="btnForum"
+                    text="Forum"
+                    onAction="#showForum"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-comments"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Button fx:id="btnSubscriptions"
+                    text="Subscriptions"
+                    onAction="#showSubscriptions"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-credit-card"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Button fx:id="btnEvents"
+                    text="Events"
+                    onAction="#showEvents"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-calendar-alt"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Button fx:id="btnQuiz"
+                    text="Quiz"
+                    onAction="#showQuiz"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-question-circle"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Button fx:id="btnSettings"
+                    text="Settings"
+                    onAction="#showSettings"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-cog"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
             <Region VBox.vgrow="ALWAYS"/>
 
             <Button text="Logout"

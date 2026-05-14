@@ -157,6 +157,27 @@
     -fx-padding: 20px 24px 24px 24px;
 }
 
+.module-placeholder {
+    -fx-padding: 32px;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14px;
+    -fx-border-color: #e2e8f3;
+    -fx-border-radius: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(28, 39, 64, 0.07), 18, 0.16, 0, 7);
+}
+
+.module-placeholder-title {
+    -fx-text-fill: #111827;
+    -fx-font-size: 28px;
+    -fx-font-weight: 900;
+}
+
+.module-placeholder-subtitle {
+    -fx-text-fill: #8a8fa3;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+
 .page-heading,
 .users-header {
     -fx-padding: 0 0 14px 0;
@@ -414,7 +435,12 @@
 
 .users-list .list-cell {
     -fx-background-color: transparent;
-    -fx-padding: 0 0 10px 0;
+    -fx-padding: 0 0 12px 0;
+    -fx-text-fill: transparent;
+}
+
+.users-list .list-cell:empty {
+    -fx-padding: 0;
 }
 
 .users-list .list-cell:selected .user-card {
@@ -430,6 +456,7 @@
     -fx-border-radius: 8px;
     -fx-padding: 13px 15px;
     -fx-min-height: 78px;
+    -fx-pref-height: 78px;
     -fx-effect: dropshadow(gaussian, rgba(28, 39, 64, 0.05), 12, 0.12, 0, 4);
 }
 
@@ -453,6 +480,8 @@
 
 .user-card-left {
     -fx-alignment: center-left;
+    -fx-min-width: 240px;
+    -fx-pref-width: 300px;
 }
 
 .user-card-badges,
@@ -461,11 +490,13 @@
 }
 
 .user-card-badges {
-    -fx-min-width: 190px;
+    -fx-min-width: 180px;
+    -fx-pref-width: 190px;
 }
 
 .user-card-actions {
     -fx-min-width: 210px;
+    -fx-pref-width: 210px;
 }
 
 .user-card-title {

@@ -19,7 +19,7 @@ public class MainFX extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/WelcomePage.fxml"));
             Scene scene = new Scene(root, APP_WIDTH, APP_HEIGHT);
 
             try {
@@ -37,7 +37,7 @@ public class MainFX extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (Exception e) {
-            System.out.println("Erreur chargement Login.fxml");
+            System.out.println("Erreur chargement WelcomePage.fxml");
             e.printStackTrace();
         }
     }

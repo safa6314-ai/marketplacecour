@@ -241,35 +241,37 @@ public class AdminUsersController {
             if (empty || User == null) {
                 setText(null);
                 setGraphic(null);
+                getStyleClass().remove("users-list-cell");
                 return;
             }
 
             Label avatar = new Label(getInitials(User));
-            avatar.getStyleClass().add("User-card-avatar");
+            avatar.getStyleClass().add("user-card-avatar");
 
             Label username = new Label(safeStatic(User.getUsername()));
-            username.getStyleClass().add("User-card-title");
+            username.getStyleClass().add("user-card-title");
 
             Label email = new Label(safeStatic(User.getEmail()));
-            email.getStyleClass().add("User-card-email");
+            email.getStyleClass().add("user-card-email");
 
             String fullNameValue = (safeStatic(User.getFirst_name()) + " " + safeStatic(User.getLast_name())).trim();
             Label meta = new Label(fullNameValue + "  |  " + formatDate(User.getCreated_at()));
-            meta.getStyleClass().add("User-card-text");
+            meta.getStyleClass().add("user-card-text");
 
             VBox identity = new VBox(3, username, email, meta);
-            identity.getStyleClass().add("User-card-left");
+            identity.getStyleClass().add("user-card-left");
             identity.setMinWidth(220);
             identity.setMaxWidth(360);
+            HBox.setHgrow(identity, Priority.SOMETIMES);
 
             Label role = new Label(safeStatic(User.getRole()));
-            role.getStyleClass().add("User-card-chip");
+            role.getStyleClass().add("user-card-chip");
 
             Label status = new Label(safeStatic(User.getStatus()));
-            status.getStyleClass().add("ACTIVE".equalsIgnoreCase(User.getStatus()) ? "User-card-status-active" : "User-card-status-blocked");
+            status.getStyleClass().add("ACTIVE".equalsIgnoreCase(User.getStatus()) ? "user-card-status-active" : "user-card-status-blocked");
 
             HBox badges = new HBox(8, role, status);
-            badges.getStyleClass().add("User-card-badges");
+            badges.getStyleClass().add("user-card-badges");
 
             Button editButton = new Button("Modifier");
             editButton.setGraphic(new FontIcon("fas-edit"));
@@ -288,14 +290,19 @@ public class AdminUsersController {
             });
 
             HBox actions = new HBox(8, editButton, deleteButton);
-            actions.getStyleClass().add("User-card-actions");
+            actions.getStyleClass().add("user-card-actions");
 
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
 
             HBox content = new HBox(14, avatar, identity, badges, spacer, actions);
-            content.getStyleClass().add("User-card");
+            content.getStyleClass().add("user-card");
+            content.setMaxWidth(Double.MAX_VALUE);
+            content.prefWidthProperty().bind(getListView().widthProperty().subtract(24));
 
+            if (!getStyleClass().contains("users-list-cell")) {
+                getStyleClass().add("users-list-cell");
+            }
             setText(null);
             setGraphic(content);
         }

@@ -15,6 +15,8 @@
 
 <StackPane prefHeight="650.0"
            prefWidth="1100.0"
+           minHeight="650.0"
+           minWidth="1100.0"
            styleClass="auth-root"
            stylesheets="@signin.css"
            xmlns="http://javafx.com/javafx"
@@ -22,10 +24,10 @@
            fx:controller="controllers.LoginController">
 
     <children>
-        <HBox maxHeight="590.0"
-              maxWidth="1000.0"
-              prefHeight="590.0"
-              prefWidth="1000.0"
+        <HBox maxHeight="610.0"
+              maxWidth="1040.0"
+              prefHeight="610.0"
+              prefWidth="1040.0"
               styleClass="auth-shell">
 
             <VBox prefWidth="420.0"

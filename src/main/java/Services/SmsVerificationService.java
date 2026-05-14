@@ -36,7 +36,11 @@ public class SmsVerificationService {
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.statusCode() >= 200 && response.statusCode() < 300;
+        if (isSuccess(response)) {
+            return true;
+        }
+
+        throw new IOException(buildTwilioError("envoi OTP", response));
     }
 
     public boolean checkVerificationCode(String phoneNumber, String code) throws IOException, InterruptedException {
@@ -50,9 +54,68 @@ public class SmsVerificationService {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         String responseBody = response.body() == null ? "" : response.body().replace(" ", "");
-        return response.statusCode() >= 200
-                && response.statusCode() < 300
-                && responseBody.contains("\"status\":\"approved\"");
+        if (isSuccess(response)) {
+            return responseBody.contains("\"status\":\"approved\"");
+        }
+
+        throw new IOException(buildTwilioError("verification OTP", response));
+    }
+
+    private boolean isSuccess(HttpResponse<String> response) {
+        return response.statusCode() >= 200 && response.statusCode() < 300;
+    }
+
+    private String buildTwilioError(String action, HttpResponse<String> response) {
+        String body = response.body() == null ? "" : response.body();
+        String message = extractJsonValue(body, "message");
+        String code = extractJsonValue(body, "code");
+
+        StringBuilder error = new StringBuilder("Erreur Twilio pendant ")
+                .append(action)
+                .append(" (HTTP ")
+                .append(response.statusCode())
+                .append(")");
+
+        if (!isBlank(code)) {
+            error.append(" - code ").append(code);
+        }
+
+        if (!isBlank(message)) {
+            error.append(" : ").append(message);
+        } else if (!isBlank(body)) {
+            error.append(" : ").append(body);
+        }
+
+        return error.toString();
+    }
+
+    private String extractJsonValue(String json, String key) {
+        if (isBlank(json)) {
+            return "";
+        }
+
+        String pattern = "\"" + key + "\"";
+        int keyIndex = json.indexOf(pattern);
+        if (keyIndex < 0) {
+            return "";
+        }
+
+        int colonIndex = json.indexOf(':', keyIndex + pattern.length());
+        if (colonIndex < 0) {
+            return "";
+        }
+
+        int firstQuote = json.indexOf('"', colonIndex + 1);
+        if (firstQuote < 0) {
+            return "";
+        }
+
+        int secondQuote = json.indexOf('"', firstQuote + 1);
+        if (secondQuote < 0) {
+            return "";
+        }
+
+        return json.substring(firstQuote + 1, secondQuote);
     }
 
     private HttpRequest.Builder baseRequest(TwilioConfig config, String path) {
@@ -66,11 +129,17 @@ public class SmsVerificationService {
     }
 
     private TwilioConfig loadConfig() {
-        return new TwilioConfig(
+        TwilioConfig config = new TwilioConfig(
                 getConfig("TWILIO_ACCOUNT_SID", ""),
                 getConfig("TWILIO_AUTH_TOKEN", ""),
                 getConfig("TWILIO_VERIFY_SERVICE_SID", "")
         );
+
+        System.out.println("[TWILIO DEBUG] TWILIO_ACCOUNT_SID present = " + !isBlank(config.accountSid));
+        System.out.println("[TWILIO DEBUG] TWILIO_AUTH_TOKEN present = " + !isBlank(config.authToken));
+        System.out.println("[TWILIO DEBUG] TWILIO_VERIFY_SERVICE_SID present = " + !isBlank(config.verifyServiceSid));
+
+        return config;
     }
 
     private void validateConfig(TwilioConfig config) {
@@ -134,12 +203,20 @@ public class SmsVerificationService {
     }
 
     private void loadEnvFile() {
-        Path envPath = Path.of(".env");
+        Path[] candidates = {
+                Path.of(".env"),
+                Path.of(System.getProperty("user.dir"), ".env")
+        };
 
-        if (!Files.exists(envPath)) {
-            return;
+        for (Path envPath : candidates) {
+            if (Files.exists(envPath)) {
+                readEnvFile(envPath);
+                return;
+            }
         }
+    }
 
+    private void readEnvFile(Path envPath) {
         try {
             for (String line : Files.readAllLines(envPath)) {
                 String trimmed = line.trim();
@@ -151,6 +228,7 @@ public class SmsVerificationService {
                 String[] parts = trimmed.split("=", 2);
                 envFileProperties.setProperty(parts[0].trim(), parts[1].trim());
             }
+            System.out.println("[TWILIO DEBUG] .env charge : " + envPath.toAbsolutePath());
         } catch (IOException e) {
             System.err.println("[TWILIO DEBUG] Impossible de lire .env : " + e.getMessage());
         }

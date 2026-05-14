@@ -17,7 +17,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -26,6 +28,9 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AdminDashboardController {
 
@@ -43,6 +48,27 @@ public class AdminDashboardController {
 
     @FXML
     private Button btnProfile;
+
+    @FXML
+    private Button btnMarketplace;
+
+    @FXML
+    private Button btnCourses;
+
+    @FXML
+    private Button btnForum;
+
+    @FXML
+    private Button btnSubscriptions;
+
+    @FXML
+    private Button btnEvents;
+
+    @FXML
+    private Button btnQuiz;
+
+    @FXML
+    private Button btnSettings;
 
     @FXML
     private Button btnThemeToggle;
@@ -66,11 +92,12 @@ public class AdminDashboardController {
         }
 
         showConnectedAdmin(admin);
+        configureSidebarByRole(admin.getRole());
         Platform.runLater(() -> {
             ThemeManager.applySavedTheme(centerContent.getScene());
             updateThemeToggle();
         });
-        loadPage("/AdminUsers.fxml", btnUsers);
+        openDefaultPage(admin.getRole());
     }
 
     @FXML
@@ -94,9 +121,44 @@ public class AdminDashboardController {
     }
 
     @FXML
+    private void showMarketplace() {
+        loadPlaceholder("Marketplace", "Explore and manage marketplace features.", btnMarketplace);
+    }
+
+    @FXML
+    private void showCourses() {
+        loadPlaceholder("Courses", "Manage courses, lessons and learning content.", btnCourses);
+    }
+
+    @FXML
+    private void showForum() {
+        loadPlaceholder("Forum", "Connect users through discussions and community spaces.", btnForum);
+    }
+
+    @FXML
+    private void showSubscriptions() {
+        loadPlaceholder("Subscriptions", "Manage plans, subscriptions and member access.", btnSubscriptions);
+    }
+
+    @FXML
+    private void showEvents() {
+        loadPlaceholder("Events", "Create and manage events for the Artevia community.", btnEvents);
+    }
+
+    @FXML
+    private void showQuiz() {
+        loadPlaceholder("Quiz", "Create quizzes and follow learning progress.", btnQuiz);
+    }
+
+    @FXML
+    private void showSettings() {
+        loadPlaceholder("Settings", "Configure Artevia workspace settings.", btnSettings);
+    }
+
+    @FXML
     private void logout(ActionEvent event) {
         SessionManager.clearSession();
-        switchRoot(event, "/Login.fxml", "Login");
+        switchRoot(event, "/WelcomePage.fxml", "Artevia");
     }
 
     @FXML
@@ -135,9 +197,9 @@ public class AdminDashboardController {
     }
 
     private void setActiveButton(Button activeButton) {
-        btnDashboard.getStyleClass().remove("sidebar-nav-button-active");
-        btnUsers.getStyleClass().remove("sidebar-nav-button-active");
-        btnProfile.getStyleClass().remove("sidebar-nav-button-active");
+        for (Button button : getSidebarButtons()) {
+            button.getStyleClass().remove("sidebar-nav-button-active");
+        }
 
         if (activeButton != null && !activeButton.getStyleClass().contains("sidebar-nav-button-active")) {
             activeButton.getStyleClass().add("sidebar-nav-button-active");
@@ -149,6 +211,103 @@ public class AdminDashboardController {
         fade.setFromValue(0.0);
         fade.setToValue(1.0);
         fade.play();
+    }
+
+    private void configureSidebarByRole(String role) {
+        Set<Button> allowedButtons = allowedButtonsForRole(role);
+
+        for (Button button : getSidebarButtons()) {
+            boolean allowed = allowedButtons.contains(button);
+            button.setVisible(allowed);
+            button.setManaged(allowed);
+        }
+    }
+
+    private Set<Button> allowedButtonsForRole(String role) {
+        String normalizedRole = role == null ? "" : role.trim().toUpperCase();
+
+        if ("ADMIN".equals(normalizedRole)) {
+            return new HashSet<>(getSidebarButtons());
+        }
+
+        if ("ARTIST".equals(normalizedRole)) {
+            return new HashSet<>(Arrays.asList(btnMarketplace, btnProfile));
+        }
+
+        if ("TRAINER".equals(normalizedRole)) {
+            return new HashSet<>(Arrays.asList(btnCourses, btnQuiz, btnProfile));
+        }
+
+        if ("BUYER".equals(normalizedRole)) {
+            return new HashSet<>(Arrays.asList(btnMarketplace, btnForum, btnEvents, btnSubscriptions, btnProfile));
+        }
+
+        if ("ORGANIZER".equals(normalizedRole)) {
+            return new HashSet<>(Arrays.asList(btnEvents, btnForum, btnProfile));
+        }
+
+        return new HashSet<>(Arrays.asList(btnProfile));
+    }
+
+    private java.util.List<Button> getSidebarButtons() {
+        return Arrays.asList(
+                btnUsers,
+                btnDashboard,
+                btnProfile,
+                btnMarketplace,
+                btnCourses,
+                btnForum,
+                btnSubscriptions,
+                btnEvents,
+                btnQuiz,
+                btnSettings
+        );
+    }
+
+    private void openDefaultPage(String role) {
+        String normalizedRole = role == null ? "" : role.trim().toUpperCase();
+
+        if ("ADMIN".equals(normalizedRole)) {
+            loadPage("/AdminUsers.fxml", btnUsers);
+            return;
+        }
+
+        if ("ARTIST".equals(normalizedRole) || "BUYER".equals(normalizedRole)) {
+            showMarketplace();
+            return;
+        }
+
+        if ("TRAINER".equals(normalizedRole)) {
+            showCourses();
+            return;
+        }
+
+        if ("ORGANIZER".equals(normalizedRole)) {
+            showEvents();
+            return;
+        }
+
+        showProfile();
+    }
+
+    private void loadPlaceholder(String title, String subtitle, Button activeButton) {
+        VBox box = new VBox(10);
+        box.getStyleClass().add("module-placeholder");
+        box.setMaxWidth(Double.MAX_VALUE);
+        box.setMaxHeight(Double.MAX_VALUE);
+        VBox.setVgrow(box, Priority.ALWAYS);
+
+        Label titleLabel = new Label(title);
+        titleLabel.getStyleClass().add("module-placeholder-title");
+
+        Label subtitleLabel = new Label(subtitle);
+        subtitleLabel.getStyleClass().add("module-placeholder-subtitle");
+        subtitleLabel.setWrapText(true);
+
+        box.getChildren().addAll(titleLabel, subtitleLabel);
+        centerContent.getChildren().setAll(box);
+        setActiveButton(activeButton);
+        playFade(box);
     }
 
     private void showConnectedAdmin(User admin) {
@@ -176,10 +335,10 @@ public class AdminDashboardController {
 
     private void redirectToLogin() {
         try {
-            URL url = getClass().getResource("/Login.fxml");
+            URL url = getClass().getResource("/WelcomePage.fxml");
 
             if (url == null) {
-                throw new IOException("FXML introuvable : /Login.fxml");
+                throw new IOException("FXML introuvable : /WelcomePage.fxml");
             }
 
             Parent root = FXMLLoader.load(url);
@@ -190,7 +349,7 @@ public class AdminDashboardController {
                 ThemeManager.applySavedTheme(scene);
             }
         } catch (Exception e) {
-            System.out.println("Erreur redirection Login.fxml");
+            System.out.println("Erreur redirection WelcomePage.fxml");
             e.printStackTrace();
         }
     }

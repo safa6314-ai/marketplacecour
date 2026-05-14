@@ -103,6 +103,7 @@
 .admin-shell .profile-card,
 .admin-shell .filter-bar,
 .admin-shell .user-card,
+.admin-shell .module-placeholder,
 .admin-shell .popup-root {
     -fx-background-color: #1E1E1E;
     -fx-border-color: #2D2D2D;
@@ -114,7 +115,8 @@
 .admin-shell .panel-card,
 .admin-shell .profile-card,
 .admin-shell .filter-bar,
-.admin-shell .user-card {
+.admin-shell .user-card,
+.admin-shell .module-placeholder {
     -fx-background-radius: 12px;
     -fx-border-radius: 12px;
 }
@@ -301,6 +303,14 @@
 .admin-shell .activity-list .list-cell {
     -fx-background-color: #232323;
     -fx-text-fill: #F5F5F5;
+}
+
+.admin-shell .module-placeholder-title {
+    -fx-text-fill: #F5F5F5;
+}
+
+.admin-shell .module-placeholder-subtitle {
+    -fx-text-fill: #A0A0A0;
 }
 
 .admin-shell .chart {
