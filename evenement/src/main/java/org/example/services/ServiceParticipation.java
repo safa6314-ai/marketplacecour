@@ -1,8 +1,6 @@
 package org.example.services;
 
-import Services.IService;
 import org.example.entities.Participation;
-import org.example.utils.DataSource;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -60,15 +58,6 @@ public class ServiceParticipation implements IService<Participation> {
         String req = "DELETE FROM participation_evenement WHERE id_participation = ?";
         try (PreparedStatement ps = cnx.prepareStatement(req)) {
             ps.setInt(1, p.getId_participation());
-            ps.executeUpdate();
-        }
-    }
-
-    public void cancelSubscription(int idEvent, int idPersonne) throws SQLException {
-        String req = "DELETE FROM participation_evenement WHERE id_event = ? AND id_personne = ?";
-        try (PreparedStatement ps = cnx.prepareStatement(req)) {
-            ps.setInt(1, idEvent);
-            ps.setInt(2, idPersonne);
             ps.executeUpdate();
         }
     }

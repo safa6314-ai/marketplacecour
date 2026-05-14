@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controllers.VoirEvenements"
+           prefWidth="1000.0" prefHeight="620.0"
+           styleClass="page-root">
+    <children>
+
+        <!-- ══════════════════════════════════════════════════════════
+             CONTENU PRINCIPAL
+        ══════════════════════════════════════════════════════════ -->
+        <AnchorPane fx:id="mainPane">
+            <children>
+                <VBox layoutX="20.0" layoutY="15.0"
+                      prefWidth="960.0" spacing="14.0">
+                    <children>
+
+                        <!-- Titre -->
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <Label text="Événements Disponibles" styleClass="page-title"/>
+                            <Label fx:id="lblCompteur" styleClass="topbar-subtitle"/>
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button onAction="#toggleDarkMode" styleClass="secondary-action-button" text="🌙" style="-fx-font-size: 16px;"/>
+                        </HBox>
+
+                        <!-- Barre de recherche et filtres -->
+                        <HBox spacing="15.0" alignment="CENTER_LEFT">
+                            <children>
+                                <TextField fx:id="tfSearch"
+                                           promptText="🔍 Rechercher par titre ou lieu..."
+                                           prefWidth="350.0"
+                                           styleClass="search-input"
+                                           onKeyReleased="#applyFilters"/>
+                                <ComboBox fx:id="cbTypeFilter"
+                                          prefWidth="200.0"
+                                          promptText="Tous les types"
+                                          styleClass="admin-combo"
+                                          onAction="#applyFilters"/>
+                            </children>
+                        </HBox>
+
+                        <!-- En-tête colonnes -->
+                        <HBox styleClass="panel-card" spacing="0.0"
+                              prefWidth="960.0" minHeight="38.0">
+                            <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+                            <Label text="Titre"          prefWidth="220.0" styleClass="topbar-subtitle"/>
+                            <Label text="Date Début"     prefWidth="150.0" styleClass="topbar-subtitle"/>
+                            <Label text="Date Fin"       prefWidth="150.0" styleClass="topbar-subtitle"/>
+                            <Label text="Lieu"           prefWidth="150.0" styleClass="topbar-subtitle"/>
+                            <Label text="Places"         prefWidth="130.0" styleClass="topbar-subtitle"/>
+                            <Label text="Type"           prefWidth="150.0" styleClass="topbar-subtitle"/>
+                        </HBox>
+
+                        <!-- Liste scrollable -->
+                        <ScrollPane fx:id="scrollPane"
+                                    prefHeight="440.0" prefWidth="960.0"
+                                    fitToWidth="true" hbarPolicy="NEVER">
+                            <content>
+                                <VBox fx:id="vboxListeEvents" spacing="4.0" prefWidth="940.0">
+                                    <padding><Insets top="6" right="6" bottom="6" left="6"/></padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+
+                        <!-- Pagination -->
+                        <HBox alignment="CENTER" spacing="20.0" prefWidth="960.0">
+                            <children>
+                                <Button fx:id="btnPrev" text="⬅️ Précédent" onAction="#prevPage"
+                                        styleClass="secondary-action-button" prefWidth="120.0"/>
+                                <Label fx:id="lblPageInfo" text="Page 1 sur 5" styleClass="topbar-subtitle"
+                                       style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                                <Button fx:id="btnNext" text="Suivant ➡️" onAction="#nextPage"
+                                        styleClass="secondary-action-button" prefWidth="120.0"/>
+                            </children>
+                        </HBox>
+
+                        <!-- Boutons Navigation -->
+                        <HBox spacing="12.0" alignment="CENTER_LEFT">
+                            <Button text="Se déconnecter"
+                                    onAction="#deconnexion"
+                                    prefWidth="160.0"
+                                    styleClass="secondary-action-button"/>
+                            <Button text="📅 Mon Calendrier"
+                                    onAction="#ouvrirCalendrier"
+                                    prefWidth="160.0"
+                                    styleClass="secondary-action-button"/>
+                        </HBox>
+
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+
+        <!-- ══════════════════════════════════════════════════════════
+             OVERLAY SOMBRE — clic ferme le panneau
+        ══════════════════════════════════════════════════════════ -->
+        <AnchorPane fx:id="overlayPane"
+                    style="-fx-background-color: rgba(0,0,0,0.32);"
+                    visible="false"
+                    onMouseClicked="#fermerPanneau"
+                    AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                    AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+
+        <!-- ══════════════════════════════════════════════════════════
+             PANNEAU LATÉRAL DROIT
+        ══════════════════════════════════════════════════════════ -->
+        <AnchorPane fx:id="detailPane"
+                    prefWidth="370.0"
+                    StackPane.alignment="CENTER_RIGHT"
+                    style="-fx-background-color: white;
+                           -fx-effect: dropshadow(gaussian,rgba(28,39,64,0.20),28,0.22,-6,0);"
+                    visible="false">
+            <children>
+
+                <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                      AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                      spacing="0">
+                    <children>
+
+                        <!-- ── Header violet ── -->
+                        <HBox alignment="CENTER_LEFT" spacing="10"
+                              style="-fx-background-color: linear-gradient(to right,#6f2dbd,#8e43e7);
+                                     -fx-padding: 18 20 18 20;">
+                            <Label text="Détail de l'événement"
+                                   style="-fx-text-fill:white; -fx-font-size:15px; -fx-font-weight:900;"
+                                   HBox.hgrow="ALWAYS"/>
+                            <Button text="✕" onAction="#fermerPanneau"
+                                    style="-fx-background-color:rgba(255,255,255,0.22);
+                                           -fx-text-fill:white; -fx-background-radius:50;
+                                           -fx-min-width:30; -fx-min-height:30;
+                                           -fx-font-weight:900; -fx-cursor:hand;"/>
+                        </HBox>
+
+                        <!-- ── Corps scrollable ── -->
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" hbarPolicy="NEVER">
+                            <content>
+                                <VBox spacing="18" style="-fx-padding: 22;">
+                                    <children>
+
+                                        <!-- Chip type -->
+                                        <HBox>
+                                            <Label fx:id="detailChipType"
+                                                   style="-fx-background-color:#f1edff;
+                                                          -fx-text-fill:#5b2b91;
+                                                          -fx-font-weight:900; -fx-font-size:11px;
+                                                          -fx-background-radius:999;
+                                                          -fx-padding: 5 16 5 16;"/>
+                                        </HBox>
+
+                                        <!-- Titre événement -->
+                                        <Label fx:id="detailTitre"
+                                               wrapText="true"
+                                               style="-fx-font-size:22px; -fx-font-weight:900;
+                                                      -fx-text-fill:#1e1f2f;"/>
+
+                                        <Separator/>
+
+                                        <!-- Bloc infos -->
+                                        <VBox spacing="14"
+                                              style="-fx-background-color:#fbf8ff;
+                                                     -fx-background-radius:10;
+                                                     -fx-border-color:#e6d9f8;
+                                                     -fx-border-radius:10;
+                                                     -fx-padding:16;">
+                                            <children>
+
+                                                <!-- Date début -->
+                                                <HBox spacing="12" alignment="CENTER_LEFT">
+                                                    <Label text="📅" style="-fx-font-size:16px;"/>
+                                                    <VBox spacing="2">
+                                                        <Label text="Date de début"
+                                                               styleClass="topbar-subtitle"/>
+                                                        <Label fx:id="detailDateDebut"
+                                                               style="-fx-font-weight:900;
+                                                                      -fx-text-fill:#1e1f2f;
+                                                                      -fx-font-size:13px;"/>
+                                                    </VBox>
+                                                </HBox>
+
+                                                <!-- Date fin -->
+                                                <HBox spacing="12" alignment="CENTER_LEFT">
+                                                    <Label text="🏁" style="-fx-font-size:16px;"/>
+                                                    <VBox spacing="2">
+                                                        <Label text="Date de fin"
+                                                               styleClass="topbar-subtitle"/>
+                                                        <Label fx:id="detailDateFin"
+                                                               style="-fx-font-weight:900;
+                                                                      -fx-text-fill:#1e1f2f;
+                                                                      -fx-font-size:13px;"/>
+                                                    </VBox>
+                                                </HBox>
+
+                                                <!-- Lieu -->
+                                                <HBox spacing="12" alignment="CENTER_LEFT">
+                                                    <Label text="📍" style="-fx-font-size:16px;"/>
+                                                    <VBox spacing="2">
+                                                        <Label text="Lieu"
+                                                               styleClass="topbar-subtitle"/>
+                                                        <Label fx:id="detailLieu"
+                                                               wrapText="true"
+                                                               style="-fx-font-weight:900;
+                                                                      -fx-text-fill:#1e1f2f;
+                                                                      -fx-font-size:13px;"/>
+                                                    </VBox>
+                                                </HBox>
+
+                                                <!-- Statut -->
+                                                <HBox spacing="12" alignment="CENTER_LEFT">
+                                                    <Label text="🔖" style="-fx-font-size:16px;"/>
+                                                    <VBox spacing="2">
+                                                        <Label text="Statut"
+                                                               styleClass="topbar-subtitle"/>
+                                                        <Label fx:id="detailStatut"
+                                                               style="-fx-font-weight:900;
+                                                                      -fx-text-fill:#1e1f2f;
+                                                                      -fx-font-size:13px;"/>
+                                                    </VBox>
+                                                </HBox>
+
+                                            </children>
+                                        </VBox>
+
+                                        <!-- ── Bloc Météo ── -->
+                                        <VBox fx:id="weatherContainer" spacing="10"
+                                              style="-fx-background-color:#e3f2fd; -fx-background-radius:10; -fx-padding:12;"
+                                              visible="false" managed="false">
+                                            <children>
+                                                <HBox spacing="15" alignment="CENTER_LEFT">
+                                                    <Label fx:id="lblWeatherEmoji" style="-fx-font-size:32px;"/>
+                                                    <VBox spacing="2">
+                                                        <Label fx:id="lblWeatherDesc" style="-fx-font-weight:900; -fx-text-fill:#1e1f2f;"/>
+                                                        <Label fx:id="lblWeatherTemp" style="-fx-text-fill:#546e7a; -fx-font-size:12px;"/>
+                                                        <Label fx:id="lblWeatherPrecip" style="-fx-text-fill:#0277bd; -fx-font-size:11px; -fx-font-weight:bold;"/>
+                                                    </VBox>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                        <Label fx:id="lblWeatherStatus" styleClass="topbar-subtitle" wrapText="true"/>
+
+                                        <!-- Jauge places -->
+                                        <VBox spacing="8">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="8">
+                                                    <Label text="🎟️ Places restantes"
+                                                           styleClass="topbar-subtitle"/>
+                                                    <Label fx:id="detailPlacesLabel"
+                                                           style="-fx-font-weight:900;
+                                                                  -fx-font-size:13px;"/>
+                                                </HBox>
+                                                <!-- Barre de remplissage -->
+                                                <AnchorPane prefHeight="12" prefWidth="326"
+                                                            style="-fx-background-color:#e8edf6;
+                                                                   -fx-background-radius:999;">
+                                                    <AnchorPane fx:id="barreRemplissage"
+                                                                prefHeight="12"
+                                                                AnchorPane.topAnchor="0"
+                                                                AnchorPane.bottomAnchor="0"
+                                                                AnchorPane.leftAnchor="0"
+                                                                style="-fx-background-radius:999;"/>
+                                                </AnchorPane>
+                                            </children>
+                                        </VBox>
+
+                                        <Separator/>
+
+                                        <!-- Badge statut inscription -->
+                                        <Label fx:id="detailStatutInscription"
+                                               wrapText="true" prefWidth="326"
+                                               style="-fx-font-size:13px; -fx-font-weight:900;
+                                                      -fx-background-radius:8;
+                                                      -fx-padding: 12 16 12 16;"/>
+
+                                        <!-- Conteneur Boutons Inscription / Annulation -->
+                                        <StackPane prefWidth="326">
+                                            <children>
+                                                <!-- Bouton S'inscrire -->
+                                                <Button fx:id="btnSinscrire"
+                                                        text="S'inscrire à cet événement"
+                                                        onAction="#sinscrire"
+                                                        prefWidth="326" prefHeight="46"
+                                                        styleClass="primary-action-button"/>
+
+                                                <!-- Bouton Annuler (caché par défaut) -->
+                                                <Button fx:id="btnAnnuler"
+                                                        text="❌ Annuler mon inscription"
+                                                        onAction="#annulerInscription"
+                                                        prefWidth="326" prefHeight="46"
+                                                        styleClass="danger-action-button"
+                                                        visible="false"/>
+                                            </children>
+                                        </StackPane>
+
+                                        <Separator/>
+
+                                        <!-- ── Bloc Carte ── -->
+                                        <VBox spacing="10">
+                                            <children>
+                                                <Label text="📍 Localisation" styleClass="topbar-subtitle"/>
+                                                <StackPane prefHeight="200" style="-fx-background-color:#f0f0f0; -fx-background-radius:10;">
+                                                    <WebView fx:id="mapWebView" prefHeight="200" visible="false"/>
+                                                    <Label fx:id="lblMapError" text="📍 Carte non disponible" visible="false"/>
+                                                    <ProgressIndicator fx:id="mapProgress" maxWidth="40" maxHeight="40"/>
+                                                </StackPane>
+                                            </children>
+                                        </VBox>
+
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+
+                    </children>
+                </VBox>
+
+            </children>
+        </AnchorPane>
+
+    </children>
+</StackPane>

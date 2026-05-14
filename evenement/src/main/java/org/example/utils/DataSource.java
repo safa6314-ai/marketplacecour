@@ -19,14 +19,16 @@ public class DataSource {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("✅ Connexion réussie !");
         } catch (ClassNotFoundException e) {
-            System.out.println("❌ Driver introuvable : " + e.getMessage());
+            System.out.println(" Driver introuvable : " + e.getMessage());
         } catch (SQLException e) {
-            System.out.println("❌ Erreur de connexion : " + e.getMessage());
+            System.out.println(" Erreur de connexion : " + e.getMessage());
         }
     }
 
     public static DataSource getInstance() {
-        if (instance == null) instance = new DataSource();
+        if (instance == null) {
+            instance = new DataSource();
+        }
         return instance;
     }
 

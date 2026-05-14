@@ -1,8 +1,6 @@
 package org.example.services;
 
-import Services.IService;
 import org.example.entities.Event;
-import org.example.utils.DataSource;
 
 import java.sql.*;
 import java.util.ArrayList;

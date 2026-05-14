@@ -8,134 +8,125 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="580.0" prefWidth="720.0"
+<AnchorPane prefHeight="560.0" prefWidth="640.0"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.AjouterEvenement"
-            styleClass="admin-shell"
-            stylesheets="@styles.css">
-
+            styleClass="page-root">
    <children>
 
-      <!-- Titre principal -->
-      <Label layoutX="30.0" layoutY="25.0"
-             text="Gestion des Événements"
-             styleClass="page-title" />
+      <!-- Panel Card principal -->
+      <VBox layoutX="30.0" layoutY="20.0"
+            prefWidth="580.0"
+            styleClass="panel-card"
+            spacing="16.0">
+         <children>
 
-      <Label layoutX="30.0" layoutY="65.0"
-             text="Ajouter un nouvel événement"
-             styleClass="page-subtitle" />
+            <!-- Titre -->
+            <Label text="Ajouter un Événement"
+                   styleClass="panel-title" />
 
-      <!-- Panel Card -->
-      <AnchorPane layoutX="20.0" layoutY="95.0"
-                  prefWidth="680.0" prefHeight="440.0"
-                  styleClass="panel-card">
+            <!-- Titre -->
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+               <Label text="Titre *" styleClass="topbar-subtitle" prefWidth="120.0"/>
+               <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                  <TextField fx:id="tfTitre"
+                             promptText="Min 3 caractères"
+                             styleClass="admin-input"
+                             prefWidth="300.0"/>
+                  <Label fx:id="lblErrTitre" styleClass="topbar-role"/>
+               </VBox>
+            </HBox>
 
-         <!-- Titre -->
-         <Label layoutX="20.0" layoutY="20.0" text="Titre *"
-                styleClass="form-field-label" />
-         <TextField fx:id="tfTitre"
-                    layoutX="160.0" layoutY="15.0"
-                    prefWidth="350.0"
-                    promptText="Nom de l'événement"
-                    styleClass="admin-input" />
-         <Label fx:id="lblErrTitre"
-                layoutX="520.0" layoutY="20.0"
-                styleClass="error-label" />
+            <!-- Date Début -->
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+               <Label text="Date Début *" styleClass="topbar-subtitle" prefWidth="120.0"/>
+               <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                  <DatePicker fx:id="dpDateDebut"
+                              styleClass="admin-date"
+                              prefWidth="220.0"/>
+                  <Label fx:id="lblErrDateDebut" styleClass="topbar-role"/>
+               </VBox>
+            </HBox>
 
-         <!-- Date Début -->
-         <Label layoutX="20.0" layoutY="75.0" text="Date Début *"
-                styleClass="form-field-label" />
-         <DatePicker fx:id="dpDateDebut"
-                     layoutX="160.0" layoutY="70.0"
-                     prefWidth="200.0"
-                     promptText="jj/mm/aaaa"
-                     styleClass="admin-date" />
-         <Label fx:id="lblErrDateDebut"
-                layoutX="370.0" layoutY="75.0"
-                styleClass="error-label" />
+            <!-- Date Fin -->
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+               <Label text="Date Fin *" styleClass="topbar-subtitle" prefWidth="120.0"/>
+               <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                  <DatePicker fx:id="dpDateFin"
+                              styleClass="admin-date"
+                              prefWidth="220.0"/>
+                  <Label fx:id="lblErrDateFin" styleClass="topbar-role"/>
+               </VBox>
+            </HBox>
 
-         <!-- Date Fin -->
-         <Label layoutX="20.0" layoutY="130.0" text="Date Fin *"
-                styleClass="form-field-label" />
-         <DatePicker fx:id="dpDateFin"
-                     layoutX="160.0" layoutY="125.0"
-                     prefWidth="200.0"
-                     promptText="jj/mm/aaaa"
-                     styleClass="admin-date" />
-         <Label fx:id="lblErrDateFin"
-                layoutX="370.0" layoutY="130.0"
-                styleClass="error-label" />
+            <!-- Lieu -->
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+               <Label text="Lieu *" styleClass="topbar-subtitle" prefWidth="120.0"/>
+               <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                  <TextField fx:id="tfLieu"
+                             promptText="Entrez le lieu"
+                             styleClass="admin-input"
+                             prefWidth="300.0"/>
+                  <Label fx:id="lblErrLieu" styleClass="topbar-role"/>
+               </VBox>
+            </HBox>
 
-         <!-- Lieu -->
-         <Label layoutX="20.0" layoutY="185.0" text="Lieu *"
-                styleClass="form-field-label" />
-         <TextField fx:id="tfLieu"
-                    layoutX="160.0" layoutY="180.0"
-                    prefWidth="350.0"
-                    promptText="Entrez le lieu"
-                    styleClass="admin-input" />
-         <Label fx:id="lblErrLieu"
-                layoutX="520.0" layoutY="185.0"
-                styleClass="error-label" />
+            <!-- Capacité -->
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+               <Label text="Capacité *" styleClass="topbar-subtitle" prefWidth="120.0"/>
+               <Spinner fx:id="spCapacite" prefWidth="120.0" prefHeight="40.0"/>
+               <Label text="personnes" styleClass="topbar-subtitle"/>
+            </HBox>
 
-         <!-- Capacité -->
-         <Label layoutX="20.0" layoutY="240.0" text="Capacité *"
-                styleClass="form-field-label" />
-         <Spinner fx:id="spCapacite"
-                  layoutX="160.0" layoutY="235.0"
-                  prefWidth="120.0" prefHeight="40.0"
-                  styleClass="admin-input" />
-         <Label layoutX="290.0" layoutY="240.0"
-                text="personnes"
-                styleClass="muted-label" />
+            <!-- Type -->
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+               <Label text="Type *" styleClass="topbar-subtitle" prefWidth="120.0"/>
+               <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                  <ComboBox fx:id="cbType"
+                            promptText="Choisir un type"
+                            styleClass="admin-combo"
+                            prefWidth="220.0"/>
+                  <Label fx:id="lblErrType" styleClass="topbar-role"/>
+               </VBox>
+            </HBox>
 
-         <!-- Type -->
-         <Label layoutX="20.0" layoutY="295.0" text="Type *"
-                styleClass="form-field-label" />
-         <ComboBox fx:id="cbType"
-                   layoutX="160.0" layoutY="290.0"
-                   prefWidth="220.0"
-                   promptText="Choisir un type"
-                   styleClass="admin-combo" />
-         <Label fx:id="lblErrType"
-                layoutX="390.0" layoutY="295.0"
-                styleClass="error-label" />
+            <!-- Statut -->
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+               <Label text="Statut" styleClass="topbar-subtitle" prefWidth="120.0"/>
+               <CheckBox fx:id="cbStatut" text="Planifié"/>
+            </HBox>
 
-         <!-- Statut -->
-         <Label layoutX="20.0" layoutY="350.0" text="Statut"
-                styleClass="form-field-label" />
-         <CheckBox fx:id="cbStatut"
-                   layoutX="160.0" layoutY="348.0"
-                   text="Planifié" />
+            <!-- Message erreur global -->
+            <Label fx:id="lblErrGlobal"
+                   prefWidth="500.0"
+                   styleClass="topbar-role"/>
 
-         <!-- Message erreur global -->
-         <Label fx:id="lblErrGlobal"
-                layoutX="20.0" layoutY="390.0"
-                prefWidth="400.0"
-                styleClass="error-label" />
+            <!-- Boutons -->
+            <HBox spacing="12.0" alignment="CENTER_RIGHT">
+               <Button text="Se déconnecter"
+                       onAction="#deconnexion"
+                       prefWidth="130.0"
+                       styleClass="secondary-action-button"/>
+               <Button text="Vider"
+                       onAction="#viderChamps"
+                       prefWidth="100.0"
+                       styleClass="secondary-action-button"/>
+               <Button text="Voir les événements"
+                       onAction="#voirEvenements"
+                       prefWidth="180.0"
+                       styleClass="danger-action-button"/>
+               <Button text="Ajouter"
+                       onAction="#ajouterEvent"
+                       prefWidth="130.0"
+                       styleClass="primary-action-button"/>
+            </HBox>
 
-      </AnchorPane>
-
-      <!-- Boutons -->
-      <Button layoutX="540.0" layoutY="545.0"
-              onAction="#ajouterEvent"
-              text="Ajouter"
-              styleClass="primary-action-button"
-              prefWidth="130.0" />
-
-      <Button layoutX="40.0" layoutY="545.0"
-              onAction="#voirEvenements"
-              text="Voir les événements"
-              styleClass="secondary-action-button"
-              prefWidth="170.0" />
-
-      <Button layoutX="230.0" layoutY="545.0"
-              onAction="#viderChamps"
-              text="Vider"
-              styleClass="secondary-action-button"
-              prefWidth="100.0" />
+         </children>
+      </VBox>
 
    </children>
 </AnchorPane>

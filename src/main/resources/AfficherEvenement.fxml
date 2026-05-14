@@ -3,118 +3,110 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1100.0"
+<AnchorPane prefHeight="680.0" prefWidth="1000.0"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.AfficherEvenement"
-            styleClass="admin-shell"
-            stylesheets="@styles.css">
-
+            styleClass="page-root">
     <children>
 
-        <!-- Titre -->
-        <Label layoutX="30.0" layoutY="20.0"
-               text="Liste des Événements"
-               styleClass="page-title" />
+        <VBox layoutX="20.0" layoutY="15.0"
+              prefWidth="960.0"
+              spacing="14.0">
+            <children>
 
-        <!-- Filter Bar -->
-        <AnchorPane layoutX="30.0" layoutY="60.0"
-                    prefWidth="1040.0" prefHeight="100.0"
-                    styleClass="filter-bar">
+                <!-- ── Titre ── -->
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <Label text="Liste des Événements" styleClass="page-title"/>
+                    <Label fx:id="lblCompteur" styleClass="topbar-subtitle"/>
+                    <javafx.scene.layout.Region HBox.hgrow="ALWAYS" />
+                    <Button onAction="#toggleDarkMode" styleClass="secondary-action-button" text="🌙" style="-fx-font-size: 16px;"/>
+                </HBox>
 
-            <!-- Recherche -->
-            <Label layoutX="15.0" layoutY="15.0"
-                   text="Rechercher :"
-                   styleClass="form-field-label" />
+                <!-- ── Barre filtre / recherche ── -->
+                <HBox styleClass="filter-bar" spacing="12.0" alignment="CENTER_LEFT">
+                    <HBox styleClass="search-box" alignment="CENTER_LEFT" prefWidth="260.0">
+                        <TextField fx:id="tfRecherche"
+                                   promptText="Rechercher par titre ou lieu..."
+                                   styleClass="search-input"
+                                   prefWidth="240.0"
+                                   onKeyReleased="#rechercherEvent"/>
+                    </HBox>
 
-            <TextField fx:id="tfRecherche"
-                       layoutX="100.0" layoutY="10.0"
-                       prefWidth="250.0"
-                       promptText="Rechercher par titre..."
-                       onKeyReleased="#rechercherEvent"
-                       styleClass="admin-input" />
+                    <Label text="Type :" styleClass="topbar-subtitle"/>
+                    <ComboBox fx:id="cbFiltreType"
+                              prefWidth="160.0"
+                              styleClass="admin-combo"
+                              onAction="#filtrerParType"/>
 
-            <Button layoutX="365.0" layoutY="10.0"
-                    text="Rechercher"
-                    onAction="#rechercherEvent"
-                    prefWidth="110.0"
-                    styleClass="primary-action-button" />
+                    <Label text="Trier par :" styleClass="topbar-subtitle"/>
+                    <ComboBox fx:id="cbTri"
+                              prefWidth="200.0"
+                              styleClass="admin-combo"
+                              onAction="#trierTable"/>
 
-            <Button layoutX="490.0" layoutY="10.0"
-                    text="Tout afficher"
-                    onAction="#chargerDonnees"
-                    prefWidth="110.0"
-                    styleClass="secondary-action-button" />
+                    <Button text="Tout afficher"
+                            onAction="#chargerDonnees"
+                            styleClass="secondary-action-button"
+                            prefWidth="120.0"/>
+                </HBox>
 
-            <!-- Filtre et Tri -->
-            <Label layoutX="15.0" layoutY="60.0"
-                   text="Filtrer par type :"
-                   styleClass="form-field-label" />
+                <!-- ── En-tête colonnes ── -->
+                <HBox styleClass="panel-card" spacing="0.0"
+                      prefWidth="960.0" minHeight="38.0">
+                    <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+                    <Label text="ID"          prefWidth="55.0"  styleClass="topbar-subtitle"/>
+                    <Label text="Titre"       prefWidth="190.0" styleClass="topbar-subtitle"/>
+                    <Label text="Date Début"  prefWidth="130.0" styleClass="topbar-subtitle"/>
+                    <Label text="Date Fin"    prefWidth="130.0" styleClass="topbar-subtitle"/>
+                    <Label text="Lieu"        prefWidth="120.0" styleClass="topbar-subtitle"/>
+                    <Label text="Capacité"    prefWidth="80.0"  styleClass="topbar-subtitle"/>
+                    <Label text="Type"        prefWidth="110.0" styleClass="topbar-subtitle"/>
+                    <Label text="Statut"      prefWidth="95.0"  styleClass="topbar-subtitle"/>
+                </HBox>
 
-            <ComboBox fx:id="cbFiltreType"
-                      layoutX="130.0" layoutY="55.0"
-                      prefWidth="160.0"
-                      promptText="Tous les types"
-                      onAction="#filtrerParType"
-                      styleClass="admin-combo" />
+                <!-- ── Liste scrollable ── -->
+                <ScrollPane fx:id="scrollPane"
+                            prefHeight="290.0" prefWidth="960.0"
+                            fitToWidth="true" hbarPolicy="NEVER">
+                    <content>
+                        <VBox fx:id="vboxListeEvents" spacing="4.0" prefWidth="940.0">
+                            <padding><Insets top="6" right="6" bottom="6" left="6"/></padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
 
-            <Label layoutX="330.0" layoutY="60.0"
-                   text="Trier par :"
-                   styleClass="form-field-label" />
+                <!-- ── Boutons d'action ── -->
+                <HBox spacing="15.0" alignment="CENTER_LEFT">
+                    <children>
+                        <Button text="📝 Modifier"
+                                onAction="#ouvrirModifier"
+                                prefWidth="150.0"
+                                styleClass="primary-action-button"/>
+                        <Button text="❌ Supprimer"
+                                onAction="#supprimerEvent"
+                                prefWidth="150.0"
+                                styleClass="danger-action-button"/>
+                        <Button text="➕ Ajouter"
+                                onAction="#retourAjout"
+                                prefWidth="150.0"
+                                styleClass="secondary-action-button"/>
+                        <Button text="🚪 Quitter"
+                                onAction="#deconnexion"
+                                prefWidth="150.0"
+                                styleClass="secondary-action-button"/>
+                    </children>
+                </HBox>
 
-            <ComboBox fx:id="cbTri"
-                      layoutX="400.0" layoutY="55.0"
-                      prefWidth="200.0"
-                      onAction="#trierTable"
-                      styleClass="admin-combo" />
-
-            <!-- Compteur -->
-            <Label fx:id="lblCompteur"
-                   layoutX="850.0" layoutY="60.0"
-                   styleClass="compteur-label" />
-
-        </AnchorPane>
-
-        <!-- TableView -->
-        <TableView fx:id="tableEvent"
-                   layoutX="30.0" layoutY="175.0"
-                   prefHeight="400.0" prefWidth="1040.0"
-                   styleClass="table-view">
-            <columns>
-                <TableColumn fx:id="colId"        text="ID"         prefWidth="50.0" />
-                <TableColumn fx:id="colTitre"     text="Titre"      prefWidth="220.0" />
-                <TableColumn fx:id="colDateDebut" text="Date Début" prefWidth="150.0" />
-                <TableColumn fx:id="colDateFin"   text="Date Fin"   prefWidth="150.0" />
-                <TableColumn fx:id="colLieu"      text="Lieu"       prefWidth="130.0" />
-                <TableColumn fx:id="colCapacite"  text="Capacité"   prefWidth="80.0" />
-                <TableColumn fx:id="colType"      text="Type"       prefWidth="100.0" />
-                <TableColumn fx:id="colStatut"    text="Statut"     prefWidth="120.0" />
-            </columns>
-        </TableView>
-
-        <!-- Boutons d'action -->
-        <HBox layoutX="30.0" layoutY="595.0" spacing="15.0">
-            <Button text="✏ Modifier"
-                    onAction="#ouvrirModifier"
-                    prefWidth="140.0" prefHeight="38.0"
-                    styleClass="primary-action-button" />
-
-            <Button text="🗑 Supprimer"
-                    onAction="#supprimerEvent"
-                    prefWidth="140.0" prefHeight="38.0"
-                    styleClass="danger-action-button" />
-
-            <Button text="↩ Retour à l'ajout"
-                    onAction="#retourAjout"
-                    prefWidth="170.0" prefHeight="38.0"
-                    styleClass="secondary-action-button" />
-        </HBox>
+            </children>
+        </VBox>
 
     </children>
 </AnchorPane>

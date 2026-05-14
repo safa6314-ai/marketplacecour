@@ -2,72 +2,64 @@ package controllers;
 
 import org.example.entities.Event;
 import org.example.services.ServiceEvent;
+import org.example.services.ServiceParticipation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class AfficherEvenement implements Initializable {
 
-    // ── TableView ──
-    @FXML private TableView<Event>                  tableEvent;
-    @FXML private TableColumn<Event, Integer>       colId;
-    @FXML private TableColumn<Event, String>        colTitre;
-    @FXML private TableColumn<Event, LocalDateTime> colDateDebut;
-    @FXML private TableColumn<Event, LocalDateTime> colDateFin;
-    @FXML private TableColumn<Event, String>        colLieu;
-    @FXML private TableColumn<Event, Integer>       colCapacite;
-    @FXML private TableColumn<Event, String>        colType;
-    @FXML private TableColumn<Event, String>        colStatut;
-
-    // ── Filtres et tri ──
+    // ── FXML injectés ──
+    @FXML private VBox       vboxListeEvents;
+    @FXML private ScrollPane scrollPane;
     @FXML private TextField        tfRecherche;
     @FXML private ComboBox<String> cbFiltreType;
     @FXML private ComboBox<String> cbTri;
     @FXML private Label            lblCompteur;
 
-    private final ServiceEvent serviceEvent = new ServiceEvent();
-    private ObservableList<Event> tousLesEvents = FXCollections.observableArrayList();
+    // ── Services ──
+    private final ServiceEvent         serviceEvent         = new ServiceEvent();
+    private final ServiceParticipation serviceParticipation = new ServiceParticipation();
 
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    // ── État ──
+    private ObservableList<Event> tousLesEvents      = FXCollections.observableArrayList();
+    private ObservableList<Event> evenementsAffiches = FXCollections.observableArrayList();
+    private Event                 evenementSelectionne = null;
+    private boolean               isDarkMode           = false;
 
+    // ── Largeurs des colonnes (doivent correspondre aux Label d'en-tête du FXML) ──
+    private static final double W_ID       =  55;
+    private static final double W_TITRE    = 190;
+    private static final double W_DDEBUT  = 130;
+    private static final double W_DFIN    = 130;
+    private static final double W_LIEU    = 120;
+    private static final double W_CAP     =  80;
+    private static final double W_TYPE    = 110;
+    private static final double W_STATUT  =  95;
+
+    // ─────────────────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Lier colonnes
-        colId.setCellValueFactory(new PropertyValueFactory<>("id_event"));
-        colTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
-        colDateDebut.setCellValueFactory(new PropertyValueFactory<>("date_debut"));
-        colDateFin.setCellValueFactory(new PropertyValueFactory<>("date_fin"));
-        colLieu.setCellValueFactory(new PropertyValueFactory<>("lieu"));
-        colCapacite.setCellValueFactory(new PropertyValueFactory<>("capacite"));
-        colType.setCellValueFactory(new PropertyValueFactory<>("type"));
-        colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
-
-        // Configurer les colonnes
-        setupTableColumns();
-
-        // Remplir ComboBox filtre type
         cbFiltreType.getItems().addAll("Tous", "exposition", "vente", "conférence", "atelier", "concert");
         cbFiltreType.setValue("Tous");
 
-        // Remplir ComboBox tri
         cbTri.getItems().addAll(
                 "Date début (croissant)",
                 "Date début (décroissant)",
@@ -81,131 +73,84 @@ public class AfficherEvenement implements Initializable {
         chargerDonnees();
     }
 
-    /**
-     * Configure le style et le formatage des colonnes du tableau
-     */
-    private void setupTableColumns() {
-        // Centrer les colonnes ID et Capacité
-        colId.setCellFactory(col -> new TableCell<Event, Integer>() {
-            @Override
-            protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(String.valueOf(item));
-                    setStyle("-fx-alignment: CENTER;");
-                }
-            }
-        });
+    // ─────────────────────────────────────────────────────────────────────────
+    // CHARGEMENT
+    // ─────────────────────────────────────────────────────────────────────────
 
-        colCapacite.setCellFactory(col -> new TableCell<Event, Integer>() {
-            @Override
-            protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(String.valueOf(item));
-                    setStyle("-fx-alignment: CENTER;");
-                }
-            }
-        });
-
-        // Formater les dates dans la table
-        colDateDebut.setCellFactory(column -> new TableCell<Event, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateFormatter));
-                }
-            }
-        });
-
-        colDateFin.setCellFactory(column -> new TableCell<Event, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateFormatter));
-                }
-            }
-        });
-
-        // Style pour le statut avec des badges colorés (version ARTEVIA Purple)
-        colStatut.setCellFactory(column -> new TableCell<Event, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    setText(item);
-                    setAlignment(javafx.geometry.Pos.CENTER);
-
-                    if ("actif".equals(item)) {
-                        setStyle("-fx-background-color: #e9fbf2; -fx-text-fill: #28c76f; " +
-                                "-fx-padding: 4 12; -fx-background-radius: 20; " +
-                                "-fx-font-size: 11px; -fx-font-weight: 900;");
-                    } else if ("planifié".equals(item)) {
-                        setStyle("-fx-background-color: #ECBBFA; -fx-text-fill: #5b2b91; " +
-                                "-fx-padding: 4 12; -fx-background-radius: 20; " +
-                                "-fx-font-size: 11px; -fx-font-weight: 900;");
-                    } else if ("terminé".equals(item)) {
-                        setStyle("-fx-background-color: #f5f5f5; -fx-text-fill: #757575; " +
-                                "-fx-padding: 4 12; -fx-background-radius: 20; " +
-                                "-fx-font-size: 11px; -fx-font-weight: 900;");
-                    } else if ("annulé".equals(item)) {
-                        setStyle("-fx-background-color: #ffebee; -fx-text-fill: #f44336; " +
-                                "-fx-padding: 4 12; -fx-background-radius: 20; " +
-                                "-fx-font-size: 11px; -fx-font-weight: 900;");
-                    } else {
-                        setStyle("");
-                    }
-                }
-            }
-        });
-
-        // Style pour le type avec badges
-        colType.setCellFactory(column -> new TableCell<Event, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    setText(item);
-                    setStyle("-fx-background-color: #f3edf9; -fx-text-fill: #5b2b91; " +
-                            "-fx-padding: 4 10; -fx-background-radius: 15; " +
-                            "-fx-font-size: 11px; -fx-font-weight: 600;");
-                    setAlignment(javafx.geometry.Pos.CENTER);
-                }
-            }
-        });
-    }
-
-    // ── Charger tous les événements ──
     @FXML
     public void chargerDonnees() {
         try {
             tousLesEvents = FXCollections.observableArrayList(serviceEvent.getAll());
-            tableEvent.setItems(tousLesEvents);
             tfRecherche.clear();
             cbFiltreType.setValue("Tous");
-            majCompteur(tousLesEvents.size());
+            evenementsAffiches.setAll(tousLesEvents);
+            afficherListe(evenementsAffiches);
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger : " + e.getMessage());
         }
     }
 
-    // ── Recherche par titre (en temps réel) ──
+    @FXML
+    void toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        Scene scene = vboxListeEvents.getScene();
+        if (isDarkMode) {
+            scene.getRoot().getStyleClass().add("dark-theme");
+        } else {
+            scene.getRoot().getStyleClass().remove("dark-theme");
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // AFFICHAGE DES LIGNES (HBox)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void afficherListe(ObservableList<Event> liste) {
+        evenementSelectionne = null;
+        vboxListeEvents.getChildren().clear();
+
+        for (Event ev : liste) {
+            HBox row = buildRow(ev);
+            vboxListeEvents.getChildren().add(row);
+        }
+        majCompteur(liste.size());
+    }
+
+    private HBox buildRow(Event ev) {
+        HBox row = new HBox();
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setPadding(new Insets(9, 12, 9, 12));
+        row.setSpacing(0);
+        row.getStyleClass().add("event-row-card");
+
+        row.getChildren().addAll(
+                makeCell(String.valueOf(ev.getId_event()), W_ID),
+                makeCell(ev.getTitre(),                    W_TITRE),
+                makeCell(formatDate(ev.getDate_debut()),   W_DDEBUT),
+                makeCell(formatDate(ev.getDate_fin()),     W_DFIN),
+                makeCell(ev.getLieu(),                     W_LIEU),
+                makeCell(String.valueOf(ev.getCapacite()), W_CAP),
+                makeCell(ev.getType(),                     W_TYPE),
+                makeCell(ev.getStatut(),                   W_STATUT)
+        );
+
+        row.setOnMouseClicked(e -> selectionner(row, ev));
+        return row;
+    }
+
+    private void selectionner(HBox row, Event ev) {
+        // Retirer la sélection visuelle de toutes les lignes
+        vboxListeEvents.getChildren().forEach(n ->
+                n.getStyleClass().remove("event-row-selected"));
+        // Appliquer sur la ligne cliquée
+        row.getStyleClass().add("event-row-selected");
+        evenementSelectionne = ev;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // RECHERCHE
+    // ─────────────────────────────────────────────────────────────────────────
+
     @FXML
     void rechercherEvent() {
         String motCle = tfRecherche.getText().trim().toLowerCase();
@@ -220,67 +165,74 @@ public class AfficherEvenement implements Initializable {
                 resultats.add(e);
             }
         }
-        tableEvent.setItems(resultats);
-        majCompteur(resultats.size());
+        evenementsAffiches.setAll(resultats);
+        afficherListe(evenementsAffiches);
     }
 
-    // ── Filtre par type ──
+    // ─────────────────────────────────────────────────────────────────────────
+    // FILTRE PAR TYPE
+    // ─────────────────────────────────────────────────────────────────────────
+
     @FXML
     void filtrerParType() {
         appliquerFiltre();
     }
 
     private void appliquerFiltre() {
-        String type = cbFiltreType.getValue();
+        String type   = cbFiltreType.getValue();
         String motCle = tfRecherche.getText().trim().toLowerCase();
 
         ObservableList<Event> filtres = FXCollections.observableArrayList();
         for (Event e : tousLesEvents) {
             boolean matchType  = type == null || type.equals("Tous") || e.getType().equals(type);
-            boolean matchTitre = motCle.isEmpty() ||
-                    e.getTitre().toLowerCase().contains(motCle) ||
-                    e.getLieu().toLowerCase().contains(motCle);
+            boolean matchTitre = motCle.isEmpty()
+                    || e.getTitre().toLowerCase().contains(motCle)
+                    || e.getLieu().toLowerCase().contains(motCle);
             if (matchType && matchTitre) filtres.add(e);
         }
-        tableEvent.setItems(filtres);
-        majCompteur(filtres.size());
+        evenementsAffiches.setAll(filtres);
+        afficherListe(evenementsAffiches);
     }
 
-    // ── Tri ──
+    // ─────────────────────────────────────────────────────────────────────────
+    // TRI
+    // ─────────────────────────────────────────────────────────────────────────
+
     @FXML
     void trierTable() {
-        ObservableList<Event> items = tableEvent.getItems();
         String tri = cbTri.getValue();
-        if (tri == null) return;
+        if (tri == null || evenementsAffiches.isEmpty()) return;
 
         switch (tri) {
             case "Date début (croissant)":
-                items.sort(Comparator.comparing(Event::getDate_debut));
+                evenementsAffiches.sort(Comparator.comparing(Event::getDate_debut));
                 break;
             case "Date début (décroissant)":
-                items.sort(Comparator.comparing(Event::getDate_debut).reversed());
+                evenementsAffiches.sort(Comparator.comparing(Event::getDate_debut).reversed());
                 break;
             case "Titre (A-Z)":
-                items.sort(Comparator.comparing(e -> e.getTitre().toLowerCase()));
+                evenementsAffiches.sort(Comparator.comparing(e -> e.getTitre().toLowerCase()));
                 break;
             case "Titre (Z-A)":
-                items.sort((a, b) -> b.getTitre().compareToIgnoreCase(a.getTitre()));
+                evenementsAffiches.sort((a, b) -> b.getTitre().compareToIgnoreCase(a.getTitre()));
                 break;
             case "Capacité (croissant)":
-                items.sort(Comparator.comparingInt(Event::getCapacite));
+                evenementsAffiches.sort(Comparator.comparingInt(Event::getCapacite));
                 break;
             case "Capacité (décroissant)":
-                items.sort(Comparator.comparingInt(Event::getCapacite).reversed());
+                evenementsAffiches.sort(Comparator.comparingInt(Event::getCapacite).reversed());
                 break;
         }
-        tableEvent.setItems(items);
+        afficherListe(evenementsAffiches);
     }
 
-    // ── Modifier ──
+    // ─────────────────────────────────────────────────────────────────────────
+    // MODIFIER
+    // ─────────────────────────────────────────────────────────────────────────
+
     @FXML
     void ouvrirModifier() {
-        Event selected = tableEvent.getSelectionModel().getSelectedItem();
-        if (selected == null) {
+        if (evenementSelectionne == null) {
             showAlert(Alert.AlertType.WARNING, "Attention",
                     "Veuillez sélectionner un événement à modifier !");
             return;
@@ -289,18 +241,11 @@ public class AfficherEvenement implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterEvenement.fxml"));
             Parent root = loader.load();
             AjouterEvenement controller = loader.getController();
-            controller.setEventAModifier(selected);
+            controller.setEventAModifier(evenementSelectionne);
             Stage stage = new Stage();
-            stage.setTitle("Modifier : " + selected.getTitre());
+            stage.setTitle("Modifier : " + evenementSelectionne.getTitre());
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
-
-            // Appliquer le CSS à la nouvelle fenêtre
-            String cssUrl = getClass().getResource("/styles.css").toExternalForm();
-            if (cssUrl != null) {
-                stage.getScene().getStylesheets().add(cssUrl);
-            }
-
             stage.showAndWait();
             chargerDonnees();
         } catch (IOException e) {
@@ -308,31 +253,27 @@ public class AfficherEvenement implements Initializable {
         }
     }
 
-    // ── Supprimer ──
+    // ─────────────────────────────────────────────────────────────────────────
+    // SUPPRIMER
+    // ─────────────────────────────────────────────────────────────────────────
+
     @FXML
     void supprimerEvent() {
-        Event selected = tableEvent.getSelectionModel().getSelectedItem();
-        if (selected == null) {
+        if (evenementSelectionne == null) {
             showAlert(Alert.AlertType.WARNING, "Attention",
                     "Veuillez sélectionner un événement à supprimer !");
             return;
         }
-
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmation");
         confirm.setHeaderText(null);
-        confirm.setContentText("Supprimer l'événement : \"" + selected.getTitre() + "\" ?");
-
-        // Style du dialog
-        DialogPane dialogPane = confirm.getDialogPane();
-        dialogPane.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
-        dialogPane.getStyleClass().add("dialog-pane");
-
+        confirm.setContentText("Supprimer l'événement : \"" + evenementSelectionne.getTitre() + "\" ?");
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    serviceEvent.delete(selected);
-                    tousLesEvents.remove(selected);
+                    serviceEvent.delete(evenementSelectionne);
+                    tousLesEvents.remove(evenementSelectionne);
+                    evenementSelectionne = null;
                     chargerDonnees();
                     showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement supprimé !");
                 } catch (SQLException e) {
@@ -342,7 +283,10 @@ public class AfficherEvenement implements Initializable {
         });
     }
 
-    // ── Retour à l'ajout ──
+    // ─────────────────────────────────────────────────────────────────────────
+    // RETOUR AJOUT
+    // ─────────────────────────────────────────────────────────────────────────
+
     @FXML
     void retourAjout() {
         try {
@@ -350,19 +294,52 @@ public class AfficherEvenement implements Initializable {
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Ajouter un événement");
-            stage.setScene(new Scene(root));
-
-            // Appliquer le CSS à la nouvelle fenêtre
-            String cssUrl = getClass().getResource("/styles.css").toExternalForm();
-            if (cssUrl != null) {
-                stage.getScene().getStylesheets().add(cssUrl);
-            }
-
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+            stage.setScene(scene);
             stage.show();
-            ((Stage) tableEvent.getScene().getWindow()).close();
+            ((Stage) scrollPane.getScene().getWindow()).close();
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // DÉCONNEXION
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @FXML
+    void deconnexion() {
+        try {
+            Stage currentStage = (Stage) scrollPane.getScene().getWindow();
+            currentStage.close();
+            Home home = new Home();
+            Stage newStage = new Stage();
+            home.start(newStage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // UTILITAIRES
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Crée un Label à largeur fixe pour simuler une cellule de tableau. */
+    private Label makeCell(String text, double width) {
+        Label lbl = new Label(text != null ? text : "—");
+        lbl.setPrefWidth(width);
+        lbl.setMinWidth(width);
+        lbl.setMaxWidth(width);
+        lbl.setWrapText(false);
+        lbl.setEllipsisString("…");
+        return lbl;
+    }
+
+    /** Formate un LocalDateTime en chaîne lisible (ou "—" si null). */
+    private String formatDate(java.time.LocalDateTime dt) {
+        if (dt == null) return "—";
+        return dt.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
     private void majCompteur(int nb) {
@@ -374,15 +351,6 @@ public class AfficherEvenement implements Initializable {
         alert.setTitle(titre);
         alert.setHeaderText(null);
         alert.setContentText(message);
-
-        // Appliquer le style CSS à l'alerte
-        DialogPane dialogPane = alert.getDialogPane();
-        String cssUrl = getClass().getResource("/styles.css").toExternalForm();
-        if (cssUrl != null) {
-            dialogPane.getStylesheets().add(cssUrl);
-        }
-        dialogPane.getStyleClass().add("dialog-pane");
-
         alert.showAndWait();
     }
 }

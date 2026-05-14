@@ -50,18 +50,23 @@ public class AjouterEvenement {
         tfTitre.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.trim().length() < 3 && !newVal.isEmpty()) {
                 setErreur(lblErrTitre, "Min 3 caractères");
+                setChampRouge(tfTitre);
             } else if (newVal.trim().isEmpty()) {
                 setErreur(lblErrTitre, "Obligatoire !");
+                setChampRouge(tfTitre);
             } else {
                 clearErreur(lblErrTitre);
+                setChampVert(tfTitre);
             }
         });
 
         tfLieu.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.trim().isEmpty()) {
                 setErreur(lblErrLieu, "Obligatoire !");
+                setChampRouge(tfLieu);
             } else {
                 clearErreur(lblErrLieu);
+                setChampVert(tfLieu);
             }
         });
 
@@ -104,6 +109,7 @@ public class AjouterEvenement {
         }
     }
 
+    // ── Pré-remplir pour modification ──
     public void setEventAModifier(Event event) {
         this.eventAModifier = event;
         tfTitre.setText(event.getTitre());
@@ -115,14 +121,17 @@ public class AjouterEvenement {
         cbStatut.setSelected("planifié".equals(event.getStatut()));
     }
 
+    // ── Ajouter / Modifier ──
     @FXML
     void ajouterEvent() {
         lblErrGlobal.setText("");
 
+        // Validation complète avant soumission
         boolean valide = true;
 
         if (tfTitre.getText().trim().length() < 3) {
             setErreur(lblErrTitre, tfTitre.getText().isEmpty() ? "Obligatoire !" : "Min 3 caractères");
+            setChampRouge(tfTitre);
             valide = false;
         }
         if (dpDateDebut.getValue() == null) {
@@ -135,6 +144,7 @@ public class AjouterEvenement {
         }
         if (tfLieu.getText().trim().isEmpty()) {
             setErreur(lblErrLieu, "Obligatoire !");
+            setChampRouge(tfLieu);
             valide = false;
         }
         if (cbType.getValue() == null) {
@@ -160,15 +170,18 @@ public class AjouterEvenement {
 
         try {
             if (eventAModifier == null) {
+                // ADD
                 Event e = new Event(
                         tfTitre.getText().trim(), dateDebut, dateFin,
                         tfLieu.getText().trim(), spCapacite.getValue(),
                         cbType.getValue(), statut
                 );
                 serviceEvent.add(e);
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement ajouté avec succès !");
+                showAlert(Alert.AlertType.INFORMATION, "Succès",
+                        "Événement ajouté avec succès !\nID = " + e.getId_event());
                 clearFields();
             } else {
+                // UPDATE
                 eventAModifier.setTitre(tfTitre.getText().trim());
                 eventAModifier.setDate_debut(dateDebut);
                 eventAModifier.setDate_fin(dateFin);
@@ -185,6 +198,7 @@ public class AjouterEvenement {
         }
     }
 
+    // ── Voir les événements ──
     @FXML
     void voirEvenements() {
         try {
@@ -192,14 +206,9 @@ public class AjouterEvenement {
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Liste des Événements");
-            stage.setScene(new Scene(root));
-
-            // Appliquer le CSS
-            String cssUrl = getClass().getResource("/styles.css").toExternalForm();
-            if (cssUrl != null) {
-                stage.getScene().getStylesheets().add(cssUrl);
-            }
-
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+            stage.setScene(scene);
             stage.show();
             ((Stage) tfTitre.getScene().getWindow()).close();
         } catch (IOException e) {
@@ -207,6 +216,21 @@ public class AjouterEvenement {
         }
     }
 
+    @FXML
+    void deconnexion() {
+        try {
+            Stage currentStage = (Stage) tfTitre.getScene().getWindow();
+            currentStage.close();
+            
+            Home home = new Home();
+            Stage newStage = new Stage();
+            home.start(newStage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ── Vider les champs ──
     @FXML
     void viderChamps() {
         clearFields();
@@ -226,8 +250,11 @@ public class AjouterEvenement {
         clearErreur(lblErrDateFin);
         clearErreur(lblErrType);
         lblErrGlobal.setText("");
+        tfTitre.setStyle("");
+        tfLieu.setStyle("");
     }
 
+    // ── Helpers validation ──
     private void setErreur(Label lbl, String msg) {
         lbl.setText("⚠ " + msg);
     }
@@ -236,19 +263,19 @@ public class AjouterEvenement {
         lbl.setText("");
     }
 
+    private void setChampRouge(TextField tf) {
+        tf.setStyle("-fx-border-color: red; -fx-border-width: 1.5px;");
+    }
+
+    private void setChampVert(TextField tf) {
+        tf.setStyle("-fx-border-color: #4CAF50; -fx-border-width: 1.5px;");
+    }
+
     private void showAlert(Alert.AlertType type, String titre, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(titre);
         alert.setHeaderText(null);
         alert.setContentText(message);
-
-        // Appliquer le style CSS
-        DialogPane dialogPane = alert.getDialogPane();
-        String cssUrl = getClass().getResource("/styles.css").toExternalForm();
-        if (cssUrl != null) {
-            dialogPane.getStylesheets().add(cssUrl);
-        }
-
         alert.showAndWait();
     }
 }
