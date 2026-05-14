@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="820.0" prefWidth="1320.0" styleClass="client-root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ClientController">
+   <children>
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <!-- Client sidebar -->
+            <VBox prefWidth="240.0" styleClass="admin-sidebar">
+               <children>
+                  <VBox styleClass="sidebar-brand" spacing="2.0">
+                     <children>
+                        <Label styleClass="header-text" text="✦ ARTEVIA" />
+                        <Label styleClass="muted-label" text="Espace client" />
+                     </children>
+                  </VBox>
+                  <Label text="NAVIGATION" styleClass="muted-label" style="-fx-font-size: 10px; -fx-padding: 8 0 4 4;">
+                     <VBox.margin><Insets top="8.0" /></VBox.margin>
+                  </Label>
+                  <Button fx:id="btnNavQuiz" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showQuizClient" styleClass="admin-nav" text="❓  Quiz" />
+                  <Button fx:id="btnNavAbonnement" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showAbonnementClient" styleClass="admin-nav-active" text="📦  Abonnements" />
+                  <Button fx:id="btnNavForum" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showForumClient" styleClass="admin-nav" text="💬  Forum" />
+                  <Pane VBox.vgrow="ALWAYS" />
+                  <Separator style="-fx-padding: 8 0;" />
+                  <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToAdminView" styleClass="admin-btn-primary" text="⚙  Administrateur" />
+               </children>
+            </VBox>
+
+            <!-- Main -->
+            <VBox HBox.hgrow="ALWAYS" spacing="0.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="admin-topbar">
+                     <children>
+                        <Label fx:id="sectionTitle" styleClass="admin-section-title" text="Abonnements" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <Label styleClass="muted-label" text="👤  Client ID: 2" />
+                     </children>
+                     <padding><Insets left="28.0" right="28.0" top="18.0" bottom="14.0" /></padding>
+                  </HBox>
+
+                  <VBox fx:id="abonnementSection" spacing="14.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <HBox spacing="14.0" style="-fx-padding: 0 28 0 28;">
+                           <children>
+                              <HBox styleClass="client-switch-container">
+                                 <children>
+                                    <Button fx:id="btnPlans" mnemonicParsing="false" onAction="#showPlans" styleClass="client-switch-btn-active" text="📦  Plans" />
+                                    <Button fx:id="btnMesSouscriptions" mnemonicParsing="false" onAction="#showMesSouscriptions" styleClass="client-switch-btn" text="📋  Mes souscriptions" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <Label fx:id="pageTitle" styleClass="client-section-title" text="Plans disponibles">
+                           <VBox.margin><Insets left="28.0" top="4.0" /></VBox.margin>
+                        </Label>
+                        <ScrollPane fitToWidth="true" styleClass="transparent-scroll" VBox.vgrow="ALWAYS">
+                           <content>
+                              <GridPane fx:id="grid" hgap="22.0" vgap="22.0">
+                                 <padding><Insets bottom="28.0" left="28.0" right="28.0" top="10.0" /></padding>
+                              </GridPane>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                     <VBox.margin><Insets bottom="16.0" left="8.0" right="16.0" /></VBox.margin>
+                  </VBox>
+
+                  <VBox fx:id="forumSection" managed="false" spacing="0.0" visible="false" VBox.vgrow="ALWAYS">
+                     <children>
+                        <ScrollPane fx:id="forumScrollPane" fitToHeight="true" fitToWidth="true" styleClass="transparent-scroll" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <VBox.margin><Insets bottom="16.0" left="8.0" right="16.0" /></VBox.margin>
+                  </VBox>
+
+                  <VBox fx:id="quizSection" managed="false" spacing="0.0" visible="false" VBox.vgrow="ALWAYS">
+                     <children>
+                        <ScrollPane fx:id="quizScrollPane" fitToHeight="true" fitToWidth="true" styleClass="transparent-scroll" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <VBox.margin><Insets bottom="16.0" left="8.0" right="16.0" /></VBox.margin>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

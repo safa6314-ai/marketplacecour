@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="820.0" prefWidth="1400.0" styleClass="admin-root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AdminController">
+   <children>
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <!-- ====== SIDEBAR ====== -->
+            <VBox prefWidth="240.0" styleClass="admin-sidebar">
+               <children>
+                  <VBox styleClass="sidebar-brand" spacing="2.0">
+                     <children>
+                        <Label styleClass="header-text" text="✦ ARTEVIA" />
+                        <Label styleClass="muted-label" text="Administration" />
+                     </children>
+                  </VBox>
+
+                  <Label text="NAVIGATION" styleClass="muted-label" style="-fx-font-size: 10px; -fx-padding: 8 0 4 4;">
+                     <VBox.margin><Insets top="8.0" /></VBox.margin>
+                  </Label>
+
+                  <Button fx:id="btnTopDashboardNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showEmptyContent" styleClass="admin-nav-active" text="📊  Dashboard" />
+
+                  <!-- Forum section -->
+                  <Button fx:id="btnForumNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#toggleForumSection" styleClass="admin-nav" text="💬  Forum  ▾" />
+                  <VBox fx:id="forumSubMenu" managed="false" visible="false" style="-fx-padding: 0 0 0 18;">
+                     <children>
+                        <Button fx:id="btnPostsNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showPosts" styleClass="admin-nav-sub" text="📝  Posts" />
+                        <Button fx:id="btnCommentairesNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showCommentaires" styleClass="admin-nav-sub" text="💭  Commentaires" />
+                        <Button fx:id="btnLikesNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showLikes" styleClass="admin-nav-sub" text="❤  Likes" />
+                     </children>
+                  </VBox>
+
+                  <!-- Abonnements section -->
+                  <Button fx:id="btnAbonnementNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#toggleAbonnementSection" styleClass="admin-nav" text="📦  Abonnements  ▾" />
+                  <VBox fx:id="abonnementSubMenu" managed="false" visible="false" style="-fx-padding: 0 0 0 18;">
+                     <children>
+                        <Button fx:id="btnAbonnementListNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showAbonnements" styleClass="admin-nav-sub" text="📋  Plans" />
+                        <Button fx:id="btnSouscriptionNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showSouscriptions" styleClass="admin-nav-sub" text="🔖  Souscriptions" />
+                        <Button fx:id="btnDashboardNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showDashboard" styleClass="admin-nav-sub" text="📈  Statistiques" />
+
+                     </children>
+                  </VBox>
+
+                  <!-- Cours -->
+                  <Button fx:id="btnCoursNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showCours" styleClass="admin-nav" text="📚  Cours" />
+
+                  <!-- Marketplace -->
+                  <Button fx:id="btnMarketplaceNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showMarketplace" styleClass="admin-nav" text="🛒  Marketplace" />
+
+                  <!-- Events -->
+                  <Button fx:id="btnEventsNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showEvents" styleClass="admin-nav" text="📅  Events" />
+
+                  <!-- Quiz -->
+                  <Button fx:id="btnQuizNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showQuiz" styleClass="admin-nav" text="❓  Quiz" />
+
+                  <Pane VBox.vgrow="ALWAYS" />
+                  <Separator style="-fx-padding: 8 0;" />
+                  <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToClientView" styleClass="admin-btn-primary" text="↗  Switch To Client View" />
+               </children>
+            </VBox>
+
+            <!-- ====== MAIN CONTENT ====== -->
+            <VBox HBox.hgrow="ALWAYS" spacing="0.0">
+               <children>
+                  <!-- TOPBAR -->
+                  <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="admin-topbar">
+                     <children>
+                        <Label fx:id="modeTitle" styleClass="admin-section-title" text="Dashboard" />
+                        <HBox fx:id="switchContainer" styleClass="admin-switch-container" visible="false" managed="false">
+                           <children>
+                              <Button fx:id="btnAbonnement" mnemonicParsing="false" onAction="#showAbonnements" styleClass="admin-switch-btn-active" text="Abonnements" />
+                              <Button fx:id="btnSouscription" mnemonicParsing="false" onAction="#showSouscriptions" styleClass="admin-switch-btn" text="Souscriptions" />
+                           </children>
+                        </HBox>
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox fx:id="crudButtons" spacing="10" visible="false" managed="false">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#handleExportCsv" styleClass="admin-btn-secondary" text="📥  Exporter CSV" />
+                              <Button mnemonicParsing="false" onAction="#handleAdd" styleClass="admin-btn-secondary" text="＋  Open Form" />
+                              <Button mnemonicParsing="false" onAction="#handleSave" styleClass="admin-btn-primary" text="💾  Save" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding><Insets left="28.0" right="28.0" top="18.0" bottom="14.0" /></padding>
+                  </HBox>
+
+                  <!-- DASHBOARD VIEW -->
+                  <ScrollPane fx:id="dashboardView" fitToWidth="true" styleClass="transparent-scroll" VBox.vgrow="ALWAYS" visible="false" managed="false">
+                     <content>
+                        <VBox spacing="20.0" style="-fx-padding: 24;">
+                           <children>
+                              <HBox spacing="16.0">
+                                 <children>
+                                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label text="📦 Total Plans" styleClass="stat-label" />
+                                          <Label fx:id="statTotalPlans" text="0" styleClass="stat-value" />
+                                          <Label text="Abonnements disponibles" styleClass="muted-label" style="-fx-font-size: 11px;" />
+                                       </children>
+                                    </VBox>
+                                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label text="📋 Total Souscriptions" styleClass="stat-label" />
+                                          <Label fx:id="statTotalSubs" text="0" styleClass="stat-value" />
+                                          <Label text="Souscriptions enregistrées" styleClass="muted-label" style="-fx-font-size: 11px;" />
+                                       </children>
+                                    </VBox>
+                                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label text="✅ Actives" styleClass="stat-label" />
+                                          <Label fx:id="statActiveSubs" text="0" styleClass="stat-value" style="-fx-text-fill: #1a7a3a;" />
+                                          <Label text="Souscriptions actives" styleClass="muted-label" style="-fx-font-size: 11px;" />
+                                       </children>
+                                    </VBox>
+                                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label text="💰 Revenus" styleClass="stat-label" />
+                                          <Label fx:id="statRevenue" text="0 DT" styleClass="stat-value" style="-fx-text-fill: #c1440e;" />
+                                          <Label text="Revenus estimés total" styleClass="muted-label" style="-fx-font-size: 11px;" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Label styleClass="muted-label" text="Export complet (metriques + plans + souscriptions)" />
+                                    <Button mnemonicParsing="false" onAction="#handleExportCsv" styleClass="admin-btn-secondary" text="Exporter CSV" />
+                                 </children>
+                              </HBox>
+                              <HBox spacing="16.0">
+                                 <children>
+                                    <VBox styleClass="panel-card" HBox.hgrow="ALWAYS" style="-fx-padding: 16;">
+                                       <children>
+                                          <Label text="📊 Répartition des Souscriptions" styleClass="section-title" />
+                                          <PieChart fx:id="pieChart" prefHeight="280.0" legendVisible="true" labelsVisible="true" styleClass="chart-warm" />
+                                       </children>
+                                    </VBox>
+                                    <VBox styleClass="panel-card" HBox.hgrow="ALWAYS" style="-fx-padding: 16;">
+                                       <children>
+                                          <Label text="💎 Prix par Abonnement" styleClass="section-title" />
+                                          <BarChart fx:id="barChart" prefHeight="280.0" legendVisible="false" styleClass="chart-warm">
+                                             <xAxis><CategoryAxis label="Plan" /></xAxis>
+                                             <yAxis><NumberAxis label="Prix (DT)" /></yAxis>
+                                          </BarChart>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <VBox styleClass="panel-card" style="-fx-padding: 16;">
+                                 <children>
+                                    <Label text="📈 Souscriptions par Mois" styleClass="section-title" />
+                                    <LineChart fx:id="lineChart" prefHeight="260.0" legendVisible="false" styleClass="chart-warm" createSymbols="true">
+                                       <xAxis><CategoryAxis label="Mois" /></xAxis>
+                                       <yAxis><NumberAxis label="Nombre" /></yAxis>
+                                    </LineChart>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+
+                  <!-- GRID VIEW (Abonnements / Souscriptions) -->
+                  <HBox fx:id="gridView" spacing="16.0" VBox.vgrow="ALWAYS" visible="false" managed="false">
+                     <children>
+                        <VBox HBox.hgrow="ALWAYS" spacing="16.0">
+                           <children>
+                              <HBox fx:id="filterContainer" alignment="CENTER_LEFT" spacing="12.0" style="-fx-padding: 10 24 0 24;">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" styleClass="search-box">
+                                       <children>
+                                          <Label text="🔍" style="-fx-padding: 0 0 0 10;"/>
+                                          <TextField fx:id="searchField" promptText="Rechercher par nom..." styleClass="transparent-tf" prefWidth="250.0" />
+                                       </children>
+                                    </HBox>
+                                    <ComboBox fx:id="filterCombo" promptText="Filtrer par..." prefWidth="180.0" styleClass="admin-combo" />
+                                 </children>
+                              </HBox>
+                              <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="transparent-scroll">
+                                 <content>
+                                    <GridPane fx:id="grid" hgap="20.0" vgap="20.0">
+                                       <padding><Insets bottom="24.0" left="24.0" right="24.0" top="10.0" /></padding>
+                                    </GridPane>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="formPanel" managed="false" prefWidth="380.0" spacing="12.0" styleClass="admin-form-panel" visible="false">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="admin-section-title" text="Formulaire" />
+                                    <Pane HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#handleCloseForm" styleClass="admin-btn-secondary" text="✕  Close" />
+                                 </children>
+                              </HBox>
+                              <VBox fx:id="abonnementForm" spacing="6.0">
+                                 <children>
+                                    <Label text="Nom" styleClass="form-field-label" />
+                                    <TextField fx:id="aboNomField" promptText="Basic / Premium / VIP" />
+                                    <Label fx:id="aboNomError" styleClass="error-label" />
+                                    <Label text="Prix" styleClass="form-field-label" />
+                                    <TextField fx:id="aboPrixField" promptText="ex: 29.90" />
+                                    <Label fx:id="aboPrixError" styleClass="error-label" />
+                                    <Label text="Durée (mois)" styleClass="form-field-label" />
+                                    <TextField fx:id="aboDureeField" promptText="ex: 6" />
+                                    <Label fx:id="aboDureeError" styleClass="error-label" />
+                                    <Label text="Description" styleClass="form-field-label" />
+                                    <TextArea fx:id="aboDescField" prefRowCount="3" />
+                                    <Label fx:id="aboDescError" styleClass="error-label" />
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="souscriptionForm" managed="false" spacing="6.0" visible="false">
+                                 <children>
+                                    <Label text="Nom Client" styleClass="form-field-label" />
+                                    <TextField fx:id="subClientField" promptText="ex: Ali" />
+                                    <Label fx:id="subClientError" styleClass="error-label" />
+                                    <Label text="Date Début" styleClass="form-field-label" />
+                                    <DatePicker fx:id="subDateDebut" maxWidth="1.7976931348623157E308" />
+                                    <Label fx:id="subDateDebutError" styleClass="error-label" />
+                                    <Label text="Date Fin" styleClass="form-field-label" />
+                                    <DatePicker fx:id="subDateFin" maxWidth="1.7976931348623157E308" />
+                                    <Label fx:id="subDateFinError" styleClass="error-label" />
+                                    <Label text="Statut" styleClass="form-field-label" />
+                                    <TextField fx:id="subStatutField" promptText="active / inactive" />
+                                    <Label fx:id="subStatutError" styleClass="error-label" />
+                                    <Label text="Abonnement" styleClass="form-field-label" />
+                                    <ComboBox fx:id="subAboComboBox" promptText="Choisir un abonnement" maxWidth="1.7976931348623157E308" />
+                                    <Label fx:id="subAboIdError" styleClass="error-label" />
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding><Insets top="20.0" right="20.0" left="20.0" bottom="20.0" /></padding>
+                        </VBox>
+                     </children>
+                     <VBox.margin><Insets left="8.0" right="16.0" bottom="16.0" /></VBox.margin>
+                  </HBox>
+
+                  <!-- FORUM VIEW (embedded post/comment/like view) -->
+                  <VBox fx:id="forumView" VBox.vgrow="ALWAYS" visible="false" managed="false">
+                     <children>
+                        <Label fx:id="forumSubTitle" styleClass="muted-label" style="-fx-padding: 4 28 4 28; -fx-font-size: 12px;" text="" />
+                        <ScrollPane fx:id="forumScrollPane" fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="transparent-scroll" />
+                     </children>
+                  </VBox>
+
+                  <!-- PLACEHOLDER VIEWS -->
+                  <VBox fx:id="coursView" VBox.vgrow="ALWAYS" visible="false" managed="false" alignment="CENTER" spacing="12">
+                     <children>
+                        <Label text="📚" style="-fx-font-size: 48px;" />
+                        <Label text="Cours" styleClass="heading-title" />
+                        <Label text="Ce module sera disponible prochainement." styleClass="muted-label" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="marketplaceView" VBox.vgrow="ALWAYS" visible="false" managed="false" alignment="CENTER" spacing="12">
+                     <children>
+                        <Label text="🛒" style="-fx-font-size: 48px;" />
+                        <Label text="Marketplace" styleClass="heading-title" />
+                        <Label text="Ce module sera disponible prochainement." styleClass="muted-label" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="eventsView" VBox.vgrow="ALWAYS" visible="false" managed="false" alignment="CENTER" spacing="12">
+                     <children>
+                        <Label text="📅" style="-fx-font-size: 48px;" />
+                        <Label text="Events" styleClass="heading-title" />
+                        <Label text="Ce module sera disponible prochainement." styleClass="muted-label" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="quizView" VBox.vgrow="ALWAYS" visible="false" managed="false" spacing="0.0">
+                     <children>
+                        <Label fx:id="quizSubTitle" styleClass="muted-label" style="-fx-padding: 4 28 8 28; -fx-font-size: 12px;" text="" />
+                        <HBox spacing="10.0" style="-fx-padding: 0 28 12 28;" alignment="CENTER_LEFT">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#showQuizQuestions" styleClass="admin-btn-secondary" text="Questions" />
+                              <Button mnemonicParsing="false" onAction="#showQuizReponses" styleClass="admin-btn-secondary" text="Reponses" />
+                              <Button mnemonicParsing="false" onAction="#showQuizUserPreview" styleClass="admin-btn-secondary" text="Apercu utilisateur" />
+                           </children>
+                        </HBox>
+                        <ScrollPane fx:id="quizScrollPane" fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="transparent-scroll" />
+                     </children>
+                  </VBox>
+
+                  <!-- Empty main area (no placeholder text) -->
+                  <VBox fx:id="emptyContentView" VBox.vgrow="ALWAYS" visible="true" managed="true">
+                     <children>
+                        <Region VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

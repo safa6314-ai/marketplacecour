@@ -9,6 +9,7 @@ public class Commentaire {
     private String contenu;
     private Timestamp dateCreation;
     private int postId;
+    private String statut = "en_attente";
 
     public Commentaire() {}
 
@@ -37,6 +38,9 @@ public class Commentaire {
     public int getPostId() { return postId; }
     public void setPostId(int postId) { this.postId = postId; }
 
+    public String getStatut() { return statut == null || statut.isBlank() ? "en_attente" : statut; }
+    public void setStatut(String statut) { this.statut = statut == null || statut.isBlank() ? "en_attente" : statut; }
+
     @Override
     public String toString() {
         return "Commentaire{" +
@@ -44,6 +48,7 @@ public class Commentaire {
                 ", contenu='" + contenu + '\'' +
                 ", dateCreation=" + dateCreation +
                 ", postId=" + postId +
+                ", statut='" + getStatut() + '\'' +
                 '}';
     }
 }

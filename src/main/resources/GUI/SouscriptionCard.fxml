@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="300.0" styleClass="client-plan-card" stylesheets="@../css/style.css" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SouscriptionCardController">
+   <children>
+      <HBox alignment="CENTER_LEFT">
+         <children>
+            <Label fx:id="clientLabel" styleClass="client-card-title" text="John Doe" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label fx:id="statusLabel" styleClass="status-active" text="ACTIVE" />
+         </children>
+      </HBox>
+      <Label fx:id="planLabel" styleClass="client-duration-label" text="Premium Plan" />
+      <VBox spacing="4.0">
+         <children>
+            <Label text="Period:" styleClass="period-label" />
+            <Label fx:id="dateLabel" styleClass="date-value-label" text="2023-01-01 to 2024-01-01" />
+         </children>
+      </VBox>
+      <Pane styleClass="card-divider">
+         <VBox.margin><Insets top="4.0" bottom="4.0" /></VBox.margin>
+      </Pane>
+      <HBox spacing="10.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#handleRenew" styleClass="card-edit-btn" text="✏  Edit" />
+            <Button mnemonicParsing="false" onAction="#handleCancel" styleClass="card-delete-btn" text="🗑  Delete" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

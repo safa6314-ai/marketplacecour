@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760.0" prefWidth="1180.0" styleClass="app-root" stylesheets="@quiz-theme.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.QuestionController">
+   <left>
+      <VBox prefWidth="260.0" spacing="18.0" styleClass="sidebar">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+               <children>
+                  <Label styleClass="logo-mark" text="A" />
+                  <Label styleClass="brand-title" text="ARTEVIA QUIZ" />
+               </children>
+            </HBox>
+            <Label styleClass="sidebar-kicker" text="NAVIGATION" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#allerVersDashboard" styleClass="nav-btn" text="Tableau de bord" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-btn-active" text="Questions" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#allerVersReponses" styleClass="nav-btn" text="Reponses" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#allerVersUtilisateur" styleClass="switch-btn" text="Passer en Utilisateur" />
+            <VBox spacing="6.0" styleClass="path-card">
+               <children>
+                  <Label styleClass="path-title" text="Parcours de creation" />
+                  <Label styleClass="path-text" text="Question -&gt; Reponses" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="28.0" left="28.0" right="24.0" top="32.0" />
+         </padding>
+      </VBox>
+   </left>
+   <center>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="page-scroll">
+         <content>
+            <VBox spacing="18.0" styleClass="content-page">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="14.0">
+                     <children>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="page-title" text="Questions" />
+                              <Label styleClass="page-subtitle" text="Gerez les questions autour des oeuvres, tableaux et sculptures." />
+                           </children>
+                        </VBox>
+                        <Button mnemonicParsing="false" onAction="#lireQuestion" styleClass="soft-btn" text="Lire" />
+                        <Button mnemonicParsing="false" onAction="#trierQuestionsParDifficulte" styleClass="soft-btn" text="Trier niveau" />
+                     </children>
+                  </HBox>
+
+                  <VBox spacing="14.0" styleClass="panel">
+                     <children>
+                        <Label styleClass="panel-title" text="Ajouter ou modifier une question" />
+                        <TextField fx:id="tfContenu" promptText="Ex: Quelle oeuvre est peinte par Leonard de Vinci ?" styleClass="line-field" />
+                        <HBox spacing="14.0">
+                           <children>
+                              <TextField fx:id="tfCategorie" promptText="Categorie: Tableaux, Sculptures, Art moderne..." styleClass="line-field" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="tfNiveau" promptText="Niveau: Facile, Moyen, Difficile" styleClass="line-field" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#ajouterQuestion" styleClass="primary-btn" text="Ajouter" />
+                              <Button fx:id="btnModifier" mnemonicParsing="false" onAction="#modifierQuestion" styleClass="soft-btn" text="Modifier" />
+                              <Button fx:id="btnSupprimer" mnemonicParsing="false" onAction="#supprimerQuestion" styleClass="danger-btn" text="Supprimer" />
+                              <Button mnemonicParsing="false" onAction="#actualiser" styleClass="soft-btn" text="Actualiser" />
+                              <Button mnemonicParsing="false" onAction="#allerVersReponses" styleClass="soft-btn" text="Reponses" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="22.0" left="24.0" right="24.0" top="22.0" />
+                     </padding>
+                  </VBox>
+
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <TextField fx:id="tfRecherche" promptText="Rechercher une question..." styleClass="search-field" HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="cbCategorieFiltre" prefWidth="190.0" promptText="Categorie" styleClass="filter-combo" />
+                        <ComboBox fx:id="cbNiveauFiltre" prefWidth="150.0" promptText="Niveau" styleClass="filter-combo" />
+                        <Label fx:id="lblResultats" styleClass="result-label" text="0 resultat(s)" />
+                     </children>
+                  </HBox>
+
+                  <VBox spacing="12.0" styleClass="panel" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="panel-title" text="Liste des questions" />
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="300.0" styleClass="cards-scroll">
+                           <content>
+                              <VBox fx:id="questionsContainer" spacing="10.0" />
+                           </content>
+                        </ScrollPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="18.0" left="24.0" right="24.0" top="18.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="34.0" left="38.0" right="38.0" top="34.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
