@@ -23,8 +23,7 @@
                      <VBox.margin><Insets top="8.0" /></VBox.margin>
                   </Label>
 
-                  <!-- Dashboard -->
-                  <Button fx:id="btnDashboardNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showDashboard" styleClass="admin-nav-active" text="📊  Dashboard" />
+                  <Button fx:id="btnTopDashboardNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showEmptyContent" styleClass="admin-nav-active" text="📊  Dashboard" />
 
                   <!-- Forum section -->
                   <Button fx:id="btnForumNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#toggleForumSection" styleClass="admin-nav" text="💬  Forum  ▾" />
@@ -42,6 +41,8 @@
                      <children>
                         <Button fx:id="btnAbonnementListNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showAbonnements" styleClass="admin-nav-sub" text="📋  Plans" />
                         <Button fx:id="btnSouscriptionNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showSouscriptions" styleClass="admin-nav-sub" text="🔖  Souscriptions" />
+                        <Button fx:id="btnDashboardNav" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showDashboard" styleClass="admin-nav-sub" text="📈  Statistiques" />
+
                      </children>
                   </VBox>
 
@@ -89,7 +90,7 @@
                   </HBox>
 
                   <!-- DASHBOARD VIEW -->
-                  <ScrollPane fx:id="dashboardView" fitToWidth="true" styleClass="transparent-scroll" VBox.vgrow="ALWAYS">
+                  <ScrollPane fx:id="dashboardView" fitToWidth="true" styleClass="transparent-scroll" VBox.vgrow="ALWAYS" visible="false" managed="false">
                      <content>
                         <VBox spacing="20.0" style="-fx-padding: 24;">
                            <children>
@@ -275,6 +276,13 @@
                         <Label text="❓" style="-fx-font-size: 48px;" />
                         <Label text="Quiz" styleClass="heading-title" />
                         <Label text="Ce module sera disponible prochainement." styleClass="muted-label" />
+                     </children>
+                  </VBox>
+
+                  <!-- Empty main area (no placeholder text) -->
+                  <VBox fx:id="emptyContentView" VBox.vgrow="ALWAYS" visible="true" managed="true">
+                     <children>
+                        <Region VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
 

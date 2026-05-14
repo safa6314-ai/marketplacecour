@@ -40,6 +40,7 @@ public class AdminController implements Initializable {
     @FXML private Button btnAbonnementNav;
     @FXML private VBox   abonnementSubMenu;
     @FXML private Button btnAbonnementListNav, btnSouscriptionNav;
+    @FXML private Button btnTopDashboardNav;
     @FXML private Button btnCoursNav, btnMarketplaceNav, btnEventsNav, btnQuizNav;
 
     // ── Topbar ───────────────────────────────────────────────────────
@@ -54,7 +55,7 @@ public class AdminController implements Initializable {
     @FXML private HBox       gridView;
     @FXML private GridPane   grid;
     @FXML private VBox       formPanel, abonnementForm, souscriptionForm;
-    @FXML private VBox       forumView, coursView, marketplaceView, eventsView, quizView;
+    @FXML private VBox       forumView, coursView, marketplaceView, eventsView, quizView, emptyContentView;
     @FXML private ScrollPane forumScrollPane;
     @FXML private Label      forumSubTitle;
 
@@ -100,7 +101,7 @@ public class AdminController implements Initializable {
         });
         searchField.textProperty().addListener((obs, old, nv) -> applyFilters());
         filterCombo.valueProperty().addListener((obs, old, nv) -> applyFilters());
-        showDashboard(null);
+        showEmptyContent(null);
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -109,12 +110,12 @@ public class AdminController implements Initializable {
 
     /** Reset all top-level nav buttons to inactive style. */
     private void clearAllNav() {
-        for (Button b : new Button[]{btnDashboardNav, btnForumNav, btnAbonnementNav,
+        for (Button b : new Button[]{btnTopDashboardNav, btnForumNav, btnAbonnementNav,
                                      btnCoursNav, btnMarketplaceNav, btnEventsNav, btnQuizNav}) {
             b.getStyleClass().setAll("admin-nav");
         }
         for (Button b : new Button[]{btnPostsNav, btnCommentairesNav, btnLikesNav,
-                                     btnAbonnementListNav, btnSouscriptionNav}) {
+                                     btnAbonnementListNav, btnSouscriptionNav, btnDashboardNav}) {
             b.getStyleClass().setAll("admin-nav-sub");
         }
     }
@@ -128,6 +129,7 @@ public class AdminController implements Initializable {
         marketplaceView.setVisible(false);marketplaceView.setManaged(false);
         eventsView.setVisible(false);     eventsView.setManaged(false);
         quizView.setVisible(false);       quizView.setManaged(false);
+        emptyContentView.setVisible(false); emptyContentView.setManaged(false);
         switchContainer.setVisible(false);switchContainer.setManaged(false);
         filterContainer.setVisible(false);filterContainer.setManaged(false);
         crudButtons.setVisible(false);    crudButtons.setManaged(false);
@@ -176,8 +178,19 @@ public class AdminController implements Initializable {
     @FXML
     void showDashboard(ActionEvent event) {
         clearAllNav();
-        btnDashboardNav.getStyleClass().setAll("admin-nav-active");
-        modeTitle.setText("Dashboard");
+        abonnementExpanded = true;
+        abonnementSubMenu.setVisible(true);
+        abonnementSubMenu.setManaged(true);
+        btnAbonnementNav.setText("📦  Abonnements  ▴");
+        if (forumExpanded) {
+            forumExpanded = false;
+            forumSubMenu.setVisible(false);
+            forumSubMenu.setManaged(false);
+            btnForumNav.setText("💬  Forum  ▾");
+        }
+        btnAbonnementNav.getStyleClass().setAll("admin-nav-active");
+        btnDashboardNav.getStyleClass().setAll("admin-nav-sub-active");
+        modeTitle.setText("Statistiques");
         hideAllViews();
         dashboardView.setVisible(true); dashboardView.setManaged(true);
         loadDashboardStats();
@@ -325,6 +338,22 @@ public class AdminController implements Initializable {
         modeTitle.setText("Quiz");
         hideAllViews();
         quizView.setVisible(true); quizView.setManaged(true);
+    }
+
+    @FXML
+    void showEmptyContent(ActionEvent event) {
+        clearAllNav();
+        if (abonnementExpanded) {
+            abonnementExpanded = false;
+            abonnementSubMenu.setVisible(false);
+            abonnementSubMenu.setManaged(false);
+            btnAbonnementNav.setText("📦  Abonnements  ▾");
+        }
+        btnTopDashboardNav.getStyleClass().setAll("admin-nav-active");
+        modeTitle.setText("Dashboard");
+        hideAllViews();
+        emptyContentView.setVisible(true);
+        emptyContentView.setManaged(true);
     }
 
     // ══════════════════════════════════════════════════════════════════
