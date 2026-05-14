@@ -94,6 +94,8 @@ public class MarketplaceController {
     @FXML private VBox clientView;
     @FXML private VBox clientCatalogView;
     @FXML private VBox clientCartView;
+    @FXML private Button venteNavButton;
+    @FXML private Button achatNavButton;
     @FXML private Button adminArticlesButton;
     @FXML private Button adminAchatsButton;
     @FXML private Button clientCatalogButton;
@@ -125,9 +127,11 @@ public class MarketplaceController {
 
     @FXML
     public void initialize() {
-        modeComboBox.setItems(FXCollections.observableArrayList(MODE_ADMIN, MODE_CLIENT));
-        modeComboBox.getSelectionModel().select(MODE_ADMIN);
-        modeComboBox.valueProperty().addListener((obs, oldMode, newMode) -> updateMode(newMode));
+        if (modeComboBox != null) {
+            modeComboBox.setItems(FXCollections.observableArrayList(MODE_ADMIN, MODE_CLIENT));
+            modeComboBox.getSelectionModel().select(MODE_ADMIN);
+            modeComboBox.valueProperty().addListener((obs, oldMode, newMode) -> updateMode(newMode));
+        }
 
         ventesListView.setItems(filteredVentesData);
         achatsListView.setItems(filteredAchatsData);
@@ -146,6 +150,16 @@ public class MarketplaceController {
         showAdminArticles();
         showClientCatalog();
         updateMode(MODE_ADMIN);
+    }
+
+    @FXML
+    private void onShowVenteSpace() {
+        updateMode(MODE_ADMIN);
+    }
+
+    @FXML
+    private void onShowAchatSpace() {
+        updateMode(MODE_CLIENT);
     }
 
     @FXML
@@ -525,6 +539,11 @@ public class MarketplaceController {
         adminView.setManaged(admin);
         clientView.setVisible(!admin);
         clientView.setManaged(!admin);
+        setSidebarNavButton(venteNavButton, admin);
+        setSidebarNavButton(achatNavButton, !admin);
+        if (modeComboBox != null && mode != null && !mode.equals(modeComboBox.getValue())) {
+            modeComboBox.getSelectionModel().select(mode);
+        }
         if (admin) {
             refreshVentes();
             refreshAchats();
@@ -582,6 +601,14 @@ public class MarketplaceController {
     private void setActiveNavButton(Button button, boolean active) {
         button.getStyleClass().removeAll("nav-btn", "nav-btn-active");
         button.getStyleClass().add(active ? "nav-btn-active" : "nav-btn");
+    }
+
+    private void setSidebarNavButton(Button button, boolean active) {
+        if (button == null) {
+            return;
+        }
+        button.getStyleClass().removeAll("side-nav-btn", "side-nav-btn-active");
+        button.getStyleClass().add(active ? "side-nav-btn-active" : "side-nav-btn");
     }
 
     private void refreshVentes() {

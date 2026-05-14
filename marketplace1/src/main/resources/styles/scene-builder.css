@@ -10,6 +10,7 @@
 .workspace,
 .admin-panel,
 .mode-switcher,
+.side-nav,
 .article-card,
 .form-card,
 .product-form-grid,
@@ -45,6 +46,91 @@
     -fx-padding: 10 12 12 12;
     -fx-background-color: #fbf8ff;
     -fx-border-color: #e6d9f8;
+}
+
+.side-nav {
+    -fx-padding: 22 14 22 14;
+    -fx-min-width: 210;
+    -fx-pref-width: 230;
+    -fx-max-width: 250;
+    -fx-background-color: linear-gradient(to bottom, #5b2b91, #6f2dbd, #7b35d1);
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(91, 43, 145, 0.22), 18, 0.18, 0, 6);
+}
+
+.side-nav-brand {
+    -fx-padding: 0 0 20 0;
+}
+
+.side-nav-avatar {
+    -fx-min-width: 42;
+    -fx-pref-width: 42;
+    -fx-min-height: 42;
+    -fx-pref-height: 42;
+    -fx-alignment: center;
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(255, 255, 255, 0.24);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+}
+
+.side-nav-brand-title {
+    -fx-font-size: 25px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #ffffff;
+}
+
+.side-nav-brand-subtitle {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #e9ddff;
+}
+
+.side-nav-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #cdb6f4;
+    -fx-padding: 10 0 6 10;
+}
+
+.side-nav-btn,
+.side-nav-btn-active {
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-size: 14px;
+    -fx-font-weight: 900;
+    -fx-padding: 14 16 14 16;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-width: 0;
+}
+
+.side-nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+}
+
+.side-nav-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+    -fx-text-fill: #ffffff;
+}
+
+.side-nav-btn-active {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #5b2b91;
+    -fx-effect: dropshadow(gaussian, rgba(29, 17, 54, 0.20), 14, 0.18, 0, 5);
+}
+
+.side-nav-hint {
+    -fx-font-size: 11px;
+    -fx-text-fill: #dfd0ff;
+    -fx-line-spacing: 3;
+    -fx-padding: 8 10 0 10;
 }
 
 .filter-bar {

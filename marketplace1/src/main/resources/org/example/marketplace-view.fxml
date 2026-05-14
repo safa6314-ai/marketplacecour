@@ -23,13 +23,24 @@
             <Label styleClass="heading-title" text="Artevia Gallery" />
             <Label styleClass="heading-subtitle" text="Une experience elegante pour gerer, explorer et acheter des oeuvres" />
         </VBox>
-        <VBox spacing="6" styleClass="mode-switcher">
-            <Label styleClass="input-label" text="Mode de test" />
-            <ComboBox fx:id="modeComboBox" prefWidth="180" />
-        </VBox>
     </HBox>
 
-    <StackPane VBox.vgrow="ALWAYS">
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <VBox spacing="16" styleClass="side-nav">
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="side-nav-brand">
+                <Label styleClass="side-nav-avatar" text="A" />
+                <VBox spacing="2">
+                    <Label styleClass="side-nav-brand-title" text="Artevia" />
+                    <Label styleClass="side-nav-brand-subtitle" text="Marketplace" />
+                </VBox>
+            </HBox>
+            <Label styleClass="side-nav-title" text="MENU" />
+            <Button fx:id="achatNavButton" maxWidth="1.7976931348623157E308" onAction="#onShowAchatSpace" styleClass="side-nav-btn" text="Achat" />
+            <Button fx:id="venteNavButton" maxWidth="1.7976931348623157E308" onAction="#onShowVenteSpace" styleClass="side-nav-btn-active" text="Vente" />
+            <Label styleClass="side-nav-hint" text="Achat : interface client&#10;Vente : interface admin" wrapText="true" />
+        </VBox>
+
+        <StackPane HBox.hgrow="ALWAYS">
         <VBox fx:id="adminView" spacing="14" styleClass="workspace">
             <HBox alignment="CENTER_LEFT" spacing="12">
                 <VBox spacing="3" HBox.hgrow="ALWAYS">
@@ -141,5 +152,6 @@
                 </VBox>
             </StackPane>
         </VBox>
-    </StackPane>
+        </StackPane>
+    </HBox>
 </VBox>
