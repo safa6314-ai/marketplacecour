@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class MyBD {
 
-    String url = "jdbc:mysql://localhost:3306/forum_artevia";
+    String url = "jdbc:mysql://localhost:3306/artevia";
     String user = "root";
     String password = "";
 
