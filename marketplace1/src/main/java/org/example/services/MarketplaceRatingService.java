@@ -1,7 +1,7 @@
 package org.example.services;
 
-import org.example.entities.Rating;
-import org.example.utils.MyDataBase;
+import org.example.entities.MarketplaceRating;
+import org.example.utils.MarketplaceMyDataBase;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -14,11 +14,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RatingService {
+public class MarketplaceRatingService {
     private final Connection connection;
 
-    public RatingService() {
-        connection = MyDataBase.getInstance().getConnection();
+    public MarketplaceRatingService() {
+        connection = MarketplaceMyDataBase.getInstance().getConnection();
         ensureRatingTable();
     }
 
@@ -59,14 +59,14 @@ public class RatingService {
         }
     }
 
-    public List<Rating> afficherNotes(int idVente) throws SQLException {
-        List<Rating> ratings = new ArrayList<>();
+    public List<MarketplaceRating> afficherNotes(int idVente) throws SQLException {
+        List<MarketplaceRating> ratings = new ArrayList<>();
         String sql = "SELECT * FROM rating WHERE id_vente = ? ORDER BY date_rating DESC, id_rating DESC";
         try (PreparedStatement ps = requireConnection().prepareStatement(sql)) {
             ps.setInt(1, idVente);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Rating rating = new Rating();
+                    MarketplaceRating rating = new MarketplaceRating();
                     rating.setIdRating(rs.getInt("id_rating"));
                     rating.setIdVente(rs.getInt("id_vente"));
                     rating.setCustomerId(rs.getString("customer_id"));
@@ -156,7 +156,7 @@ public class RatingService {
 
     private Connection requireConnection() throws SQLException {
         if (connection == null) {
-            String details = MyDataBase.getLastError() == null ? "" : " Cause: " + MyDataBase.getLastError();
+            String details = MarketplaceMyDataBase.getLastError() == null ? "" : " Cause: " + MarketplaceMyDataBase.getLastError();
             throw new SQLException("Connexion MySQL indisponible." + details);
         }
         return connection;

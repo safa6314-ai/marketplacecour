@@ -1,7 +1,7 @@
 package org.example.services;
 
-import org.example.entities.Vente;
-import org.example.utils.MyDataBase;
+import org.example.entities.MarketplaceVente;
+import org.example.utils.MarketplaceMyDataBase;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -12,18 +12,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceVente {
+public class MarketplaceServiceVente {
 
     private final Connection connection;
 
-    public ServiceVente() {
-        connection = MyDataBase.getInstance().getConnection();
+    public MarketplaceServiceVente() {
+        connection = MarketplaceMyDataBase.getInstance().getConnection();
         ensureVenteColumns();
     }
 
     private Connection requireConnection() throws SQLException {
         if (connection == null) {
-            String details = MyDataBase.getLastError() == null ? "" : " Cause: " + MyDataBase.getLastError();
+            String details = MarketplaceMyDataBase.getLastError() == null ? "" : " Cause: " + MarketplaceMyDataBase.getLastError();
             throw new SQLException("Connexion MySQL indisponible. Verifiez XAMPP et la dependance mysql-connector-j." + details);
         }
         return connection;
@@ -59,7 +59,7 @@ public class ServiceVente {
         }
     }
 
-    public void ajouter(Vente v) throws SQLException {
+    public void ajouter(MarketplaceVente v) throws SQLException {
         String req = "INSERT INTO vente (titre, description, prix, categorie, nom_artiste, quantite, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = requireConnection().prepareStatement(req);
         ps.setString(1, v.getTitre());
@@ -73,8 +73,8 @@ public class ServiceVente {
     }
 
     public void ajouterOeuvresDemoSiAbsentes() throws SQLException {
-        Vente[] oeuvres = {
-                new Vente(
+        MarketplaceVente[] oeuvres = {
+                new MarketplaceVente(
                         "Medina de Tunis",
                         "Peinture lumineuse inspiree des ruelles anciennes et des portes bleues de la Medina.",
                         420.0,
@@ -83,7 +83,7 @@ public class ServiceVente {
                         4,
                         null
                 ),
-                new Vente(
+                new MarketplaceVente(
                         "Sidi Bou Said Bleu",
                         "Illustration decorative aux tons bleus et blancs, ideale pour une collection moderne.",
                         280.0,
@@ -92,7 +92,7 @@ public class ServiceVente {
                         6,
                         null
                 ),
-                new Vente(
+                new MarketplaceVente(
                         "Desert au Coucher",
                         "Photographie artistique du desert tunisien avec lumiere chaude et contraste doux.",
                         350.0,
@@ -101,7 +101,7 @@ public class ServiceVente {
                         3,
                         null
                 ),
-                new Vente(
+                new MarketplaceVente(
                         "Calligraphie Jasmin",
                         "Oeuvre calligraphique contemporaine avec details floraux et composition elegante.",
                         190.0,
@@ -110,7 +110,7 @@ public class ServiceVente {
                         5,
                         null
                 ),
-                new Vente(
+                new MarketplaceVente(
                         "Mosaic Heritage",
                         "Composition inspiree des mosaiques antiques, avec formes geometriques et couleurs riches.",
                         510.0,
@@ -119,7 +119,7 @@ public class ServiceVente {
                         2,
                         null
                 ),
-                new Vente(
+                new MarketplaceVente(
                         "Ceramique Artisanale",
                         "Piece decorative artisanale aux motifs traditionnels, vendue en serie limitee.",
                         160.0,
@@ -130,7 +130,7 @@ public class ServiceVente {
                 )
         };
 
-        for (Vente oeuvre : oeuvres) {
+        for (MarketplaceVente oeuvre : oeuvres) {
             if (!existeParTitre(oeuvre.getTitre())) {
                 ajouter(oeuvre);
             }
@@ -145,7 +145,7 @@ public class ServiceVente {
         return rs.next();
     }
 
-    public void modifier(Vente v) throws SQLException {
+    public void modifier(MarketplaceVente v) throws SQLException {
         String req = "UPDATE vente SET titre = ?, description = ?, prix = ?, categorie = ?, nom_artiste = ?, quantite = ?, image_path = ? WHERE id = ?";
         PreparedStatement ps = requireConnection().prepareStatement(req);
         ps.setString(1, v.getTitre());
@@ -175,14 +175,14 @@ public class ServiceVente {
         ps.executeUpdate();
     }
 
-    public List<Vente> afficherAll() throws SQLException {
-        List<Vente> list = new ArrayList<>();
+    public List<MarketplaceVente> afficherAll() throws SQLException {
+        List<MarketplaceVente> list = new ArrayList<>();
         String req = "SELECT * FROM vente";
         Statement st = requireConnection().createStatement();
         ResultSet rs = st.executeQuery(req);
 
         while (rs.next()) {
-            Vente v = new Vente();
+            MarketplaceVente v = new MarketplaceVente();
             v.setId(rs.getInt("id"));
             v.setTitre(rs.getString("titre"));
             v.setDescription(rs.getString("description"));

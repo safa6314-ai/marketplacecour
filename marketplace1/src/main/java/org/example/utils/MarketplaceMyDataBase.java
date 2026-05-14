@@ -4,18 +4,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-public class MyDataBase {
+public class MarketplaceMyDataBase {
 
     private static final String HOST_URL = "jdbc:mysql://localhost:3306/?useSSL=false&serverTimezone=UTC";
     private static final String URL = "jdbc:mysql://localhost:3306/marketplace_db?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
-    private static MyDataBase instance;
+    private static MarketplaceMyDataBase instance;
     private static String lastError;
     private Connection connection;
 
-    private MyDataBase() {
+    private MarketplaceMyDataBase() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             initSchemaIfMissing();
@@ -64,9 +64,9 @@ public class MyDataBase {
         }
     }
 
-    public static MyDataBase getInstance() {
+    public static MarketplaceMyDataBase getInstance() {
         if (instance == null) {
-            instance = new MyDataBase();
+            instance = new MarketplaceMyDataBase();
         }
         return instance;
     }

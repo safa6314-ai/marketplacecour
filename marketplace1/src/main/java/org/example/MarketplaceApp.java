@@ -1,22 +1,22 @@
 package org.example;
 
-import org.example.entities.Achat;
-import org.example.entities.Vente;
-import org.example.services.ServiceAchat;
-import org.example.services.ServiceVente;
+import org.example.entities.MarketplaceAchat;
+import org.example.entities.MarketplaceVente;
+import org.example.services.MarketplaceServiceAchat;
+import org.example.services.MarketplaceServiceVente;
 
 import java.sql.Date;
 import java.sql.SQLException;
 
-public class App {
+public class MarketplaceApp {
 
     public static void main(String[] args) {
 
-        ServiceVente sv = new ServiceVente();
-        ServiceAchat sa = new ServiceAchat();
+        MarketplaceServiceVente sv = new MarketplaceServiceVente();
+        MarketplaceServiceAchat sa = new MarketplaceServiceAchat();
 
         try {
-            Vente v = new Vente(
+            MarketplaceVente v = new MarketplaceVente(
                     "Dragon Mystique",
                     "Illustration fantasy d'un dragon magique",
                     200.0,
@@ -25,7 +25,7 @@ public class App {
             );
             sv.ajouter(v);
 
-            Vente vModif = new Vente(
+            MarketplaceVente vModif = new MarketplaceVente(
                     1,
                     "Dragon Légendaire",
                     "Illustration fantasy modifiée",
@@ -35,7 +35,7 @@ public class App {
             );
             sv.modifier(vModif);
 
-            Achat a = new Achat(
+            MarketplaceAchat a = new MarketplaceAchat(
                     "Dragon Légendaire",
                     "Client1",
                     300.0,
@@ -43,7 +43,7 @@ public class App {
             );
             sa.ajouter(a);
 
-            Achat aModif = new Achat(
+            MarketplaceAchat aModif = new MarketplaceAchat(
                     2,
                     "Dragon Légendaire",
                     "Client Modifié",
@@ -57,12 +57,12 @@ public class App {
             // sa.supprimer(1);
 
             System.out.println("===== LISTE DES VENTES =====");
-            for (Vente vente : sv.afficherAll()) {
+            for (MarketplaceVente vente : sv.afficherAll()) {
                 System.out.println(vente);
             }
 
             System.out.println("===== LISTE DES ACHATS =====");
-            for (Achat achat : sa.afficher()) {
+            for (MarketplaceAchat achat : sa.afficher()) {
                 System.out.println(achat);
             }
 

@@ -19,7 +19,6 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -34,17 +33,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.stage.FileChooser;
-import org.example.entities.Achat;
-import org.example.entities.Vente;
-import org.example.services.CurrencyApiService;
-import org.example.services.InvoicePdfService;
-import org.example.services.MetMuseumApiService;
-import org.example.services.QrCodeApiService;
-import org.example.services.RatingService;
-import org.example.services.ServiceAchat;
-import org.example.services.ServiceVente;
-import org.example.utils.MyDataBase;
+import org.example.entities.MarketplaceAchat;
+import org.example.entities.MarketplaceVente;
+import org.example.services.MarketplaceCurrencyApiService;
+import org.example.services.MarketplaceInvoicePdfService;
+import org.example.services.MarketplaceMetMuseumApiService;
+import org.example.services.MarketplaceQrCodeApiService;
+import org.example.services.MarketplaceRatingService;
+import org.example.services.MarketplaceServiceAchat;
+import org.example.services.MarketplaceServiceVente;
+import org.example.services.MarketplaceStripePaymentService;
+import org.example.utils.MarketplaceMyDataBase;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -65,27 +66,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class MarketplaceController {
+public class ArteviaMarketplaceController {
 
     private static final String MODE_ADMIN = "Admin";
     private static final String MODE_CLIENT = "Client";
     private static final String CURRENT_CUSTOMER_ID = "Client test";
 
-    private final ServiceVente serviceVente = new ServiceVente();
-    private final ServiceAchat serviceAchat = new ServiceAchat();
-    private final RatingService ratingService = new RatingService();
-    private final MetMuseumApiService metMuseumApiService = new MetMuseumApiService();
-    private final QrCodeApiService qrCodeApiService = new QrCodeApiService();
-    private final CurrencyApiService currencyApiService = new CurrencyApiService();
-    private final InvoicePdfService invoicePdfService = new InvoicePdfService();
+    private final MarketplaceServiceVente serviceVente = new MarketplaceServiceVente();
+    private final MarketplaceServiceAchat serviceAchat = new MarketplaceServiceAchat();
+    private final MarketplaceRatingService ratingService = new MarketplaceRatingService();
+    private final MarketplaceMetMuseumApiService metMuseumApiService = new MarketplaceMetMuseumApiService();
+    private final MarketplaceQrCodeApiService qrCodeApiService = new MarketplaceQrCodeApiService();
+    private final MarketplaceCurrencyApiService currencyApiService = new MarketplaceCurrencyApiService();
+    private final MarketplaceInvoicePdfService invoicePdfService = new MarketplaceInvoicePdfService();
+    private final MarketplaceStripePaymentService stripePaymentService = new MarketplaceStripePaymentService();
     private final HttpClient talonHttpClient = HttpClient.newHttpClient();
-    private final ObservableList<Vente> ventesData = FXCollections.observableArrayList();
-    private final ObservableList<Achat> achatsData = FXCollections.observableArrayList();
-    private final ObservableList<Vente> cartData = FXCollections.observableArrayList();
-    private final FilteredList<Vente> filteredVentesData = new FilteredList<>(ventesData, vente -> true);
-    private final FilteredList<Achat> filteredAchatsData = new FilteredList<>(achatsData, achat -> true);
+    private final ObservableList<MarketplaceVente> ventesData = FXCollections.observableArrayList();
+    private final ObservableList<MarketplaceAchat> achatsData = FXCollections.observableArrayList();
+    private final ObservableList<MarketplaceVente> cartData = FXCollections.observableArrayList();
+    private final FilteredList<MarketplaceVente> filteredVentesData = new FilteredList<>(ventesData, vente -> true);
+    private final FilteredList<MarketplaceAchat> filteredAchatsData = new FilteredList<>(achatsData, achat -> true);
     private String appliedCouponCode = "";
     private double appliedDiscountRate;
+    private MarketplaceStripePaymentService.CheckoutSessionResult pendingStripeSession;
+    private String pendingStripePaymentRef;
+    private double pendingStripeAmount;
 
     @FXML private ComboBox<String> modeComboBox;
     @FXML private VBox adminView;
@@ -100,16 +105,16 @@ public class MarketplaceController {
     @FXML private Button adminAchatsButton;
     @FXML private Button clientCatalogButton;
     @FXML private Button clientCartButton;
-    @FXML private ListView<Vente> ventesListView;
-    @FXML private ListView<Achat> achatsListView;
-    @FXML private ListView<Vente> cartListView;
+    @FXML private ListView<MarketplaceVente> ventesListView;
+    @FXML private ListView<MarketplaceAchat> achatsListView;
+    @FXML private ListView<MarketplaceVente> cartListView;
     @FXML private TilePane clientGrid;
     @FXML private Label cartTotalLabel;
     @FXML private TextField couponCodeField;
     @FXML private Label cartSubtotalLabel;
     @FXML private Label cartDiscountLabel;
     @FXML private Label couponStatusLabel;
-    @FXML private Label cardPaymentStatusLabel;
+    @FXML private Label stripePaymentStatusLabel;
     @FXML private Label currencyConversionLabel;
     @FXML private Label clientLoyaltyPointsLabel;
     @FXML private Label clientVipLevelLabel;
@@ -139,7 +144,7 @@ public class MarketplaceController {
         ventesListView.setCellFactory(list -> new VenteAdminCell());
         achatsListView.setCellFactory(list -> new AchatAdminCell());
         cartListView.setCellFactory(list -> new CartCell());
-        cartData.addListener((javafx.collections.ListChangeListener<Vente>) change -> updateCartTotal());
+        cartData.addListener((javafx.collections.ListChangeListener<MarketplaceVente>) change -> updateCartTotal());
         setupFilters();
         ensureSimpleLoyaltyTable();
 
@@ -177,7 +182,7 @@ public class MarketplaceController {
 
     @FXML
     private void onEditVente() {
-        Vente selected = ventesListView.getSelectionModel().getSelectedItem();
+        MarketplaceVente selected = ventesListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showError("Selection obligatoire", "Selectionnez un article a modifier.");
             return;
@@ -195,7 +200,7 @@ public class MarketplaceController {
 
     @FXML
     private void onDeleteVente() {
-        Vente selected = ventesListView.getSelectionModel().getSelectedItem();
+        MarketplaceVente selected = ventesListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showError("Selection obligatoire", "Selectionnez un article a supprimer.");
             return;
@@ -223,7 +228,7 @@ public class MarketplaceController {
             return;
         }
         try {
-            Vente imported = metMuseumApiService.importFirstArtwork(result.get());
+            MarketplaceVente imported = metMuseumApiService.importFirstArtwork(result.get());
             serviceVente.ajouter(imported);
             refreshVentes();
             showSuccess("Import MET Museum", "Oeuvre importee: " + imported.getTitre());
@@ -238,7 +243,7 @@ public class MarketplaceController {
             try {
                 serviceAchat.ajouter(achat);
                 refreshAchats();
-                showSuccess("Achat ajoute", "L'achat a ete ajoute avec succes.");
+                showSuccess("MarketplaceAchat ajoute", "L'achat a ete ajoute avec succes.");
             } catch (Exception ex) {
                 showError("Erreur ajout achat", ex.getMessage());
             }
@@ -247,7 +252,7 @@ public class MarketplaceController {
 
     @FXML
     private void onDownloadInvoicePdf() {
-        Achat selected = achatsListView.getSelectionModel().getSelectedItem();
+        MarketplaceAchat selected = achatsListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showError("Selection obligatoire", "Selectionnez un achat pour generer sa facture PDF.");
             return;
@@ -262,7 +267,7 @@ public class MarketplaceController {
 
     @FXML
     private void onEditAchat() {
-        Achat selected = achatsListView.getSelectionModel().getSelectedItem();
+        MarketplaceAchat selected = achatsListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showError("Selection obligatoire", "Selectionnez un achat a modifier.");
             return;
@@ -271,7 +276,7 @@ public class MarketplaceController {
             try {
                 serviceAchat.modifier(achat);
                 refreshAchats();
-                showSuccess("Achat modifie", "L'achat a ete modifie avec succes.");
+                showSuccess("MarketplaceAchat modifie", "L'achat a ete modifie avec succes.");
             } catch (Exception ex) {
                 showError("Erreur modification achat", ex.getMessage());
             }
@@ -280,7 +285,7 @@ public class MarketplaceController {
 
     @FXML
     private void onDeleteAchat() {
-        Achat selected = achatsListView.getSelectionModel().getSelectedItem();
+        MarketplaceAchat selected = achatsListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showError("Selection obligatoire", "Selectionnez un achat a supprimer.");
             return;
@@ -289,7 +294,7 @@ public class MarketplaceController {
             try {
                 serviceAchat.supprimer(selected.getId());
                 refreshAchats();
-                showSuccess("Achat supprime", "L'achat a ete supprime avec succes.");
+                showSuccess("MarketplaceAchat supprime", "L'achat a ete supprime avec succes.");
             } catch (Exception ex) {
                 showError("Erreur suppression achat", ex.getMessage());
             }
@@ -298,7 +303,7 @@ public class MarketplaceController {
 
     @FXML
     private void onConfirmAchat() {
-        Achat selected = achatsListView.getSelectionModel().getSelectedItem();
+        MarketplaceAchat selected = achatsListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showError("Selection obligatoire", "Selectionnez un achat a confirmer.");
             return;
@@ -309,7 +314,7 @@ public class MarketplaceController {
         try {
             serviceAchat.confirmer(selected.getId());
             refreshAchats();
-            showSuccess("Achat accepte", "L'achat a ete confirme avec succes.");
+            showSuccess("MarketplaceAchat accepte", "L'achat a ete confirme avec succes.");
         } catch (Exception ex) {
             showError("Erreur confirmation achat", ex.getMessage());
         }
@@ -317,7 +322,7 @@ public class MarketplaceController {
 
     @FXML
     private void onRefuseAchat() {
-        Achat selected = achatsListView.getSelectionModel().getSelectedItem();
+        MarketplaceAchat selected = achatsListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showError("Selection obligatoire", "Selectionnez un achat a refuser.");
             return;
@@ -328,7 +333,7 @@ public class MarketplaceController {
         try {
             serviceAchat.refuser(selected.getId());
             refreshAchats();
-            showSuccess("Achat refuse", "L'achat a ete refuse avec succes.");
+            showSuccess("MarketplaceAchat refuse", "L'achat a ete refuse avec succes.");
         } catch (Exception ex) {
             showError("Erreur refus achat", ex.getMessage());
         }
@@ -406,7 +411,7 @@ public class MarketplaceController {
 
     @FXML
     private void onRemoveFromCart() {
-        Vente selected = cartListView.getSelectionModel().getSelectedItem();
+        MarketplaceVente selected = cartListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showError("Selection obligatoire", "Selectionnez un article a retirer du panier.");
             return;
@@ -459,7 +464,7 @@ public class MarketplaceController {
             showError("Conversion devise", "Le total du panier doit etre superieur a 0.");
             return;
         }
-        CurrencyApiService.CurrencyResult result = currencyApiService.convertFromTnd(total);
+        MarketplaceCurrencyApiService.CurrencyResult result = currencyApiService.convertFromTnd(total);
         String suffix = result.isFallback() ? " (mode secours)" : " (API live)";
         if (currencyConversionLabel != null) {
             currencyConversionLabel.setText(String.format("EUR %.2f | USD %.2f%s", result.getEur(), result.getUsd(), suffix));
@@ -467,9 +472,9 @@ public class MarketplaceController {
     }
 
     @FXML
-    private void onPayWithCard() {
+    private void onPayWithStripe() {
         if (cartData.isEmpty()) {
-            showError("Panier vide", "Ajoutez au moins un article avant de payer par carte.");
+            showError("Panier vide", "Ajoutez au moins un article avant de payer avec Stripe.");
             return;
         }
         refreshVentes();
@@ -484,7 +489,119 @@ public class MarketplaceController {
             return;
         }
 
-        showCardPaymentDialog(finalTotal);
+        if (!stripePaymentService.isConfigured()) {
+            updateStripePaymentStatus("Stripe non configure | ECHOUE");
+            showError("Stripe non configure", "Configurez la variable d'environnement STRIPE_SECRET_KEY avant de lancer un vrai paiement Stripe.");
+            return;
+        }
+
+        try {
+            String paymentRef = "STRIPE-" + System.currentTimeMillis();
+            if (!showStripeCheckoutConfirmation(finalTotal, paymentRef)) {
+                updateStripePaymentStatus("Stripe ANNULE");
+                return;
+            }
+            MarketplaceStripePaymentService.CheckoutSessionResult session = stripePaymentService.createCheckoutSession(
+                    finalTotal,
+                    "Artevia Marketplace - Panier",
+                    paymentRef
+            );
+            if (session.getCheckoutUrl() == null || session.getCheckoutUrl().trim().isEmpty()) {
+                updateStripePaymentStatus("Stripe URL vide | ECHOUE");
+                showError("Paiement Stripe", "Stripe n'a retourne aucune URL Checkout.");
+                return;
+            }
+
+            pendingStripeSession = session;
+            pendingStripePaymentRef = paymentRef;
+            pendingStripeAmount = finalTotal;
+            saveStripePayment(paymentRef, session, finalTotal, "EN_ATTENTE");
+            updateStripePaymentStatus("Stripe EN_ATTENTE | " + session.getSessionId());
+            openExternalBrowser(session.getCheckoutUrl());
+            showSuccess("Stripe Checkout", "La page Stripe Checkout est ouverte dans le navigateur.\nApres le paiement, cliquez sur Verifier Stripe.");
+        } catch (Exception ex) {
+            updateStripePaymentStatus("Stripe ECHOUE");
+            showError("Paiement Stripe impossible", ex.getMessage());
+        }
+    }
+
+    private boolean showStripeCheckoutConfirmation(double amount, String paymentRef) {
+        Dialog<Boolean> dialog = new Dialog<>();
+        styleDialog(dialog.getDialogPane());
+        dialog.setTitle("Paiement Stripe");
+        dialog.setHeaderText("Confirmation du paiement Stripe");
+
+        Label subtitle = new Label("Securise par Stripe");
+        subtitle.getStyleClass().add("muted-label");
+
+        Label summaryTitle = new Label("Recapitulatif");
+        summaryTitle.getStyleClass().add("panel-title");
+
+        Label amountLabel = new Label(formatPrice(amount));
+        amountLabel.getStyleClass().add("cart-total");
+
+        Label orderLabel = new Label("#" + paymentRef.replace("STRIPE-", ""));
+        orderLabel.getStyleClass().add("summary-value");
+
+        GridPane summary = new GridPane();
+        summary.setHgap(18);
+        summary.setVgap(12);
+        summary.setPadding(new Insets(16));
+        summary.getStyleClass().add("cart-summary");
+        summary.add(new Label("Montant total"), 0, 0);
+        summary.add(amountLabel, 1, 0);
+        summary.add(new Label("Commande N°"), 0, 1);
+        summary.add(orderLabel, 1, 1);
+
+        VBox content = new VBox(14, subtitle, summaryTitle, summary);
+        content.setPadding(new Insets(8, 4, 4, 4));
+        dialog.getDialogPane().setContent(content);
+
+        ButtonType payType = new ButtonType("Payer avec Stripe", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(payType, ButtonType.CANCEL);
+        Button payButton = (Button) dialog.getDialogPane().lookupButton(payType);
+        payButton.getStyleClass().add("primary-btn");
+
+        dialog.setResultConverter(button -> button == payType);
+        return dialog.showAndWait().orElse(false);
+    }
+
+    @FXML
+    private void onVerifyStripePayment() {
+        if (pendingStripeSession == null || pendingStripeSession.getSessionId() == null) {
+            showError("Stripe", "Aucune session Stripe en attente. Lancez d'abord un paiement Stripe.");
+            return;
+        }
+
+        try {
+            MarketplaceStripePaymentService.CheckoutSessionResult session =
+                    stripePaymentService.retrieveCheckoutSession(pendingStripeSession.getSessionId());
+            String appStatus = stripeAppStatus(session);
+            updateStripePayment(pendingStripePaymentRef, appStatus);
+            updateStripePaymentStatus("Stripe " + appStatus + " | " + session.getPaymentStatus());
+
+            if ("PAYE".equals(appStatus)) {
+                processPaidCart(pendingStripePaymentRef, pendingStripeAmount);
+                pendingStripeSession = null;
+                pendingStripePaymentRef = null;
+                pendingStripeAmount = 0;
+                showSuccess("Paiement confirme", "Stripe confirme le paiement. La commande est marquee PAYE.");
+            } else if ("ANNULE".equals(appStatus)) {
+                showError("Paiement annule", "La session Stripe est expiree ou annulee.");
+            } else {
+                showError("Paiement en attente", "Stripe n'a pas encore confirme le paiement. Statut: " + session.getPaymentStatus());
+            }
+        } catch (Exception ex) {
+            if (pendingStripePaymentRef != null) {
+                try {
+                    updateStripePayment(pendingStripePaymentRef, "ECHOUE");
+                } catch (SQLException sqlException) {
+                    System.out.println("Impossible de mettre a jour le statut Stripe: " + sqlException.getMessage());
+                }
+            }
+            updateStripePaymentStatus("Stripe ECHOUE");
+            showError("Verification Stripe impossible", ex.getMessage());
+        }
     }
 
     @FXML
@@ -505,9 +622,9 @@ public class MarketplaceController {
         try {
             double finalTotal = cartFinalTotal();
             String loyaltySessionRef = "ORDER-" + System.currentTimeMillis();
-            for (Vente vente : new ArrayList<>(cartData)) {
+            for (MarketplaceVente vente : new ArrayList<>(cartData)) {
                 serviceVente.diminuerQuantite(vente.getId());
-                serviceAchat.ajouter(new Achat(
+                serviceAchat.ajouter(new MarketplaceAchat(
                         safeText(vente.getTitre(), "Article"),
                         CURRENT_CUSTOMER_ID,
                         vente.getPrix(),
@@ -686,7 +803,7 @@ public class MarketplaceController {
         }
         String selected = clientCategoryFilterComboBox.getValue();
         ObservableList<String> categories = FXCollections.observableArrayList("Toutes les categories");
-        for (Vente vente : ventesData) {
+        for (MarketplaceVente vente : ventesData) {
             String category = safeText(vente.getCategorie(), "");
             if (!category.isEmpty() && !categories.contains(category)) {
                 categories.add(category);
@@ -705,23 +822,23 @@ public class MarketplaceController {
             return;
         }
         clientGrid.getChildren().clear();
-        List<Vente> visibleArticles = filteredClientArticles();
+        List<MarketplaceVente> visibleArticles = filteredClientArticles();
         if (visibleArticles.isEmpty()) {
             Label empty = new Label("Aucun article ne correspond a votre recherche.");
             empty.getStyleClass().add("empty-label");
             clientGrid.getChildren().add(empty);
             return;
         }
-        for (Vente vente : visibleArticles) {
+        for (MarketplaceVente vente : visibleArticles) {
             clientGrid.getChildren().add(createArticleCard(vente));
         }
     }
 
-    private List<Vente> filteredClientArticles() {
+    private List<MarketplaceVente> filteredClientArticles() {
         String query = normalized(clientSearchField == null ? "" : clientSearchField.getText());
         String categoryFilter = clientCategoryFilterComboBox == null ? "Toutes les categories" : clientCategoryFilterComboBox.getValue();
-        List<Vente> results = new ArrayList<>();
-        for (Vente vente : ventesData) {
+        List<MarketplaceVente> results = new ArrayList<>();
+        for (MarketplaceVente vente : ventesData) {
             boolean textMatches = query.isEmpty()
                     || normalized(vente.getTitre()).contains(query)
                     || normalized(vente.getCategorie()).contains(query)
@@ -737,7 +854,7 @@ public class MarketplaceController {
         return results;
     }
 
-    private Node createArticleCard(Vente vente) {
+    private Node createArticleCard(MarketplaceVente vente) {
         VBox card = new VBox(10);
         card.getStyleClass().add("article-card");
         card.setPrefWidth(280);
@@ -820,7 +937,7 @@ public class MarketplaceController {
         }
     }
 
-    private String ratingText(Vente vente) {
+    private String ratingText(MarketplaceVente vente) {
         try {
             double moyenne = ratingService.moyenne(vente.getId());
             int count = ratingService.nombreNotes(vente.getId());
@@ -830,7 +947,7 @@ public class MarketplaceController {
         }
     }
 
-    private void rateArticle(Vente vente, int note) {
+    private void rateArticle(MarketplaceVente vente, int note) {
         try {
             ratingService.ajouterOuModifier(vente.getId(), CURRENT_CUSTOMER_ID, note);
             renderClientGrid();
@@ -839,7 +956,7 @@ public class MarketplaceController {
         }
     }
 
-    private void showArticleQrCode(Vente vente) {
+    private void showArticleQrCode(MarketplaceVente vente) {
         Dialog<Void> dialog = new Dialog<>();
         styleDialog(dialog.getDialogPane());
         dialog.setTitle("QR Code article");
@@ -857,13 +974,13 @@ public class MarketplaceController {
         dialog.showAndWait();
     }
 
-    private String articleQrData(Vente vente) {
+    private String articleQrData(MarketplaceVente vente) {
         return safeText(vente.getTitre(), "Article") + " | " +
                 safeText(vente.getNomArtiste(), "Artiste inconnu") + " | " +
                 formatPrice(vente.getPrix());
     }
 
-    private void addToCart(Vente vente) {
+    private void addToCart(MarketplaceVente vente) {
         if (vente.getQuantite() <= 0) {
             showError("Article epuise", "Impossible d'ajouter au panier: l'article \"" + vente.getTitre() + "\" est epuise.");
             return;
@@ -878,7 +995,7 @@ public class MarketplaceController {
 
     private int countCartItems(int venteId) {
         int count = 0;
-        for (Vente cartItem : cartData) {
+        for (MarketplaceVente cartItem : cartData) {
             if (cartItem.getId() == venteId) {
                 count++;
             }
@@ -888,12 +1005,12 @@ public class MarketplaceController {
 
     private String validateCartStock() {
         Map<Integer, Integer> requestedQuantities = new HashMap<>();
-        for (Vente cartItem : cartData) {
+        for (MarketplaceVente cartItem : cartData) {
             requestedQuantities.put(cartItem.getId(), requestedQuantities.getOrDefault(cartItem.getId(), 0) + 1);
         }
 
         for (Map.Entry<Integer, Integer> entry : requestedQuantities.entrySet()) {
-            Vente current = findVenteById(entry.getKey());
+            MarketplaceVente current = findVenteById(entry.getKey());
             if (current == null) {
                 return "Un article du panier n'est plus disponible.";
             }
@@ -904,8 +1021,8 @@ public class MarketplaceController {
         return null;
     }
 
-    private Vente findVenteById(int id) {
-        for (Vente vente : ventesData) {
+    private MarketplaceVente findVenteById(int id) {
+        for (MarketplaceVente vente : ventesData) {
             if (vente.getId() == id) {
                 return vente;
             }
@@ -913,109 +1030,7 @@ public class MarketplaceController {
         return null;
     }
 
-    private void showCardPaymentDialog(double amount) {
-        Dialog<ButtonType> dialog = new Dialog<>();
-        styleDialog(dialog.getDialogPane());
-        dialog.setTitle("Paiement par carte");
-        dialog.setHeaderText("Paiement simule par carte bancaire");
-
-        TextField holderField = new TextField();
-        holderField.setPromptText("Nom du titulaire");
-        TextField cardNumberField = new TextField();
-        cardNumberField.setPromptText("16 chiffres");
-        TextField expiryField = new TextField();
-        expiryField.setPromptText("MM/AA");
-        PasswordField cvvField = new PasswordField();
-        cvvField.setPromptText("CVV");
-        Label amountLabel = new Label(formatPrice(amount));
-        amountLabel.getStyleClass().add("cart-total");
-
-        GridPane form = new GridPane();
-        form.setHgap(12);
-        form.setVgap(12);
-        form.setPadding(new Insets(16, 8, 8, 8));
-        form.add(new Label("Nom du titulaire"), 0, 0);
-        form.add(holderField, 1, 0);
-        form.add(new Label("Numero de carte"), 0, 1);
-        form.add(cardNumberField, 1, 1);
-        form.add(new Label("Expiration"), 0, 2);
-        form.add(expiryField, 1, 2);
-        form.add(new Label("CVV"), 0, 3);
-        form.add(cvvField, 1, 3);
-        form.add(new Label("Montant total"), 0, 4);
-        form.add(amountLabel, 1, 4);
-
-        ButtonType payType = new ButtonType("Valider le paiement", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(payType, ButtonType.CANCEL);
-        dialog.getDialogPane().setContent(form);
-
-        Button payButton = (Button) dialog.getDialogPane().lookupButton(payType);
-        payButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
-            clearValidation(holderField, cardNumberField, expiryField, cvvField);
-            List<String> errors = validateCardPaymentForm(holderField, cardNumberField, expiryField, cvvField, amount);
-            if (!errors.isEmpty()) {
-                showValidationAlert(errors);
-                event.consume();
-                return;
-            }
-            try {
-                String cardDigits = digitsOnly(cardNumberField.getText());
-                String cardLast4 = cardDigits.substring(cardDigits.length() - 4);
-                String paymentRef = "CARD-" + System.currentTimeMillis();
-                processPaidCart(paymentRef, holderField.getText().trim(), cardLast4, amount);
-                updateCardPaymentStatus("Paiement accepte | Carte **** " + cardLast4);
-                showSuccess("Paiement accepte", "Paiement simule accepte. La commande est marquee PAYE.");
-            } catch (Exception ex) {
-                showError("Paiement refuse", ex.getMessage());
-                event.consume();
-            }
-        });
-
-        dialog.showAndWait();
-    }
-
-    private List<String> validateCardPaymentForm(TextField holderField, TextField cardNumberField,
-                                                 TextField expiryField, PasswordField cvvField, double amount) {
-        List<String> errors = new ArrayList<>();
-        if (holderField.getText() == null || holderField.getText().trim().isEmpty()) {
-            markInvalid(holderField);
-            errors.add("Le nom du titulaire est obligatoire.");
-        }
-        String cardDigits = digitsOnly(cardNumberField.getText());
-        if (!cardDigits.matches("\\d{16}")) {
-            markInvalid(cardNumberField);
-            errors.add("Le numero de carte doit contenir exactement 16 chiffres.");
-        }
-        String expiry = expiryField.getText() == null ? "" : expiryField.getText().trim();
-        if (!expiry.matches("\\d{2}/\\d{2}") || !validExpiryMonth(expiry)) {
-            markInvalid(expiryField);
-            errors.add("La date d'expiration est obligatoire au format MM/AA.");
-        }
-        String cvv = cvvField.getText() == null ? "" : cvvField.getText().trim();
-        if (!cvv.matches("\\d{3}")) {
-            markInvalid(cvvField);
-            errors.add("Le CVV doit contenir exactement 3 chiffres.");
-        }
-        if (amount <= 0) {
-            errors.add("Le montant doit etre superieur a 0.");
-        }
-        return errors;
-    }
-
-    private boolean validExpiryMonth(String expiry) {
-        try {
-            int month = Integer.parseInt(expiry.substring(0, 2));
-            return month >= 1 && month <= 12;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    private String digitsOnly(String value) {
-        return value == null ? "" : value.replaceAll("\\D", "");
-    }
-
-    private void processPaidCart(String paymentRef, String cardHolder, String cardLast4, double finalTotal) throws SQLException {
+    private void processPaidCart(String paymentRef, double finalTotal) throws SQLException {
         refreshVentes();
         String stockError = validateCartStock();
         if (stockError != null) {
@@ -1023,9 +1038,9 @@ public class MarketplaceController {
         }
 
         String loyaltySessionRef = "ORDER-" + System.currentTimeMillis();
-        for (Vente vente : new ArrayList<>(cartData)) {
+        for (MarketplaceVente vente : new ArrayList<>(cartData)) {
             serviceVente.diminuerQuantite(vente.getId());
-            serviceAchat.ajouter(new Achat(
+            serviceAchat.ajouter(new MarketplaceAchat(
                     safeText(vente.getTitre(), "Article"),
                     CURRENT_CUSTOMER_ID,
                     vente.getPrix(),
@@ -1034,10 +1049,9 @@ public class MarketplaceController {
             ));
         }
 
-        saveSimulatedPayment(paymentRef, cardHolder, cardLast4, finalTotal);
         int earnedPoints = calculateCashbackPoints(finalTotal);
-        addLoyaltyPoints(CURRENT_CUSTOMER_ID, earnedPoints, "PURCHASE", "Paiement carte simule", loyaltySessionRef);
-        callTalonOneMock(CURRENT_CUSTOMER_ID, "local_card_payment", finalTotal, appliedCouponCode);
+        addLoyaltyPoints(CURRENT_CUSTOMER_ID, earnedPoints, "PURCHASE", "Paiement Stripe confirme", loyaltySessionRef);
+        callTalonOneMock(CURRENT_CUSTOMER_ID, "stripe_payment", finalTotal, appliedCouponCode);
         cartData.clear();
         clearCoupon();
         refreshVentes();
@@ -1046,36 +1060,69 @@ public class MarketplaceController {
         showClientCatalog();
     }
 
-    private void saveSimulatedPayment(String paymentRef, String cardHolder, String cardLast4, double amount) throws SQLException {
+    private void saveStripePayment(String paymentRef, MarketplaceStripePaymentService.CheckoutSessionResult session,
+                                   double amount, String status) throws SQLException {
         Connection connection = loyaltyConnection();
         try (java.sql.Statement st = connection.createStatement()) {
             st.executeUpdate(
-                    "CREATE TABLE IF NOT EXISTS simulated_card_payments (" +
+                    "CREATE TABLE IF NOT EXISTS stripe_checkout_payments (" +
                             "id_payment INT AUTO_INCREMENT PRIMARY KEY, " +
                             "payment_ref VARCHAR(120) NOT NULL UNIQUE, " +
+                            "stripe_session_id VARCHAR(255) NOT NULL UNIQUE, " +
                             "customer_id VARCHAR(100) NOT NULL, " +
                             "amount DOUBLE NOT NULL, " +
-                            "card_holder VARCHAR(150) NOT NULL, " +
-                            "card_last4 VARCHAR(4) NOT NULL, " +
+                            "currency VARCHAR(10) NOT NULL, " +
                             "status VARCHAR(20) NOT NULL, " +
-                            "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+                            "checkout_url TEXT, " +
+                            "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
+                            "updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)"
             );
         }
-        String sql = "INSERT INTO simulated_card_payments (payment_ref, customer_id, amount, card_holder, card_last4, status) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO stripe_checkout_payments " +
+                "(payment_ref, stripe_session_id, customer_id, amount, currency, status, checkout_url) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, paymentRef);
-            ps.setString(2, CURRENT_CUSTOMER_ID);
-            ps.setDouble(3, amount);
-            ps.setString(4, cardHolder);
-            ps.setString(5, cardLast4);
-            ps.setString(6, "PAYE");
+            ps.setString(2, session.getSessionId());
+            ps.setString(3, CURRENT_CUSTOMER_ID);
+            ps.setDouble(4, amount);
+            ps.setString(5, session.getCurrency());
+            ps.setString(6, status);
+            ps.setString(7, session.getCheckoutUrl());
             ps.executeUpdate();
         }
     }
 
-    private void updateCardPaymentStatus(String status) {
-        if (cardPaymentStatusLabel != null) {
-            cardPaymentStatusLabel.setText(status);
+    private void updateStripePayment(String paymentRef, String status) throws SQLException {
+        Connection connection = loyaltyConnection();
+        String sql = "UPDATE stripe_checkout_payments SET status = ? WHERE payment_ref = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setString(2, paymentRef);
+            ps.executeUpdate();
+        }
+    }
+
+    private String stripeAppStatus(MarketplaceStripePaymentService.CheckoutSessionResult session) {
+        if ("paid".equalsIgnoreCase(session.getPaymentStatus())) {
+            return "PAYE";
+        }
+        if ("expired".equalsIgnoreCase(session.getStatus())) {
+            return "ANNULE";
+        }
+        return "EN_ATTENTE";
+    }
+
+    private void openExternalBrowser(String url) throws IOException {
+        if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            throw new IOException("Impossible d'ouvrir le navigateur automatiquement. URL Stripe: " + url);
+        }
+        Desktop.getDesktop().browse(URI.create(url));
+    }
+
+    private void updateStripePaymentStatus(String status) {
+        if (stripePaymentStatusLabel != null) {
+            stripePaymentStatusLabel.setText(status);
         }
     }
 
@@ -1106,7 +1153,7 @@ public class MarketplaceController {
 
     private double cartSubtotal() {
         double subtotal = 0;
-        for (Vente vente : cartData) {
+        for (MarketplaceVente vente : cartData) {
             subtotal += vente.getPrix();
         }
         return subtotal;
@@ -1286,9 +1333,9 @@ public class MarketplaceController {
     }
 
     private Connection loyaltyConnection() throws SQLException {
-        Connection connection = MyDataBase.getInstance().getConnection();
+        Connection connection = MarketplaceMyDataBase.getInstance().getConnection();
         if (connection == null) {
-            String details = MyDataBase.getLastError() == null ? "" : " Cause: " + MyDataBase.getLastError();
+            String details = MarketplaceMyDataBase.getLastError() == null ? "" : " Cause: " + MarketplaceMyDataBase.getLastError();
             throw new SQLException("Connexion MySQL indisponible." + details);
         }
         return connection;
@@ -1330,8 +1377,8 @@ public class MarketplaceController {
         return value == null ? "" : value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
-    private Optional<Vente> openVenteDialog(Vente existing) {
-        Dialog<Vente> dialog = new Dialog<>();
+    private Optional<MarketplaceVente> openVenteDialog(MarketplaceVente existing) {
+        Dialog<MarketplaceVente> dialog = new Dialog<>();
         styleDialog(dialog.getDialogPane());
         dialog.setTitle(existing == null ? "Vendre un article" : "Modifier l'article");
         dialog.setHeaderText(existing == null ? "Nouvel article a vendre" : "Mise a jour de l'article");
@@ -1433,19 +1480,19 @@ public class MarketplaceController {
                 int quantite = parseInt(quantiteField.getText());
                 String imagePath = safeText(selectedImagePath[0], null);
                 if (existing == null) {
-                    return new Vente(titreField.getText(), descriptionArea.getText(), prix, categorieField.getText(), artisteField.getText(), quantite, imagePath);
+                    return new MarketplaceVente(titreField.getText(), descriptionArea.getText(), prix, categorieField.getText(), artisteField.getText(), quantite, imagePath);
                 }
-                return new Vente(existing.getId(), titreField.getText(), descriptionArea.getText(), prix, categorieField.getText(), artisteField.getText(), quantite, imagePath);
+                return new MarketplaceVente(existing.getId(), titreField.getText(), descriptionArea.getText(), prix, categorieField.getText(), artisteField.getText(), quantite, imagePath);
             }
             return null;
         });
         return dialog.showAndWait();
     }
 
-    private Optional<Achat> openAchatDialog(Achat existing) {
-        Dialog<Achat> dialog = new Dialog<>();
+    private Optional<MarketplaceAchat> openAchatDialog(MarketplaceAchat existing) {
+        Dialog<MarketplaceAchat> dialog = new Dialog<>();
         styleDialog(dialog.getDialogPane());
-        dialog.setTitle(existing == null ? "Ajouter Achat" : "Modifier Achat");
+        dialog.setTitle(existing == null ? "Ajouter MarketplaceAchat" : "Modifier MarketplaceAchat");
         dialog.setHeaderText(existing == null ? "Nouvel achat" : "Edition de l'achat");
         ButtonType saveType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveType, ButtonType.CANCEL);
@@ -1473,7 +1520,7 @@ public class MarketplaceController {
         addRow(form, 0, "Nom Oeuvre", oeuvreField);
         addRow(form, 1, "Nom Acheteur", acheteurField);
         addRow(form, 2, "Prix", prixField);
-        addRow(form, 3, "Date Achat", datePicker);
+        addRow(form, 3, "Date MarketplaceAchat", datePicker);
         addRow(form, 4, "Statut", statutComboBox);
         dialog.getDialogPane().setContent(form);
 
@@ -1490,9 +1537,9 @@ public class MarketplaceController {
                 Date date = parseDate(datePicker.getValue());
                 String statut = safeText(statutComboBox.getValue(), "En attente");
                 if (existing == null) {
-                    return new Achat(oeuvreField.getText(), acheteurField.getText(), prix, date, statut);
+                    return new MarketplaceAchat(oeuvreField.getText(), acheteurField.getText(), prix, date, statut);
                 }
-                return new Achat(existing.getId(), oeuvreField.getText(), acheteurField.getText(), prix, date, statut);
+                return new MarketplaceAchat(existing.getId(), oeuvreField.getText(), acheteurField.getText(), prix, date, statut);
             }
             return null;
         });
@@ -1700,7 +1747,7 @@ public class MarketplaceController {
         return String.format("%.2f DT", price);
     }
 
-    private String stockText(Vente vente) {
+    private String stockText(MarketplaceVente vente) {
         if (vente.getQuantite() <= 0) {
             return "Article epuise";
         }
@@ -1709,10 +1756,10 @@ public class MarketplaceController {
 
     private void styleDialog(DialogPane pane) {
         pane.getStyleClass().add("dialog-theme");
-        pane.getStylesheets().add(getClass().getResource("/styles/scene-builder.css").toExternalForm());
+        pane.getStylesheets().add(getClass().getResource("/styles/artevia-marketplace.css").toExternalForm());
     }
 
-    private Node createArtworkPreview(Vente vente, double width, double height, String styleClass) {
+    private Node createArtworkPreview(MarketplaceVente vente, double width, double height, String styleClass) {
         ImageView imageView = new ImageView(createPreviewImage(vente.getImagePath(), vente.getTitre(), vente.getCategorie(), (int) width, (int) height));
         imageView.setFitWidth(width);
         imageView.setFitHeight(height);
@@ -1798,9 +1845,9 @@ public class MarketplaceController {
         return new Color[]{Color.web("#334155"), Color.web("#d3e3f3"), Color.web("#e85d48")};
     }
 
-    private class VenteAdminCell extends ListCell<Vente> {
+    private class VenteAdminCell extends ListCell<MarketplaceVente> {
         @Override
-        protected void updateItem(Vente vente, boolean empty) {
+        protected void updateItem(MarketplaceVente vente, boolean empty) {
             super.updateItem(vente, empty);
             if (empty || vente == null) {
                 setGraphic(null);
@@ -1834,9 +1881,9 @@ public class MarketplaceController {
         }
     }
 
-    private class CartCell extends ListCell<Vente> {
+    private class CartCell extends ListCell<MarketplaceVente> {
         @Override
-        protected void updateItem(Vente vente, boolean empty) {
+        protected void updateItem(MarketplaceVente vente, boolean empty) {
             super.updateItem(vente, empty);
             if (empty || vente == null) {
                 setGraphic(null);
@@ -1866,9 +1913,9 @@ public class MarketplaceController {
         }
     }
 
-    private class AchatAdminCell extends ListCell<Achat> {
+    private class AchatAdminCell extends ListCell<MarketplaceAchat> {
         @Override
-        protected void updateItem(Achat achat, boolean empty) {
+        protected void updateItem(MarketplaceAchat achat, boolean empty) {
             super.updateItem(achat, empty);
             if (empty || achat == null) {
                 setGraphic(null);

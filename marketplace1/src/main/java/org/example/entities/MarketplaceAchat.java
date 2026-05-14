@@ -1,7 +1,7 @@
 package org.example.entities;
 import java.sql.Date;
 
-public class Achat {
+public class MarketplaceAchat {
 
     private int id;
     private String nomOeuvre;
@@ -10,14 +10,14 @@ public class Achat {
     private Date dateAchat;
     private String statut;
 
-    public Achat() {
+    public MarketplaceAchat() {
     }
 
-    public Achat(String nomOeuvre, String nomAcheteur, double prix, Date dateAchat) {
+    public MarketplaceAchat(String nomOeuvre, String nomAcheteur, double prix, Date dateAchat) {
         this(nomOeuvre, nomAcheteur, prix, dateAchat, "En attente");
     }
 
-    public Achat(String nomOeuvre, String nomAcheteur, double prix, Date dateAchat, String statut) {
+    public MarketplaceAchat(String nomOeuvre, String nomAcheteur, double prix, Date dateAchat, String statut) {
         this.nomOeuvre = nomOeuvre;
         this.nomAcheteur = nomAcheteur;
         this.prix = prix;
@@ -25,11 +25,11 @@ public class Achat {
         this.statut = statut;
     }
 
-    public Achat(int id, String nomOeuvre, String nomAcheteur, double prix, Date dateAchat) {
+    public MarketplaceAchat(int id, String nomOeuvre, String nomAcheteur, double prix, Date dateAchat) {
         this(id, nomOeuvre, nomAcheteur, prix, dateAchat, "En attente");
     }
 
-    public Achat(int id, String nomOeuvre, String nomAcheteur, double prix, Date dateAchat, String statut) {
+    public MarketplaceAchat(int id, String nomOeuvre, String nomAcheteur, double prix, Date dateAchat, String statut) {
         this.id = id;
         this.nomOeuvre = nomOeuvre;
         this.nomAcheteur = nomAcheteur;
@@ -89,7 +89,7 @@ public class Achat {
 
     @Override
     public String toString() {
-        return "Achat{" +
+        return "MarketplaceAchat{" +
                 "id=" + id +
                 ", nomOeuvre='" + nomOeuvre + '\'' +
                 ", nomAcheteur='" + nomAcheteur + '\'' +

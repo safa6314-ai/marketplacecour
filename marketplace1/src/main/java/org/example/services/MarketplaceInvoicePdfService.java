@@ -1,14 +1,14 @@
 package org.example.services;
 
-import org.example.entities.Achat;
+import org.example.entities.MarketplaceAchat;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class InvoicePdfService {
-    public Path generateInvoice(Achat achat) throws IOException {
+public class MarketplaceInvoicePdfService {
+    public Path generateInvoice(MarketplaceAchat achat) throws IOException {
         Path directory = Path.of("target", "invoices");
         Files.createDirectories(directory);
         Path output = directory.resolve("facture-achat-" + achat.getId() + ".pdf");
@@ -16,9 +16,9 @@ public class InvoicePdfService {
         return output.toAbsolutePath();
     }
 
-    private String pdfContent(Achat achat) {
+    private String pdfContent(MarketplaceAchat achat) {
         String lines = "BT\n/F1 18 Tf\n50 770 Td\n(Facture Marketplace Artevia) Tj\n" +
-                "/F1 11 Tf\n0 -40 Td\n(Achat ID: " + esc(String.valueOf(achat.getId())) + ") Tj\n" +
+                "/F1 11 Tf\n0 -40 Td\n(MarketplaceAchat ID: " + esc(String.valueOf(achat.getId())) + ") Tj\n" +
                 "0 -20 Td\n(Oeuvre: " + esc(achat.getNomOeuvre()) + ") Tj\n" +
                 "0 -20 Td\n(Client: " + esc(achat.getNomAcheteur()) + ") Tj\n" +
                 "0 -20 Td\n(Date: " + esc(String.valueOf(achat.getDateAchat())) + ") Tj\n" +

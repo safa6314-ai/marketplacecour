@@ -1,7 +1,7 @@
 package org.example.services;
 
-import org.example.entities.Achat;
-import org.example.utils.MyDataBase;
+import org.example.entities.MarketplaceAchat;
+import org.example.utils.MarketplaceMyDataBase;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -12,18 +12,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceAchat {
+public class MarketplaceServiceAchat {
 
     private final Connection connection;
 
-    public ServiceAchat() {
-        connection = MyDataBase.getInstance().getConnection();
+    public MarketplaceServiceAchat() {
+        connection = MarketplaceMyDataBase.getInstance().getConnection();
         ensureStatutColumn();
     }
 
     private Connection requireConnection() throws SQLException {
         if (connection == null) {
-            String details = MyDataBase.getLastError() == null ? "" : " Cause: " + MyDataBase.getLastError();
+            String details = MarketplaceMyDataBase.getLastError() == null ? "" : " Cause: " + MarketplaceMyDataBase.getLastError();
             throw new SQLException("Connexion MySQL indisponible. Verifiez XAMPP et la dependance mysql-connector-j." + details);
         }
         return connection;
@@ -55,7 +55,7 @@ public class ServiceAchat {
         }
     }
 
-    public void ajouter(Achat a) throws SQLException {
+    public void ajouter(MarketplaceAchat a) throws SQLException {
         String req = "INSERT INTO achat (nom_oeuvre, nom_acheteur, prix, date_achat, statut) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement ps = requireConnection().prepareStatement(req);
         ps.setString(1, a.getNomOeuvre());
@@ -66,7 +66,7 @@ public class ServiceAchat {
         ps.executeUpdate();
     }
 
-    public void modifier(Achat a) throws SQLException {
+    public void modifier(MarketplaceAchat a) throws SQLException {
         String req = "UPDATE achat SET nom_oeuvre = ?, nom_acheteur = ?, prix = ?, date_achat = ?, statut = ? WHERE id = ?";
         PreparedStatement ps = requireConnection().prepareStatement(req);
         ps.setString(1, a.getNomOeuvre());
@@ -101,14 +101,14 @@ public class ServiceAchat {
         ps.executeUpdate();
     }
 
-    public List<Achat> afficher() throws SQLException {
-        List<Achat> list = new ArrayList<>();
+    public List<MarketplaceAchat> afficher() throws SQLException {
+        List<MarketplaceAchat> list = new ArrayList<>();
         String req = "SELECT * FROM achat";
         Statement st = requireConnection().createStatement();
         ResultSet rs = st.executeQuery(req);
 
         while (rs.next()) {
-            Achat a = new Achat();
+            MarketplaceAchat a = new MarketplaceAchat();
             a.setId(rs.getInt("id"));
             a.setNomOeuvre(rs.getString("nom_oeuvre"));
             a.setNomAcheteur(rs.getString("nom_acheteur"));

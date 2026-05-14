@@ -1,6 +1,6 @@
 package org.example.services;
 
-import org.example.entities.Vente;
+import org.example.entities.MarketplaceVente;
 
 import java.io.IOException;
 import java.net.URI;
@@ -10,12 +10,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-public class MetMuseumApiService {
+public class MarketplaceMetMuseumApiService {
     private static final String BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1";
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    public Vente importFirstArtwork(String query) throws IOException, InterruptedException {
+    public MarketplaceVente importFirstArtwork(String query) throws IOException, InterruptedException {
         String encodedQuery = URLEncoder.encode(query == null || query.isBlank() ? "painting" : query, StandardCharsets.UTF_8);
         String searchJson = get(BASE_URL + "/search?hasImages=true&q=" + encodedQuery);
         int objectId = firstObjectId(searchJson);
@@ -31,7 +31,7 @@ public class MetMuseumApiService {
         String date = value(objectJson, "objectDate", "");
         double price = calculatePrice(objectId, title, artist, category, date);
         String description = "Import MET Museum API: " + (date.isBlank() ? "oeuvre referencee" : date) + ".";
-        return new Vente(title, description, price, category, artist, 1, image.isBlank() ? null : image);
+        return new MarketplaceVente(title, description, price, category, artist, 1, image.isBlank() ? null : image);
     }
 
     private String get(String url) throws IOException, InterruptedException {

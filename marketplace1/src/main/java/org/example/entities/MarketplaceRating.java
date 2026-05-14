@@ -2,17 +2,17 @@ package org.example.entities;
 
 import java.sql.Date;
 
-public class Rating {
+public class MarketplaceRating {
     private int idRating;
     private int idVente;
     private String customerId;
     private int note;
     private Date dateRating;
 
-    public Rating() {
+    public MarketplaceRating() {
     }
 
-    public Rating(int idVente, String customerId, int note, Date dateRating) {
+    public MarketplaceRating(int idVente, String customerId, int note, Date dateRating) {
         this.idVente = idVente;
         this.customerId = customerId;
         this.note = note;

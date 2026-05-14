@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="16" styleClass="root-pane" stylesheets="@../../styles/scene-builder.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.MarketplaceController">
+<VBox spacing="16" styleClass="root-pane" stylesheets="@../../styles/artevia-marketplace.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.ArteviaMarketplaceController">
     <padding>
         <Insets bottom="18" left="18" right="18" top="18" />
     </padding>
@@ -145,8 +145,9 @@
                             <Label fx:id="currencyConversionLabel" styleClass="payment-status" text="Conversion devise non lancee" HBox.hgrow="ALWAYS" />
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Button onAction="#onPayWithCard" styleClass="card-payment-btn" text="Payer par carte" />
-                            <Label fx:id="cardPaymentStatusLabel" styleClass="payment-status" text="Paiement carte non lance" HBox.hgrow="ALWAYS" />
+                            <Button onAction="#onPayWithStripe" styleClass="card-payment-btn" text="Payer avec Stripe" />
+                            <Button onAction="#onVerifyStripePayment" styleClass="secondary-btn" text="Verifier Stripe" />
+                            <Label fx:id="stripePaymentStatusLabel" styleClass="payment-status" text="Paiement Stripe non lance" HBox.hgrow="ALWAYS" />
                         </HBox>
                     </VBox>
                 </VBox>

@@ -1,5 +1,5 @@
 package org.example.entities;
-public class Vente {
+public class MarketplaceVente {
 
     private int id;
     private String titre;
@@ -10,18 +10,18 @@ public class Vente {
     private int quantite;
     private String imagePath;
 
-    public Vente() {
+    public MarketplaceVente() {
     }
 
-    public Vente(String titre, String description, double prix, String categorie, String nomArtiste) {
+    public MarketplaceVente(String titre, String description, double prix, String categorie, String nomArtiste) {
         this(titre, description, prix, categorie, nomArtiste, 1);
     }
 
-    public Vente(String titre, String description, double prix, String categorie, String nomArtiste, int quantite) {
+    public MarketplaceVente(String titre, String description, double prix, String categorie, String nomArtiste, int quantite) {
         this(titre, description, prix, categorie, nomArtiste, quantite, null);
     }
 
-    public Vente(String titre, String description, double prix, String categorie, String nomArtiste, int quantite, String imagePath) {
+    public MarketplaceVente(String titre, String description, double prix, String categorie, String nomArtiste, int quantite, String imagePath) {
         this.titre = titre;
         this.description = description;
         this.prix = prix;
@@ -31,15 +31,15 @@ public class Vente {
         this.imagePath = imagePath;
     }
 
-    public Vente(int id, String titre, String description, double prix, String categorie, String nomArtiste) {
+    public MarketplaceVente(int id, String titre, String description, double prix, String categorie, String nomArtiste) {
         this(id, titre, description, prix, categorie, nomArtiste, 1);
     }
 
-    public Vente(int id, String titre, String description, double prix, String categorie, String nomArtiste, int quantite) {
+    public MarketplaceVente(int id, String titre, String description, double prix, String categorie, String nomArtiste, int quantite) {
         this(id, titre, description, prix, categorie, nomArtiste, quantite, null);
     }
 
-    public Vente(int id, String titre, String description, double prix, String categorie, String nomArtiste, int quantite, String imagePath) {
+    public MarketplaceVente(int id, String titre, String description, double prix, String categorie, String nomArtiste, int quantite, String imagePath) {
         this.id = id;
         this.titre = titre;
         this.description = description;
@@ -117,7 +117,7 @@ public class Vente {
 
     @Override
     public String toString() {
-        return "Vente{" +
+        return "MarketplaceVente{" +
                 "id=" + id +
                 ", titre='" + titre + '\'' +
                 ", description='" + description + '\'' +
