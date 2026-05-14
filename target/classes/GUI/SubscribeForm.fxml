@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefWidth="480.0" styleClass="client-root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SubscribeFormController">
+   <children>
+      <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="32.0" left="32.0" right="32.0" top="32.0" />
+         </padding>
+         <children>
+
+            <!-- Header -->
+            <VBox spacing="4.0">
+               <children>
+                  <Label text="Complete your Subscription" styleClass="client-section-title" />
+                  <Label text="Please verify the details below before confirming." styleClass="muted-label" />
+               </children>
+            </VBox>
+
+            <!-- Plan Summary Card -->
+            <VBox styleClass="client-form-panel" spacing="8.0" style="-fx-padding: 18;">
+               <children>
+                  <Label text="Selected Plan" styleClass="plan-badge" />
+                  <Label fx:id="planNameLabel" text="Plan Name" styleClass="client-card-title" style="-fx-font-size: 18px;" />
+                  <HBox spacing="10.0" alignment="CENTER_LEFT">
+                     <children>
+                        <Label fx:id="planPriceLabel" text="0.00 DT" styleClass="client-card-price" style="-fx-font-size: 18px;" />
+                        <Separator orientation="VERTICAL" prefHeight="18.0" />
+                        <Label fx:id="planDurationLabel" text="1 Month" styleClass="client-duration-label" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <!-- Input Fields -->
+            <VBox spacing="16.0">
+               <children>
+                  <VBox spacing="6.0">
+                     <children>
+                        <Label text="Your Full Name" styleClass="form-field-label" />
+                        <TextField fx:id="clientNameField" promptText="e.g. John Doe" />
+                        <Label fx:id="errorLabel" styleClass="error-label" visible="false" managed="false"/>
+                     </children>
+                  </VBox>
+
+                  <HBox spacing="16.0">
+                     <children>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="Start Date" styleClass="form-field-label" />
+                              <TextField fx:id="startDateField" editable="false" styleClass="readonly-date-field, start-date-field" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="End Date" styleClass="form-field-label" />
+                              <TextField fx:id="endDateField" editable="false" styleClass="readonly-date-field, end-date-field" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <!-- Buttons -->
+            <Pane styleClass="card-divider">
+               <VBox.margin><Insets top="4.0" bottom="4.0" /></VBox.margin>
+            </Pane>
+            <HBox alignment="CENTER_RIGHT" spacing="14.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleCancel" styleClass="client-btn-secondary" text="Cancel" />
+                  <Button mnemonicParsing="false" onAction="#handleConfirm" styleClass="client-btn-primary" text="✦  Confirm &amp; Pay" />
+               </children>
+            </HBox>
+
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
