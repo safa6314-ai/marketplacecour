@@ -136,8 +136,23 @@ public class AdminDashboardController {
     }
 
     @FXML
-    private void showSubscriptions() {
-        loadPage("/GUI/AdminDashboard.fxml", btnSubscriptions);
+    private void showSubscriptions(ActionEvent event) {
+        if (SessionManager.getCurrentUser() == null) {
+            redirectToLogin();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/Admin.fxml"));
+            Parent view = loader.load();
+            centerContent.getChildren().clear();
+            centerContent.getChildren().add(view);
+            setActiveButton(btnSubscriptions);
+            playFade(view);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur navigation", e.getMessage());
+        }
     }
 
     @FXML
