@@ -1,27 +1,30 @@
 package Utils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class MyBD {
-    String url = "jdbc:mariadb://localhost:3306/user";
-    String user = "root";
-    String password = "";
-    private Connection conn;
 
+    private static final String URL = "jdbc:mysql://localhost:3306/artevia";
+    private static final String User = "root";
+    private static final String PASSWORD = "";
+
+    private Connection conn;
     private static MyBD instance;
 
     private MyBD() {
         try {
-            conn = DriverManager.getConnection(url, user, password);
-            System.out.println("Connection établie !!");
+            conn = DriverManager.getConnection(URL, User, PASSWORD);
+            System.out.println("Connexion Ã©tablie !");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erreur connexion BD : " + e.getMessage());
         }
     }
 
     public static MyBD getInstance() {
         if (instance == null) {
-            return instance = new MyBD();
+            instance = new MyBD();
         }
         return instance;
     }
@@ -29,8 +32,6 @@ public class MyBD {
     public Connection getConn() {
         return conn;
     }
-
-    public void setConn(Connection conn) {
-        this.conn = conn;
-    }
 }
+
+

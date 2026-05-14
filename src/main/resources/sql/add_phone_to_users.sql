@@ -1,0 +1,6 @@
+ALTER TABLE users
+    ADD COLUMN phone VARCHAR(20) DEFAULT NULL,
+    ADD COLUMN phone_verified BOOLEAN NOT NULL DEFAULT FALSE;
+
+CREATE UNIQUE INDEX idx_users_phone ON users(phone);
+

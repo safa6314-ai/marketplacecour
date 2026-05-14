@@ -12,6 +12,9 @@ public class User {
     private String last_name;
     private String role;
     private String status;
+    private String profile_image;
+    private String phone;
+    private boolean phone_verified;
     private Timestamp created_at;
 
     public User() {}
@@ -36,6 +39,19 @@ public class User {
         this.last_name = last_name;
         this.role = role;
         this.status = status;
+    }
+
+    public User(String username, String email, String password, String first_name, String last_name,
+                String role, String status, String phone, boolean phone_verified) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.role = role;
+        this.status = status;
+        this.phone = phone;
+        this.phone_verified = phone_verified;
     }
 
     public int getId() {
@@ -102,6 +118,30 @@ public class User {
         this.status = status;
     }
 
+    public String getProfile_image() {
+        return profile_image;
+    }
+
+    public void setProfile_image(String profile_image) {
+        this.profile_image = profile_image;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public boolean isPhone_verified() {
+        return phone_verified;
+    }
+
+    public void setPhone_verified(boolean phone_verified) {
+        this.phone_verified = phone_verified;
+    }
+
     public Timestamp getCreated_at() {
         return created_at;
     }
@@ -121,7 +161,11 @@ public class User {
                 ", last_name='" + last_name + '\'' +
                 ", role='" + role + '\'' +
                 ", status='" + status + '\'' +
+                ", profile_image='" + profile_image + '\'' +
+                ", phone='" + phone + '\'' +
+                ", phone_verified=" + phone_verified +
                 ", created_at=" + created_at +
                 '}';
     }
 }
+

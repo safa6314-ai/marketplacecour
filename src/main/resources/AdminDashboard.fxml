@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane prefWidth="1100.0"
+            prefHeight="650.0"
+            minWidth="1100.0"
+            minHeight="650.0"
+            stylesheets="@admin.css"
+            styleClass="admin-shell"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AdminDashboardController">
+
+    <left>
+        <VBox prefWidth="260.0"
+              minWidth="260.0"
+              maxWidth="260.0"
+              spacing="12.0"
+              styleClass="sidebar">
+            <HBox spacing="12.0"
+                  styleClass="brand-box">
+                <Label text="A"
+                       styleClass="brand-mark"/>
+                <VBox spacing="0.0">
+                    <Label text="Artevia"
+                           styleClass="brand-title"/>
+                    <Label text="Admin Workspace"
+                           styleClass="brand-subtitle"/>
+                </VBox>
+            </HBox>
+
+            <Label text="MENU"
+                   styleClass="sidebar-section"/>
+
+            <Button fx:id="btnUsers"
+                    text="Gestion des membres"
+                    onAction="#showUsers"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-users"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Button fx:id="btnDashboard"
+                    text="Statistique"
+                    onAction="#showDashboard"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-chart-line"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Button fx:id="btnProfile"
+                    text="Profil utilisateur"
+                    onAction="#showProfile"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-user-cog"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="Logout"
+                    onAction="#logout"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-logout-button">
+                <graphic>
+                    <FontIcon iconLiteral="fas-sign-out-alt"
+                              iconSize="16"/>
+                </graphic>
+            </Button>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox styleClass="main-area">
+            <HBox alignment="CENTER_LEFT"
+                  spacing="14.0"
+                  styleClass="topbar">
+                <VBox spacing="2.0"
+                      HBox.hgrow="ALWAYS">
+                    <Label text="Admin Panel"
+                           styleClass="topbar-title"/>
+                    <Label text="Manage members, statistics and profile"
+                           styleClass="topbar-subtitle"/>
+                </VBox>
+
+                <Button styleClass="topbar-icon-button">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-bell"
+                                  iconSize="16"/>
+                    </graphic>
+                </Button>
+
+                <Button styleClass="topbar-icon-button">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-cog"
+                                  iconSize="16"/>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="btnThemeToggle"
+                        onAction="#toggleTheme"
+                        styleClass="theme-toggle-button">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-moon"
+                                  iconSize="16"/>
+                    </graphic>
+                </Button>
+
+                <HBox fx:id="adminProfileBox"
+                      alignment="CENTER_RIGHT"
+                      spacing="10.0"
+                      onMouseClicked="#showProfileFromTopbar"
+                      styleClass="topbar-profile-box">
+                    <ImageView fx:id="ivAdminPhoto"
+                               fitHeight="42.0"
+                               fitWidth="42.0"
+                               preserveRatio="true"/>
+                    <VBox spacing="1.0">
+                        <Label fx:id="lblAdminName"
+                               text="Admin"
+                               styleClass="topbar-name"/>
+                        <Label text="Administrator"
+                               styleClass="topbar-role"/>
+                    </VBox>
+                </HBox>
+            </HBox>
+
+            <StackPane fx:id="centerContent"
+                       VBox.vgrow="ALWAYS"
+                       styleClass="content-host"/>
+        </VBox>
+    </center>
+</BorderPane>
