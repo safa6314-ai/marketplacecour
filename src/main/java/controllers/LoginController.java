@@ -3,6 +3,7 @@ package controllers;
 import Entites.User;
 import Entites.OAuthUser;
 import Services.OAuthService;
+import Services.SecurityAlertService;
 import Services.UserCRUD;
 import Utils.SessionManager;
 import Utils.CaptchaService;
@@ -26,12 +27,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.prefs.Preferences;
 
 public class LoginController {
 
     private static final double APP_WIDTH = 1100;
     private static final double APP_HEIGHT = 650;
+    private static final int MAX_FAILED_ATTEMPTS = 3;
+    private static final int LOCK_MINUTES = 5;
 
     @FXML
     private TextField tfEmail;
@@ -68,6 +73,7 @@ public class LoginController {
 
     private final UserCRUD UserCRUD = new UserCRUD();
     private final OAuthService OAuthService = new OAuthService();
+    private final SecurityAlertService SecurityAlertService = new SecurityAlertService();
     private final CaptchaService CaptchaService = new CaptchaService();
     private final Preferences preferences = Preferences.userNodeForPackage(LoginController.class);
     private boolean passwordVisible = false;
@@ -103,11 +109,19 @@ public class LoginController {
         }
 
         try {
+            if (UserCRUD.isUserLocked(email)) {
+                showAlert(
+                        Alert.AlertType.WARNING,
+                        "Connexion temporairement bloquee",
+                        buildLockedMessage(email)
+                );
+                return;
+            }
+
             User User = UserCRUD.login(email, password);
 
             if (User == null) {
-                registerFailedAttempt();
-                showAlert(Alert.AlertType.ERROR, "Connexion echouee", "Email ou mot de passe incorrect.");
+                handleFailedPassword(email);
                 return;
             }
 
@@ -127,6 +141,7 @@ public class LoginController {
             }
 
             resetSecurityState();
+            UserCRUD.resetFailedAttempts(email);
             saveRememberMe(email);
             SessionManager.setCurrentUser(User);
             openAdminDashboard(event);
@@ -134,6 +149,53 @@ public class LoginController {
             showAlert(Alert.AlertType.ERROR, "Erreur base de donnees", e.getMessage());
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur navigation", e.getMessage());
+        }
+    }
+
+    private void handleFailedPassword(String email) {
+        registerFailedAttempt();
+
+        try {
+            int attempts = UserCRUD.incrementFailedAttempts(email);
+
+            if (attempts >= MAX_FAILED_ATTEMPTS) {
+                showAlert(
+                        Alert.AlertType.WARNING,
+                        "Alerte de securite",
+                        "Pour des raisons de securite, une photo sera capturee apres plusieurs tentatives echouees."
+                );
+
+                SecurityAlertService.triggerFailedLoginAlert(email);
+                UserCRUD.lockUserUntil(email, LocalDateTime.now().plusMinutes(LOCK_MINUTES));
+
+                showAlert(
+                        Alert.AlertType.ERROR,
+                        "Connexion bloquee",
+                        "Trop de tentatives echouees. Le login est bloque pendant 5 minutes."
+                );
+                return;
+            }
+        } catch (SQLException e) {
+            System.err.println("[SECURITY] Tentative echouee non enregistree : " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.err.println("[SECURITY] Alerte login ignoree : " + e.getMessage());
+        }
+
+        showAlert(Alert.AlertType.ERROR, "Connexion echouee", "Email ou mot de passe incorrect.");
+    }
+
+    private String buildLockedMessage(String email) {
+        try {
+            LocalDateTime lockUntil = UserCRUD.getLockUntil(email);
+
+            if (lockUntil == null) {
+                return "Votre compte est temporairement bloque. Reessayez dans quelques minutes.";
+            }
+
+            long minutes = Math.max(1, Duration.between(LocalDateTime.now(), lockUntil).toMinutes() + 1);
+            return "Votre compte est temporairement bloque. Reessayez dans " + minutes + " minute(s).";
+        } catch (SQLException e) {
+            return "Votre compte est temporairement bloque. Reessayez dans quelques minutes.";
         }
     }
 

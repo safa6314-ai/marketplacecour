@@ -19,6 +19,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 public class AdminProfileController {
 
@@ -148,7 +149,9 @@ public class AdminProfileController {
                 File file = new File(imagePath);
 
                 if (file.exists()) {
-                    return new Image(file.toURI().toString());
+                    try (FileInputStream inputStream = new FileInputStream(file)) {
+                        return new Image(inputStream);
+                    }
                 }
             }
         } catch (Exception e) {

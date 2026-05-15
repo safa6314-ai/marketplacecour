@@ -39,26 +39,6 @@ CREATE TABLE `audit_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
 COLLATE=utf8mb4_general_ci;
 
--- Table avis
-CREATE TABLE `avis` (
-  `id` int(11) NOT NULL,
-  `chapitre_id` int(11) NOT NULL,
-  `commentaire` text DEFAULT NULL,
-  `note` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
-COLLATE=utf8mb4_general_ci;
-
--- Table chapitres
-CREATE TABLE `chapitres` (
-  `id` int(11) NOT NULL,
-  `titre` varchar(255) NOT NULL,
-  `contenu` text DEFAULT NULL,
-  `ordre` int(11) DEFAULT NULL,
-  `cours_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
-COLLATE=utf8mb4_general_ci;
-
 -- Table commentaire
 CREATE TABLE `commentaire` (
   `id` int(11) NOT NULL,
@@ -66,17 +46,6 @@ CREATE TABLE `commentaire` (
   `date_creation` timestamp NOT NULL 
     DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `post_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
-COLLATE=utf8mb4_general_ci;
-
--- Table cours
-CREATE TABLE `cours` (
-  `id` int(11) NOT NULL,
-  `titre` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `prix` double DEFAULT 0,
-  `categorie` varchar(100) DEFAULT NULL,
-  `niveau` varchar(50) DEFAULT 'Debutant'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
 COLLATE=utf8mb4_general_ci;
 
@@ -157,9 +126,6 @@ COLLATE=utf8mb4_general_ci;
 ALTER TABLE `abonnement` ADD PRIMARY KEY (`id_abonnement`);
 ALTER TABLE `achat` ADD PRIMARY KEY (`id`);
 ALTER TABLE `audit_logs` ADD PRIMARY KEY (`id`);
-ALTER TABLE `avis` ADD PRIMARY KEY (`id`);
-ALTER TABLE `chapitres` ADD PRIMARY KEY (`id`);
-ALTER TABLE `cours` ADD PRIMARY KEY (`id`);
 ALTER TABLE `evenement` ADD PRIMARY KEY (`id_event`);
 ALTER TABLE `flouci_payments` 
   ADD PRIMARY KEY (`id_payment`),

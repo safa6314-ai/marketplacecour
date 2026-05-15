@@ -66,6 +66,12 @@
     -fx-icon-color: #ffffff;
 }
 
+.sidebar-button-label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
 .sidebar-nav-button:hover {
     -fx-background-color: rgba(255, 255, 255, 0.16);
     -fx-text-fill: #ffffff;
@@ -83,6 +89,42 @@
 
 .sidebar-nav-button-active .ikonli-font-icon {
     -fx-icon-color: #5b2b91;
+}
+
+.sidebar-nav-button-active .sidebar-button-label {
+    -fx-text-fill: #5b2b91;
+}
+
+.sidebar-submenu {
+    -fx-padding: 0 0 0 28px;
+}
+
+.sidebar-submenu-button {
+    -fx-pref-height: 38px;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.82);
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-alignment: center-left;
+    -fx-padding: 0 12px;
+    -fx-graphic-text-gap: 9px;
+    -fx-cursor: hand;
+}
+
+.sidebar-submenu-button .ikonli-font-icon {
+    -fx-icon-color: rgba(255, 255, 255, 0.82);
+}
+
+.sidebar-submenu-button:hover,
+.sidebar-submenu-button-active {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+    -fx-text-fill: #ffffff;
+}
+
+.sidebar-submenu-button-active .ikonli-font-icon {
+    -fx-icon-color: #ffffff;
 }
 
 .sidebar-logout-button {

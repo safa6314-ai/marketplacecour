@@ -86,11 +86,7 @@
                            styleClass="welcome-role-pill"/>
                     <Label text="ARTIST"
                            styleClass="welcome-role-pill"/>
-                    <Label text="TRAINER"
-                           styleClass="welcome-role-pill"/>
                     <Label text="BUYER"
-                           styleClass="welcome-role-pill"/>
-                    <Label text="ORGANIZER"
                            styleClass="welcome-role-pill"/>
                 </HBox>
             </VBox>
@@ -115,42 +111,6 @@
                         <FontIcon iconLiteral="fas-store"
                                   iconSize="22"/>
                         <Label text="Marketplace"/>
-                    </VBox>
-                    <VBox GridPane.columnIndex="0"
-                          GridPane.rowIndex="1"
-                          styleClass="welcome-module-card">
-                        <FontIcon iconLiteral="fas-graduation-cap"
-                                  iconSize="22"/>
-                        <Label text="Courses"/>
-                    </VBox>
-                    <VBox GridPane.columnIndex="1"
-                          GridPane.rowIndex="1"
-                          styleClass="welcome-module-card">
-                        <FontIcon iconLiteral="fas-comments"
-                                  iconSize="22"/>
-                        <Label text="Forum"/>
-                    </VBox>
-                    <VBox GridPane.columnIndex="0"
-                          GridPane.rowIndex="2"
-                          styleClass="welcome-module-card">
-                        <FontIcon iconLiteral="fas-credit-card"
-                                  iconSize="22"/>
-                        <Label text="Subscriptions"/>
-                    </VBox>
-                    <VBox GridPane.columnIndex="1"
-                          GridPane.rowIndex="2"
-                          styleClass="welcome-module-card">
-                        <FontIcon iconLiteral="fas-calendar-alt"
-                                  iconSize="22"/>
-                        <Label text="Events"/>
-                    </VBox>
-                    <VBox GridPane.columnIndex="0"
-                          GridPane.rowIndex="3"
-                          GridPane.columnSpan="2"
-                          styleClass="welcome-module-card-wide">
-                        <FontIcon iconLiteral="fas-question-circle"
-                                  iconSize="22"/>
-                        <Label text="Quiz"/>
                     </VBox>
                 </GridPane>
             </VBox>

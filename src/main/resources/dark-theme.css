@@ -43,6 +43,10 @@
     -fx-icon-color: #d8d3e6;
 }
 
+.admin-shell .sidebar-button-label {
+    -fx-text-fill: #d8d3e6;
+}
+
 .admin-shell .sidebar-nav-button:hover {
     -fx-background-color: rgba(124, 58, 237, 0.14);
     -fx-text-fill: #ffffff;
@@ -57,6 +61,28 @@
 }
 
 .admin-shell .sidebar-nav-button-active .ikonli-font-icon {
+    -fx-icon-color: #c4b5fd;
+}
+
+.admin-shell .sidebar-nav-button-active .sidebar-button-label {
+    -fx-text-fill: #ffffff;
+}
+
+.admin-shell .sidebar-submenu-button {
+    -fx-text-fill: #bfb7d2;
+}
+
+.admin-shell .sidebar-submenu-button .ikonli-font-icon {
+    -fx-icon-color: #bfb7d2;
+}
+
+.admin-shell .sidebar-submenu-button:hover,
+.admin-shell .sidebar-submenu-button-active {
+    -fx-background-color: rgba(124, 58, 237, 0.18);
+    -fx-text-fill: #ffffff;
+}
+
+.admin-shell .sidebar-submenu-button-active .ikonli-font-icon {
     -fx-icon-color: #c4b5fd;
 }
 

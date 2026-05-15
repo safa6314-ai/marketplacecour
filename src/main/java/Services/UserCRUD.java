@@ -6,6 +6,7 @@ import Utils.MyBD;
 import Utils.PasswordUtils;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class UserCRUD implements InterfaceCRUD<User> {
 
     public UserCRUD() {
         conn = MyBD.getInstance().getConn();
+        ensureSecurityColumns();
     }
 
     @Override
@@ -114,6 +116,107 @@ public class UserCRUD implements InterfaceCRUD<User> {
         return null;
     }
 
+    public int incrementFailedAttempts(String email) throws SQLException {
+        if (email == null || email.trim().isEmpty()) {
+            return 0;
+        }
+
+        ensureSecurityColumns();
+        String req = "UPDATE users SET failed_attempts = COALESCE(failed_attempts, 0) + 1 WHERE email = ?";
+
+        try (PreparedStatement pst = conn.prepareStatement(req)) {
+            pst.setString(1, email);
+            pst.executeUpdate();
+        }
+
+        return getFailedAttempts(email);
+    }
+
+    public void resetFailedAttempts(String email) throws SQLException {
+        if (email == null || email.trim().isEmpty()) {
+            return;
+        }
+
+        ensureSecurityColumns();
+        String req = "UPDATE users SET failed_attempts = 0, lock_until = NULL WHERE email = ?";
+
+        try (PreparedStatement pst = conn.prepareStatement(req)) {
+            pst.setString(1, email);
+            pst.executeUpdate();
+        }
+    }
+
+    public int getFailedAttempts(String email) throws SQLException {
+        if (email == null || email.trim().isEmpty()) {
+            return 0;
+        }
+
+        ensureSecurityColumns();
+        String req = "SELECT COALESCE(failed_attempts, 0) FROM users WHERE email = ?";
+
+        try (PreparedStatement pst = conn.prepareStatement(req)) {
+            pst.setString(1, email);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+
+        return 0;
+    }
+
+    public void lockUserUntil(String email, LocalDateTime lockUntil) throws SQLException {
+        if (email == null || email.trim().isEmpty() || lockUntil == null) {
+            return;
+        }
+
+        ensureSecurityColumns();
+        String req = "UPDATE users SET lock_until = ? WHERE email = ?";
+
+        try (PreparedStatement pst = conn.prepareStatement(req)) {
+            pst.setTimestamp(1, Timestamp.valueOf(lockUntil));
+            pst.setString(2, email);
+            pst.executeUpdate();
+        }
+    }
+
+    public boolean isUserLocked(String email) throws SQLException {
+        LocalDateTime lockUntil = getLockUntil(email);
+
+        if (lockUntil == null) {
+            return false;
+        }
+
+        if (LocalDateTime.now().isBefore(lockUntil)) {
+            return true;
+        }
+
+        resetFailedAttempts(email);
+        return false;
+    }
+
+    public LocalDateTime getLockUntil(String email) throws SQLException {
+        if (email == null || email.trim().isEmpty()) {
+            return null;
+        }
+
+        ensureSecurityColumns();
+        String req = "SELECT lock_until FROM users WHERE email = ?";
+
+        try (PreparedStatement pst = conn.prepareStatement(req)) {
+            pst.setString(1, email);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                Timestamp lockUntil = rs.getTimestamp("lock_until");
+                return lockUntil == null ? null : lockUntil.toLocalDateTime();
+            }
+        }
+
+        return null;
+    }
+
     public int countAllUsers() throws SQLException {
         return countByQuery("SELECT COUNT(*) FROM users");
     }
@@ -204,6 +307,33 @@ public class UserCRUD implements InterfaceCRUD<User> {
         }
 
         return 0;
+    }
+
+    private void ensureSecurityColumns() {
+        if (conn == null) {
+            return;
+        }
+
+        try {
+            addColumnIfMissing("users", "failed_attempts", "INT DEFAULT 0");
+            addColumnIfMissing("users", "lock_until", "DATETIME NULL");
+        } catch (SQLException e) {
+            System.err.println("[SECURITY] Colonnes login securise non initialisees : " + e.getMessage());
+        }
+    }
+
+    private void addColumnIfMissing(String tableName, String columnName, String definition) throws SQLException {
+        DatabaseMetaData metaData = conn.getMetaData();
+
+        try (ResultSet rs = metaData.getColumns(conn.getCatalog(), null, tableName, columnName)) {
+            if (rs.next()) {
+                return;
+            }
+        }
+
+        try (Statement st = conn.createStatement()) {
+            st.executeUpdate("ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + definition);
+        }
     }
 
     private String preparePasswordForUpdate(String newPassword, User oldUser) {

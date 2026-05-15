@@ -75,81 +75,50 @@
             </Button>
 
             <Button fx:id="btnMarketplace"
-                    text="Marketplace"
-                    onAction="#showMarketplace"
+                    onAction="#toggleMarketplaceMenu"
                     maxWidth="Infinity"
                     styleClass="sidebar-nav-button">
                 <graphic>
-                    <FontIcon iconLiteral="fas-store"
-                              iconSize="16"/>
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="12.0">
+                        <FontIcon iconLiteral="fas-store"
+                                  iconSize="16"/>
+                        <Label text="Marketplace"
+                               styleClass="sidebar-button-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <FontIcon fx:id="marketplaceArrowIcon"
+                                  iconLiteral="fas-chevron-right"
+                                  iconSize="12"/>
+                    </HBox>
                 </graphic>
             </Button>
 
-            <Button fx:id="btnCourses"
-                    text="Courses"
-                    onAction="#showCourses"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="fas-graduation-cap"
-                              iconSize="16"/>
-                </graphic>
-            </Button>
-
-            <Button fx:id="btnForum"
-                    text="Forum"
-                    onAction="#showForum"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="fas-comments"
-                              iconSize="16"/>
-                </graphic>
-            </Button>
-
-            <Button fx:id="btnSubscriptions"
-                    text="Subscriptions"
-                    onAction="#showSubscriptions"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="fas-credit-card"
-                              iconSize="16"/>
-                </graphic>
-            </Button>
-
-            <Button fx:id="btnEvents"
-                    text="Events"
-                    onAction="#showEvents"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="fas-calendar-alt"
-                              iconSize="16"/>
-                </graphic>
-            </Button>
-
-            <Button fx:id="btnQuiz"
-                    text="Quiz"
-                    onAction="#showQuiz"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="fas-question-circle"
-                              iconSize="16"/>
-                </graphic>
-            </Button>
-
-            <Button fx:id="btnSettings"
-                    text="Settings"
-                    onAction="#showSettings"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="fas-cog"
-                              iconSize="16"/>
-                </graphic>
-            </Button>
+            <VBox fx:id="marketplaceSubmenu"
+                  managed="false"
+                  visible="false"
+                  spacing="6.0"
+                  styleClass="sidebar-submenu">
+                <Button fx:id="btnMarketplaceVente"
+                        text="Vente"
+                        onAction="#openMarketplaceVente"
+                        maxWidth="Infinity"
+                        styleClass="sidebar-submenu-button">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-tags"
+                                  iconSize="13"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnMarketplaceAchat"
+                        text="Achat"
+                        onAction="#openMarketplaceAchat"
+                        maxWidth="Infinity"
+                        styleClass="sidebar-submenu-button">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-shopping-cart"
+                                  iconSize="13"/>
+                    </graphic>
+                </Button>
+            </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
 

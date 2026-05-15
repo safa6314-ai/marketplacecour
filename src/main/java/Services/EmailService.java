@@ -1,14 +1,19 @@
 package Services;
 
 import jakarta.mail.Authenticator;
+import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -41,20 +46,7 @@ public class EmailService {
         logSmtpDebug(config);
         validateConfig(config);
 
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.starttls.required", "true");
-        props.put("mail.smtp.host", config.host);
-        props.put("mail.smtp.port", config.port);
-        props.put("mail.smtp.ssl.trust", config.host);
-
-        Session session = Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(config.username, config.password);
-            }
-        });
+        Session session = createSession(config);
 
         MimeMessage message = new MimeMessage(session);
         message.setFrom(new InternetAddress(config.from));
@@ -65,16 +57,70 @@ public class EmailService {
         Transport.send(message);
     }
 
+    public void sendSecurityAlertWithAttachment(String to, String subject, String body, File attachment)
+            throws MessagingException {
+        SmtpConfig config = loadSmtpConfig();
+        logSmtpDebug(config);
+        validateConfig(config);
+
+        if (isBlank(to)) {
+            throw new MessagingException("ADMIN_SECURITY_EMAIL manquant.");
+        }
+
+        Session session = createSession(config);
+
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(config.from));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+        message.setSubject(subject, "UTF-8");
+
+        BodyPart textPart = new MimeBodyPart();
+        textPart.setContent(body, "text/html; charset=UTF-8");
+
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(textPart);
+
+        if (attachment != null && attachment.exists() && attachment.isFile()) {
+            MimeBodyPart attachmentPart = new MimeBodyPart();
+            try {
+                attachmentPart.attachFile(attachment);
+                multipart.addBodyPart(attachmentPart);
+            } catch (IOException e) {
+                throw new MessagingException("Impossible d'attacher la photo de securite.", e);
+            }
+        }
+
+        message.setContent(multipart);
+        Transport.send(message);
+    }
+
     private SmtpConfig loadSmtpConfig() {
-        String username = getConfig("SMTP_USERNAME", DEFAULT_USERNAME);
+        String username = getConfigWithAliases(DEFAULT_USERNAME, "SMTP_USERNAME", "SMTP_USER");
 
         return new SmtpConfig(
                 getConfig("SMTP_HOST", DEFAULT_HOST),
                 getConfig("SMTP_PORT", DEFAULT_PORT),
                 username,
                 getConfig("SMTP_PASSWORD", ""),
-                getConfig("SMTP_FROM", username)
+                getConfigWithAliases(username, "SMTP_FROM", "SMTP_USER", "SMTP_USERNAME")
         );
+    }
+
+    private Session createSession(SmtpConfig config) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.required", "true");
+        props.put("mail.smtp.host", config.host);
+        props.put("mail.smtp.port", config.port);
+        props.put("mail.smtp.ssl.trust", config.host);
+
+        return Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(config.username, config.password);
+            }
+        });
     }
 
     private void validateConfig(SmtpConfig config) throws MessagingException {
@@ -142,6 +188,21 @@ public class EmailService {
         String propertyValue = appProperties.getProperty(key);
         if (!isBlank(propertyValue)) {
             return propertyValue.trim();
+        }
+
+        return defaultValue;
+    }
+
+    public String getConfigValue(String key, String defaultValue) {
+        return getConfig(key, defaultValue);
+    }
+
+    private String getConfigWithAliases(String defaultValue, String... keys) {
+        for (String key : keys) {
+            String value = getConfig(key, null);
+            if (!isBlank(value)) {
+                return value.trim();
+            }
         }
 
         return defaultValue;

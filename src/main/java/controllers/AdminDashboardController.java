@@ -23,9 +23,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.example.controller.ArteviaMarketplaceController;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -53,22 +55,16 @@ public class AdminDashboardController {
     private Button btnMarketplace;
 
     @FXML
-    private Button btnCourses;
+    private VBox marketplaceSubmenu;
 
     @FXML
-    private Button btnForum;
+    private Button btnMarketplaceVente;
 
     @FXML
-    private Button btnSubscriptions;
+    private Button btnMarketplaceAchat;
 
     @FXML
-    private Button btnEvents;
-
-    @FXML
-    private Button btnQuiz;
-
-    @FXML
-    private Button btnSettings;
+    private FontIcon marketplaceArrowIcon;
 
     @FXML
     private Button btnThemeToggle;
@@ -92,6 +88,7 @@ public class AdminDashboardController {
         }
 
         showConnectedAdmin(admin);
+        SessionManager.addSessionListener(() -> Platform.runLater(this::refreshConnectedAdmin));
         configureSidebarByRole(admin.getRole());
         Platform.runLater(() -> {
             ThemeManager.applySavedTheme(centerContent.getScene());
@@ -121,53 +118,22 @@ public class AdminDashboardController {
     }
 
     @FXML
-    private void showMarketplace() {
-        loadPlaceholder("Marketplace", "Explore and manage marketplace features.", btnMarketplace);
+    private void toggleMarketplaceMenu() {
+        boolean open = !marketplaceSubmenu.isVisible();
+        setMarketplaceMenuOpen(open);
+        setActiveButton(btnMarketplace);
     }
 
     @FXML
-    private void showCourses() {
-        loadPlaceholder("Courses", "Manage courses, lessons and learning content.", btnCourses);
+    private void openMarketplaceVente() {
+        setMarketplaceMenuOpen(true);
+        loadMarketplacePage("/MarketplaceVente.fxml", true, btnMarketplaceVente);
     }
 
     @FXML
-    private void showForum() {
-        loadPlaceholder("Forum", "Connect users through discussions and community spaces.", btnForum);
-    }
-
-    @FXML
-    private void showSubscriptions(ActionEvent event) {
-        if (SessionManager.getCurrentUser() == null) {
-            redirectToLogin();
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/Admin.fxml"));
-            Parent view = loader.load();
-            centerContent.getChildren().clear();
-            centerContent.getChildren().add(view);
-            setActiveButton(btnSubscriptions);
-            playFade(view);
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur navigation", e.getMessage());
-        }
-    }
-
-    @FXML
-    private void showEvents() {
-        loadPlaceholder("Events", "Create and manage events for the Artevia community.", btnEvents);
-    }
-
-    @FXML
-    private void showQuiz() {
-        loadPlaceholder("Quiz", "Create quizzes and follow learning progress.", btnQuiz);
-    }
-
-    @FXML
-    private void showSettings() {
-        loadPlaceholder("Settings", "Configure Artevia workspace settings.", btnSettings);
+    private void openMarketplaceAchat() {
+        setMarketplaceMenuOpen(true);
+        loadMarketplacePage("/MarketplaceAchat.fxml", false, btnMarketplaceAchat);
     }
 
     @FXML
@@ -215,9 +181,59 @@ public class AdminDashboardController {
         for (Button button : getSidebarButtons()) {
             button.getStyleClass().remove("sidebar-nav-button-active");
         }
+        btnMarketplaceVente.getStyleClass().remove("sidebar-submenu-button-active");
+        btnMarketplaceAchat.getStyleClass().remove("sidebar-submenu-button-active");
 
         if (activeButton != null && !activeButton.getStyleClass().contains("sidebar-nav-button-active")) {
-            activeButton.getStyleClass().add("sidebar-nav-button-active");
+            if (activeButton == btnMarketplaceVente || activeButton == btnMarketplaceAchat) {
+                activeButton.getStyleClass().add("sidebar-submenu-button-active");
+                if (!btnMarketplace.getStyleClass().contains("sidebar-nav-button-active")) {
+                    btnMarketplace.getStyleClass().add("sidebar-nav-button-active");
+                }
+            } else {
+                activeButton.getStyleClass().add("sidebar-nav-button-active");
+            }
+        }
+    }
+
+    private void setMarketplaceMenuOpen(boolean open) {
+        marketplaceSubmenu.setVisible(open);
+        marketplaceSubmenu.setManaged(open);
+        marketplaceArrowIcon.setRotate(open ? 90 : 0);
+    }
+
+    private void loadMarketplacePage(String fxmlPath, boolean venteMode, Button activeButton) {
+        if (SessionManager.getCurrentUser() == null) {
+            redirectToLogin();
+            return;
+        }
+
+        try {
+            URL url = getClass().getResource(fxmlPath);
+
+            if (url == null) {
+                throw new IOException("FXML introuvable : " + fxmlPath);
+            }
+
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent page = loader.load();
+            ArteviaMarketplaceController controller = loader.getController();
+
+            if (controller != null) {
+                if (venteMode) {
+                    controller.showVenteFromMainSidebar();
+                } else {
+                    controller.showAchatFromMainSidebar();
+                }
+            }
+
+            ThemeManager.applySavedTheme(page);
+            centerContent.getChildren().setAll(page);
+            setActiveButton(activeButton);
+            playFade(page);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur Marketplace", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -236,6 +252,10 @@ public class AdminDashboardController {
             button.setVisible(allowed);
             button.setManaged(allowed);
         }
+
+        if (!allowedButtons.contains(btnMarketplace)) {
+            setMarketplaceMenuOpen(false);
+        }
     }
 
     private Set<Button> allowedButtonsForRole(String role) {
@@ -249,16 +269,8 @@ public class AdminDashboardController {
             return new HashSet<>(Arrays.asList(btnMarketplace, btnProfile));
         }
 
-        if ("TRAINER".equals(normalizedRole)) {
-            return new HashSet<>(Arrays.asList(btnCourses, btnQuiz, btnProfile));
-        }
-
         if ("BUYER".equals(normalizedRole)) {
-            return new HashSet<>(Arrays.asList(btnMarketplace, btnForum, btnEvents, btnSubscriptions, btnProfile));
-        }
-
-        if ("ORGANIZER".equals(normalizedRole)) {
-            return new HashSet<>(Arrays.asList(btnEvents, btnForum, btnProfile));
+            return new HashSet<>(Arrays.asList(btnMarketplace, btnProfile));
         }
 
         return new HashSet<>(Arrays.asList(btnProfile));
@@ -269,13 +281,7 @@ public class AdminDashboardController {
                 btnUsers,
                 btnDashboard,
                 btnProfile,
-                btnMarketplace,
-                btnCourses,
-                btnForum,
-                btnSubscriptions,
-                btnEvents,
-                btnQuiz,
-                btnSettings
+                btnMarketplace
         );
     }
 
@@ -288,17 +294,11 @@ public class AdminDashboardController {
         }
 
         if ("ARTIST".equals(normalizedRole) || "BUYER".equals(normalizedRole)) {
-            showMarketplace();
-            return;
-        }
-
-        if ("TRAINER".equals(normalizedRole)) {
-            showCourses();
-            return;
-        }
-
-        if ("ORGANIZER".equals(normalizedRole)) {
-            showEvents();
+            if ("BUYER".equals(normalizedRole)) {
+                openMarketplaceAchat();
+            } else {
+                openMarketplaceVente();
+            }
             return;
         }
 
@@ -332,13 +332,23 @@ public class AdminDashboardController {
         ivAdminPhoto.setClip(new Circle(20, 20, 20));
     }
 
+    private void refreshConnectedAdmin() {
+        User admin = SessionManager.getCurrentUser();
+
+        if (admin != null) {
+            showConnectedAdmin(admin);
+        }
+    }
+
     private Image getImageOrDefault(String imagePath) {
         try {
             if (imagePath != null && !imagePath.trim().isEmpty()) {
                 File file = new File(imagePath);
 
                 if (file.exists()) {
-                    return new Image(file.toURI().toString());
+                    try (FileInputStream inputStream = new FileInputStream(file)) {
+                        return new Image(inputStream);
+                    }
                 }
             }
         } catch (Exception e) {
