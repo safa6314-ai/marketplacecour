@@ -1,9 +1,9 @@
 package Utils;
 
+import Entities.Abonnement;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-import Entities.Abonnement;
 
 public class StripeService {
     private static final String SECRET_KEY = System.getenv("STRIPE_SECRET_KEY");
@@ -17,8 +17,8 @@ public class StripeService {
 
     public static String getPaymentUrl(Abonnement abonnement) throws Exception {
         return createSession(
-            "Abonnement Artevia: " + abonnement.getNom(), 
-            "Accès pendant " + abonnement.getDureeMois() + " mois au plan " + abonnement.getNom(), 
+            "Abonnement Artevia: " + abonnement.getNom(),
+            "Acces pendant " + abonnement.getDureeMois() + " mois au plan " + abonnement.getNom(),
             abonnement.getPrix()
         );
     }
@@ -34,7 +34,7 @@ public class StripeService {
                 .addLineItem(SessionCreateParams.LineItem.builder()
                         .setQuantity(1L)
                         .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
-                                .setCurrency("usd") // Switched back to USD for test account compatibility
+                                .setCurrency("usd")
                                 .setUnitAmount((long) (amount * 100))
                                 .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                         .setName(name)
