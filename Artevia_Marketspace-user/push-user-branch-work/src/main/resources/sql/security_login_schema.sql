@@ -1,0 +1,18 @@
+ALTER TABLE users ADD COLUMN IF NOT EXISTS failed_attempts INT DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS lock_until DATETIME NULL;
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255),
+    action VARCHAR(100),
+    details TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS security_alerts (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255),
+    image_path VARCHAR(500),
+    alert_type VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

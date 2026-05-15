@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane stylesheets="@admin.css"
+            styleClass="page-root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.DashboardContentController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT"
+              styleClass="page-heading">
+            <VBox spacing="3.0">
+                <Label text="Statistique"
+                       styleClass="page-title"/>
+                <Label fx:id="lblCurrentDate"
+                       text="Aujourd'hui"
+                       styleClass="page-subtitle"/>
+            </VBox>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="16.0">
+            <GridPane hgap="14.0"
+                      vgap="14.0">
+                <VBox GridPane.columnIndex="0"
+                      GridPane.rowIndex="0"
+                      styleClass="metric-card">
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="10.0">
+                        <Label styleClass="metric-icon-box-blue">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-users"
+                                          iconSize="16"/>
+                            </graphic>
+                        </Label>
+                        <Label text="Total users"
+                               styleClass="metric-label"/>
+                    </HBox>
+                    <Label fx:id="lblTotalUsers"
+                           text="0"
+                           styleClass="metric-value"/>
+                </VBox>
+
+                <VBox GridPane.columnIndex="1"
+                      GridPane.rowIndex="0"
+                      styleClass="metric-card">
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="10.0">
+                        <Label styleClass="metric-icon-box-purple">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-user-shield"
+                                          iconSize="16"/>
+                            </graphic>
+                        </Label>
+                        <Label text="Admins"
+                               styleClass="metric-label"/>
+                    </HBox>
+                    <Label fx:id="lblTotalAdmins"
+                           text="0"
+                           styleClass="metric-value"/>
+                </VBox>
+
+                <VBox GridPane.columnIndex="2"
+                      GridPane.rowIndex="0"
+                      styleClass="metric-card">
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="10.0">
+                        <Label styleClass="metric-icon-box-green">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-palette"
+                                          iconSize="16"/>
+                            </graphic>
+                        </Label>
+                        <Label text="Artists"
+                               styleClass="metric-label"/>
+                    </HBox>
+                    <Label fx:id="lblTotalArtists"
+                           text="0"
+                           styleClass="metric-value"/>
+                </VBox>
+
+                <VBox GridPane.columnIndex="3"
+                      GridPane.rowIndex="0"
+                      styleClass="metric-card">
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="10.0">
+                        <Label styleClass="metric-icon-box-orange">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-shopping-bag"
+                                          iconSize="16"/>
+                            </graphic>
+                        </Label>
+                        <Label text="Buyers"
+                               styleClass="metric-label"/>
+                    </HBox>
+                    <Label fx:id="lblTotalBuyers"
+                           text="0"
+                           styleClass="metric-value"/>
+                </VBox>
+
+                <VBox GridPane.columnIndex="4"
+                      GridPane.rowIndex="0"
+                      styleClass="metric-card">
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="10.0">
+                        <Label styleClass="metric-icon-box-red">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-ban"
+                                          iconSize="16"/>
+                            </graphic>
+                        </Label>
+                        <Label text="Blocked"
+                               styleClass="metric-label"/>
+                    </HBox>
+                    <Label fx:id="lblTotalBlocked"
+                           text="0"
+                           styleClass="metric-value-danger"/>
+                </VBox>
+            </GridPane>
+
+            <HBox spacing="16.0"
+                  VBox.vgrow="ALWAYS">
+                <VBox spacing="10.0"
+                      HBox.hgrow="ALWAYS"
+                      styleClass="panel-card">
+                    <Label text="Statistiques membres"
+                           styleClass="panel-title"/>
+                    <BarChart fx:id="barChartUsers"
+                              legendVisible="false"
+                              animated="true"
+                              VBox.vgrow="ALWAYS">
+                        <xAxis>
+                            <CategoryAxis/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis/>
+                        </yAxis>
+                    </BarChart>
+                </VBox>
+
+                <VBox spacing="10.0"
+                      prefWidth="290.0"
+                      styleClass="panel-card">
+                    <Label text="Activite recente"
+                           styleClass="panel-title"/>
+                    <ListView fx:id="lvRecentActivity"
+                              VBox.vgrow="ALWAYS"
+                              styleClass="activity-list"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

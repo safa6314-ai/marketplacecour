@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14.0" styleClass="event-root" stylesheets="@event-styles.css"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.CalendrierEvenements">
+    <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="event-heading">
+        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+            <Label text="Mon calendrier" styleClass="event-title"/>
+            <Label fx:id="lblStatus" text="Evenements Artevia" styleClass="event-subtitle"/>
+        </VBox>
+        <Button text="Retour" onAction="#backToReservations" styleClass="event-secondary-button"/>
+        <Button text="Actualiser" onAction="#refreshCalendar" styleClass="event-secondary-button"/>
+    </HBox>
+
+    <VBox spacing="12.0" VBox.vgrow="ALWAYS" styleClass="event-panel">
+        <HBox alignment="CENTER" spacing="10.0">
+            <Button text="&lt;" onAction="#previousMonth" styleClass="calendar-nav-button"/>
+            <Label fx:id="lblMonth" text="Mois" styleClass="calendar-month-title" HBox.hgrow="ALWAYS"/>
+            <Button text="Aujourd'hui" onAction="#currentMonth" styleClass="event-secondary-button"/>
+            <Button text="&gt;" onAction="#nextMonth" styleClass="calendar-nav-button"/>
+        </HBox>
+
+        <GridPane fx:id="calendarGrid" hgap="8.0" vgap="8.0" VBox.vgrow="ALWAYS" styleClass="calendar-grid">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="14.285"/>
+                <ColumnConstraints percentWidth="14.285"/>
+                <ColumnConstraints percentWidth="14.285"/>
+                <ColumnConstraints percentWidth="14.285"/>
+                <ColumnConstraints percentWidth="14.285"/>
+                <ColumnConstraints percentWidth="14.285"/>
+                <ColumnConstraints percentWidth="14.285"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="34.0"/>
+                <RowConstraints percentHeight="16.6"/>
+                <RowConstraints percentHeight="16.6"/>
+                <RowConstraints percentHeight="16.6"/>
+                <RowConstraints percentHeight="16.6"/>
+                <RowConstraints percentHeight="16.6"/>
+                <RowConstraints percentHeight="16.6"/>
+            </rowConstraints>
+        </GridPane>
+    </VBox>
+</VBox>

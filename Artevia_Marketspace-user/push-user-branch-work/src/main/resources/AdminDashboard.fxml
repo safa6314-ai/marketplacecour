@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane prefWidth="1100.0"
+            prefHeight="650.0"
+            minWidth="1100.0"
+            minHeight="650.0"
+            stylesheets="@admin.css"
+            styleClass="admin-shell"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AdminDashboardController">
+
+    <left>
+        <VBox prefWidth="280.0" minWidth="280.0" maxWidth="280.0" styleClass="sidebar">
+            <HBox spacing="12.0" styleClass="brand-box">
+                <Label text="A" styleClass="brand-mark"/>
+                <VBox spacing="0.0">
+                    <Label text="Artevia" styleClass="brand-title"/>
+                    <Label text="Global Workspace" styleClass="brand-subtitle"/>
+                </VBox>
+            </HBox>
+
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sidebar-scroll" VBox.vgrow="ALWAYS">
+                <VBox spacing="8.0">
+                    <Label text="MENU" styleClass="sidebar-section"/>
+
+                    <Button fx:id="btnDashboard" onAction="#toggleDashboardMenu" maxWidth="Infinity" styleClass="sidebar-nav-button">
+                        <graphic>
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <FontIcon iconLiteral="fas-tachometer-alt" iconSize="16"/>
+                                <Label text="Dashboard" styleClass="sidebar-button-label"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <FontIcon fx:id="dashboardArrowIcon" iconLiteral="fas-chevron-right" iconSize="12"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <VBox fx:id="dashboardSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
+                        <Button fx:id="btnUsers" text="Gestion des membres" onAction="#showUsers" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnDashboardStats" text="Statistique" onAction="#showDashboard" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnProfile" text="Profil utilisateur" onAction="#showProfile" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                    </VBox>
+
+                    <Button fx:id="btnMarketplace" onAction="#toggleMarketplaceMenu" maxWidth="Infinity" styleClass="sidebar-nav-button">
+                        <graphic>
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <FontIcon iconLiteral="fas-store" iconSize="16"/>
+                                <Label text="Marketplace" styleClass="sidebar-button-label"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <FontIcon fx:id="marketplaceArrowIcon" iconLiteral="fas-chevron-right" iconSize="12"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <VBox fx:id="marketplaceSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
+                        <Button fx:id="btnMarketplaceVente" text="Vente" onAction="#openMarketplaceVente" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnMarketplaceAchat" text="Achat" onAction="#openMarketplaceAchat" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                    </VBox>
+
+                    <Button fx:id="btnCourses" onAction="#toggleCoursesMenu" maxWidth="Infinity" styleClass="sidebar-nav-button">
+                        <graphic>
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <FontIcon iconLiteral="fas-graduation-cap" iconSize="16"/>
+                                <Label text="Courses" styleClass="sidebar-button-label"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <FontIcon fx:id="coursesArrowIcon" iconLiteral="fas-chevron-right" iconSize="12"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <VBox fx:id="coursesSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
+                        <Button fx:id="btnCoursesCours" text="Cours" onAction="#openCoursesCours" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnCoursesEtudiants" text="Étudiants" onAction="#openCoursesEtudiants" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnCoursesRapport" text="Rapport" onAction="#openCoursesRapport" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                    </VBox>
+
+                    <Button fx:id="btnForum" onAction="#toggleForumMenu" maxWidth="Infinity" styleClass="sidebar-nav-button">
+                        <graphic>
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <FontIcon iconLiteral="fas-comments" iconSize="16"/>
+                                <Label text="Forum" styleClass="sidebar-button-label"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <FontIcon fx:id="forumArrowIcon" iconLiteral="fas-chevron-right" iconSize="12"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <VBox fx:id="forumSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
+                        <Button fx:id="btnForumPoste" text="Poste" onAction="#openForumPoste" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnForumLike" text="Like" onAction="#openForumLike" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnForumCommentaire" text="Commentaire" onAction="#openForumCommentaire" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                    </VBox>
+
+                    <Button fx:id="btnAbonnementMenu" onAction="#toggleAbonnementMenu" maxWidth="Infinity" styleClass="sidebar-nav-button">
+                        <graphic>
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <FontIcon iconLiteral="fas-id-card" iconSize="16"/>
+                                <Label text="Abonnement" styleClass="sidebar-button-label"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <FontIcon fx:id="abonnementArrowIcon" iconLiteral="fas-chevron-right" iconSize="12"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <VBox fx:id="abonnementSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
+                        <Button fx:id="btnAbonnement" text="Abonnement" onAction="#openAbonnement" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnAbonnementStatistique" text="Statistique" onAction="#openAbonnementStatistique" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnSouscription" text="Souscription" onAction="#openSouscription" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                    </VBox>
+
+                    <Button fx:id="btnQuizMenu" onAction="#toggleQuizMenu" maxWidth="Infinity" styleClass="sidebar-nav-button">
+                        <graphic>
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <FontIcon iconLiteral="fas-question-circle" iconSize="16"/>
+                                <Label text="Quiz" styleClass="sidebar-button-label"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <FontIcon fx:id="quizArrowIcon" iconLiteral="fas-chevron-right" iconSize="12"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <VBox fx:id="quizSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
+                        <Button fx:id="btnQuiz" text="Quiz" onAction="#openQuiz" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnQuestions" text="Questions" onAction="#openQuestions" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnResultats" text="Résultats" onAction="#openResultats" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                    </VBox>
+
+                    <Button fx:id="btnEventsMenu" onAction="#toggleEventsMenu" maxWidth="Infinity" styleClass="sidebar-nav-button">
+                        <graphic>
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <FontIcon iconLiteral="fas-calendar-alt" iconSize="16"/>
+                                <Label text="Events" styleClass="sidebar-button-label"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <FontIcon fx:id="eventsArrowIcon" iconLiteral="fas-chevron-right" iconSize="12"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <VBox fx:id="eventsSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
+                        <Button fx:id="btnEvenements" text="Événement" onAction="#openEventAjouter" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnReservations" text="Réservation" onAction="#openEventReservation" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                    </VBox>
+
+                    <Button fx:id="btnSettings" text="Settings" onAction="#openSettings" maxWidth="Infinity" styleClass="sidebar-nav-button">
+                        <graphic><FontIcon iconLiteral="fas-cog" iconSize="16"/></graphic>
+                    </Button>
+                </VBox>
+            </ScrollPane>
+
+            <Button text="Logout" onAction="#logout" maxWidth="Infinity" styleClass="sidebar-logout-button">
+                <graphic><FontIcon iconLiteral="fas-sign-out-alt" iconSize="16"/></graphic>
+            </Button>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox styleClass="main-area">
+            <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="topbar">
+                <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                    <Label text="Artevia Workspace" styleClass="topbar-title"/>
+                    <Label text="Navigation globale des modules" styleClass="topbar-subtitle"/>
+                </VBox>
+                <Button styleClass="topbar-icon-button">
+                    <graphic><FontIcon iconLiteral="fas-bell" iconSize="16"/></graphic>
+                </Button>
+                <Button fx:id="btnThemeToggle" onAction="#toggleTheme" styleClass="theme-toggle-button">
+                    <graphic><FontIcon iconLiteral="fas-moon" iconSize="16"/></graphic>
+                </Button>
+                <HBox fx:id="adminProfileBox" alignment="CENTER_RIGHT" spacing="10.0" onMouseClicked="#showProfileFromTopbar" styleClass="topbar-profile-box">
+                    <ImageView fx:id="ivAdminPhoto" fitHeight="42.0" fitWidth="42.0" preserveRatio="true"/>
+                    <VBox spacing="1.0">
+                        <Label fx:id="lblAdminName" text="User" styleClass="topbar-name"/>
+                        <Label text="Authenticated" styleClass="topbar-role"/>
+                    </VBox>
+                </HBox>
+            </HBox>
+
+            <StackPane fx:id="centerPane" VBox.vgrow="ALWAYS" styleClass="content-host"/>
+        </VBox>
+    </center>
+</BorderPane>

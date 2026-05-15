@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controllers.post.AfficherLikeController"
+      spacing="14"
+      styleClass="root-pane"
+      stylesheets="@/forum-style.css">
+    <padding><Insets top="22" right="26" bottom="16" left="26"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <VBox HBox.hgrow="ALWAYS">
+            <Label text="Likes Forum" styleClass="heading-title"/>
+            <Label text="Suivi des reactions sur les publications" styleClass="heading-subtitle"/>
+        </VBox>
+        <Button text="Actualiser" onAction="#rafraichir" styleClass="secondary-btn"/>
+    </HBox>
+
+    <ListView fx:id="listLikes" VBox.vgrow="ALWAYS" styleClass="post-list"/>
+    <Label fx:id="lblStatus" text="Pret." styleClass="status-label"/>
+</VBox>

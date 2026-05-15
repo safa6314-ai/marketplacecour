@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="520.0"
+            prefWidth="760.0"
+            stylesheets="@signin.css"
+            styleClass="signin-root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HomeController">
+
+    <children>
+        <VBox layoutX="180.0"
+              layoutY="115.0"
+              prefWidth="400.0"
+              spacing="18.0"
+              styleClass="signin-card">
+
+            <Label text="Welcome to Artevia"
+                   styleClass="signin-title"/>
+
+            <Label text="Choose how you want to continue"
+                   styleClass="signin-subtitle"/>
+
+            <Button text="Sign in"
+                    onAction="#goToSignIn"
+                    prefWidth="400.0"
+                    styleClass="primary-button"/>
+
+            <Button text="Login"
+                    onAction="#goToLogin"
+                    prefWidth="400.0"
+                    styleClass="secondary-button"/>
+        </VBox>
+    </children>
+</AnchorPane>
+

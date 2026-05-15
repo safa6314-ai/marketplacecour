@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane prefHeight="650.0"
+           prefWidth="1100.0"
+           minHeight="650.0"
+           minWidth="1100.0"
+           styleClass="auth-root"
+           stylesheets="@signin.css"
+           xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controllers.signin">
+
+    <children>
+        <HBox maxHeight="610.0"
+              maxWidth="1040.0"
+              prefHeight="610.0"
+              prefWidth="1040.0"
+              styleClass="auth-shell">
+
+            <VBox prefWidth="420.0"
+                  spacing="28.0"
+                  styleClass="auth-brand-panel">
+                <padding>
+                    <Insets bottom="28.0" left="34.0" right="34.0" top="30.0" />
+                </padding>
+
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <StackPane styleClass="auth-logo-mark">
+                        <Label text="A" />
+                    </StackPane>
+                    <VBox spacing="0.0">
+                        <Label text="Artevia" styleClass="auth-logo-text" />
+                        <Label text=".marketspace" styleClass="auth-logo-subtext" />
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="12.0">
+                    <Label text="Creez votre espace Artevia"
+                           wrapText="true"
+                           styleClass="auth-hero-title" />
+                    <Label text="Rejoignez la plateforme et profitez d'une gestion fluide des membres, profils et activites."
+                           wrapText="true"
+                           styleClass="auth-hero-copy" />
+                </VBox>
+
+                <StackPane styleClass="auth-dashboard-mockup">
+                    <VBox spacing="12.0">
+                        <HBox spacing="8.0">
+                            <Region prefHeight="10.0" prefWidth="44.0" styleClass="mock-line-light" />
+                            <Region prefHeight="10.0" prefWidth="72.0" styleClass="mock-line-soft" />
+                        </HBox>
+                        <HBox spacing="10.0">
+                            <VBox prefHeight="78.0" prefWidth="90.0" styleClass="mock-card">
+                                <Region prefHeight="10.0" prefWidth="42.0" styleClass="mock-line-soft" />
+                                <Label text="New" styleClass="mock-number" />
+                            </VBox>
+                            <VBox prefHeight="78.0" prefWidth="90.0" styleClass="mock-card">
+                                <Region prefHeight="10.0" prefWidth="42.0" styleClass="mock-line-soft" />
+                                <Label text="100%" styleClass="mock-number" />
+                            </VBox>
+                        </HBox>
+                        <HBox alignment="BOTTOM_LEFT" spacing="7.0" styleClass="mock-chart">
+                            <Region prefHeight="56.0" prefWidth="18.0" styleClass="mock-bar" />
+                            <Region prefHeight="82.0" prefWidth="18.0" styleClass="mock-bar-alt" />
+                            <Region prefHeight="48.0" prefWidth="18.0" styleClass="mock-bar" />
+                            <Region prefHeight="96.0" prefWidth="18.0" styleClass="mock-bar-alt" />
+                            <Region prefHeight="70.0" prefWidth="18.0" styleClass="mock-bar" />
+                        </HBox>
+                    </VBox>
+                </StackPane>
+
+                <HBox spacing="10.0" styleClass="auth-benefits-row">
+                    <VBox spacing="8.0" styleClass="auth-benefit-card">
+                        <FontIcon iconLiteral="fas-columns" iconSize="18" />
+                        <Label text="Tableau de bord complet" wrapText="true" />
+                    </VBox>
+                    <VBox spacing="8.0" styleClass="auth-benefit-card">
+                        <FontIcon iconLiteral="fas-chart-line" iconSize="18" />
+                        <Label text="Statistiques avancees" wrapText="true" />
+                    </VBox>
+                    <VBox spacing="8.0" styleClass="auth-benefit-card">
+                        <FontIcon iconLiteral="fas-sliders-h" iconSize="18" />
+                        <Label text="Gestion facile" wrapText="true" />
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <VBox prefWidth="580.0"
+                  spacing="13.0"
+                  styleClass="auth-form-panel">
+                <padding>
+                    <Insets bottom="28.0" left="58.0" right="58.0" top="28.0" />
+                </padding>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <Button text="Retour"
+                            onAction="#goToHome"
+                            styleClass="language-button" />
+                    <Button text="Francais"
+                            focusTraversable="false"
+                            styleClass="language-button">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-globe" iconSize="16" />
+                        </graphic>
+                    </Button>
+                </HBox>
+
+                <HBox alignment="CENTER" spacing="0.0" styleClass="auth-tabs">
+                    <Button text="Connexion"
+                            onAction="#goToLogin"
+                            styleClass="auth-tab" />
+                    <Button text="Inscription"
+                            focusTraversable="false"
+                            styleClass="auth-tab-active" />
+                </HBox>
+
+                <VBox spacing="4.0">
+                    <Label text="Creer un compte" styleClass="auth-title" />
+                    <Label text="Remplissez vos informations pour commencer"
+                           styleClass="auth-subtitle" />
+                </VBox>
+
+                <TextField fx:id="tfUsername"
+                           promptText="Username"
+                           styleClass="auth-input auth-input-plain" />
+
+                <TextField fx:id="tfEmail"
+                           promptText="Email"
+                           styleClass="auth-input auth-input-plain" />
+
+                <VBox spacing="4.0">
+                    <TextField fx:id="tfPhone"
+                               promptText="+216 XX XXX XXX"
+                               styleClass="auth-input auth-input-plain" />
+                    <Label fx:id="lblPhoneMessage"
+                           styleClass="phone-message" />
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <StackPane styleClass="auth-input-wrap">
+                        <FontIcon iconLiteral="fas-lock"
+                                  iconSize="17"
+                                  styleClass="auth-input-icon"
+                                  StackPane.alignment="CENTER_LEFT" />
+                        <PasswordField fx:id="pfPassword"
+                                       promptText="Password"
+                                       styleClass="auth-input" />
+                        <TextField fx:id="tfVisiblePassword"
+                                   managed="false"
+                                   visible="false"
+                                   promptText="Password"
+                                   styleClass="auth-input" />
+                        <Button fx:id="btnTogglePassword"
+                                onAction="#togglePasswordVisibility"
+                                text="Voir"
+                                styleClass="auth-eye-button"
+                                StackPane.alignment="CENTER_RIGHT" />
+                    </StackPane>
+                    <Label fx:id="lblPasswordMessage"
+                           styleClass="password-message" />
+                </VBox>
+
+                <HBox spacing="12.0">
+                    <TextField fx:id="tfFirstName"
+                               promptText="First Name"
+                               HBox.hgrow="ALWAYS"
+                               maxWidth="Infinity"
+                               styleClass="auth-input auth-input-plain" />
+                    <TextField fx:id="tfLastName"
+                               promptText="Last Name"
+                               HBox.hgrow="ALWAYS"
+                               maxWidth="Infinity"
+                               styleClass="auth-input auth-input-plain" />
+                </HBox>
+
+                <HBox spacing="12.0">
+                    <ComboBox fx:id="cbRole"
+                              promptText="Role"
+                              HBox.hgrow="ALWAYS"
+                              maxWidth="Infinity"
+                              styleClass="auth-input auth-combo" />
+                    <ComboBox fx:id="cbStatus"
+                              promptText="Status"
+                              HBox.hgrow="ALWAYS"
+                              maxWidth="Infinity"
+                              styleClass="auth-input auth-combo" />
+                </HBox>
+
+                <Button fx:id="btnRegister"
+                        text="Creer mon compte"
+                        onAction="#registerUser"
+                        maxWidth="Infinity"
+                        styleClass="auth-primary-button" />
+
+                <Button fx:id="btnClear"
+                        text="Vider le formulaire"
+                        onAction="#clearForm"
+                        maxWidth="Infinity"
+                        styleClass="auth-secondary-wide-button" />
+
+                <HBox alignment="CENTER" spacing="7.0" styleClass="auth-footer">
+                    <Label text="Vous avez deja un compte ?" />
+                    <Button text="Se connecter"
+                            onAction="#goToLogin"
+                            styleClass="link-button" />
+                </HBox>
+            </VBox>
+        </HBox>
+    </children>
+</StackPane>

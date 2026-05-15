@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="16" styleClass="root-pane" stylesheets="@styles/artevia-marketplace.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.ArteviaMarketplaceController">
+    <padding>
+        <Insets bottom="18" left="18" right="18" top="18" />
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="16" styleClass="app-header">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label styleClass="heading-title" text="Artevia Gallery" />
+            <Label styleClass="heading-subtitle" text="Une experience elegante pour gerer, explorer et acheter des oeuvres" />
+        </VBox>
+    </HBox>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <StackPane HBox.hgrow="ALWAYS">
+        <VBox fx:id="adminView" spacing="14" styleClass="workspace">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                    <Label styleClass="section-title" text="Espace admin" />
+                    <Label styleClass="muted-label" text="L'admin publie les articles a vendre et suit les achats clients" />
+                </VBox>
+                <Button fx:id="adminArticlesButton" onAction="#onShowAdminArticles" styleClass="nav-btn-active" text="Articles en vente" />
+                <Button fx:id="adminAchatsButton" onAction="#onShowAdminAchats" styleClass="nav-btn" text="Achats clients" />
+            </HBox>
+
+            <StackPane VBox.vgrow="ALWAYS">
+                <VBox fx:id="adminArticlesView" spacing="10" styleClass="admin-panel">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label styleClass="panel-title" text="Articles en vente" HBox.hgrow="ALWAYS" />
+                        <Button onAction="#onImportMetMuseumArticle" styleClass="api-btn" text="Importer MET" />
+                        <Button onAction="#onAddVente" styleClass="primary-btn" text="Vendre un article" />
+                        <Button onAction="#onEditVente" styleClass="secondary-btn" text="Modifier" />
+                        <Button onAction="#onDeleteVente" styleClass="danger-btn" text="Supprimer" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="filter-bar">
+                        <TextField fx:id="adminArticleSearchField" promptText="Rechercher titre, categorie, artiste..." HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="adminStockFilterComboBox" prefWidth="170" />
+                    </HBox>
+                    <ListView fx:id="ventesListView" VBox.vgrow="ALWAYS" />
+                </VBox>
+
+                <VBox fx:id="adminAchatsView" spacing="10" styleClass="admin-panel">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label styleClass="panel-title" text="Achats clients" HBox.hgrow="ALWAYS" />
+                        <Button onAction="#onConfirmAchat" styleClass="primary-btn" text="Confirmer" />
+                        <Button onAction="#onDownloadInvoicePdf" styleClass="api-btn" text="Facture PDF" />
+                        <Button onAction="#onRefuseAchat" styleClass="danger-btn" text="Refuser" />
+                        <Button onAction="#onEditAchat" styleClass="secondary-btn" text="Modifier" />
+                        <Button onAction="#onDeleteAchat" styleClass="danger-btn" text="Supprimer" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="filter-bar">
+                        <TextField fx:id="achatSearchField" promptText="Rechercher oeuvre ou acheteur..." HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="achatStatusFilterComboBox" prefWidth="160" />
+                    </HBox>
+                    <ListView fx:id="achatsListView" VBox.vgrow="ALWAYS" />
+                    <VBox spacing="10" styleClass="loyalty-inline-panel">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label styleClass="panel-title" text="Dashboard admin fidelite" HBox.hgrow="ALWAYS" />
+                            <Label fx:id="loyaltyAdminSummaryLabel" styleClass="loyalty-chip" text="0 pts distribues" />
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <TextField fx:id="adminBonusCustomerField" promptText="Client" HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="adminBonusPointsField" promptText="Points bonus" prefWidth="130" />
+                            <Button onAction="#onAddManualLoyaltyBonus" styleClass="api-btn" text="Ajouter bonus" />
+                        </HBox>
+                        <ListView fx:id="loyaltyHistoryListView" prefHeight="130" />
+                    </VBox>
+                </VBox>
+            </StackPane>
+        </VBox>
+
+        <VBox fx:id="clientView" spacing="14" styleClass="workspace">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                    <Label styleClass="section-title" text="Galerie client" />
+                    <Label styleClass="muted-label" text="Explorez les creations, comparez les prix et composez votre panier" />
+                </VBox>
+                <Button fx:id="clientCatalogButton" onAction="#onShowClientCatalog" styleClass="nav-btn-active" text="Catalogue" />
+                <Button fx:id="clientCartButton" onAction="#onShowClientCart" styleClass="nav-btn" text="Panier" />
+            </HBox>
+            <Separator />
+            <StackPane VBox.vgrow="ALWAYS">
+                <VBox fx:id="clientCatalogView" spacing="10">
+                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="filter-bar">
+                        <TextField fx:id="clientSearchField" promptText="Rechercher un article..." HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="clientCategoryFilterComboBox" prefWidth="190" />
+                    </HBox>
+                    <ScrollPane fitToWidth="true" styleClass="catalog-scroll" VBox.vgrow="ALWAYS">
+                        <TilePane fx:id="clientGrid" hgap="16" prefColumns="3" tileAlignment="TOP_LEFT" vgap="16" />
+                    </ScrollPane>
+                </VBox>
+
+                <VBox fx:id="clientCartView" spacing="10" styleClass="admin-panel">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label styleClass="panel-title" text="Mon panier" HBox.hgrow="ALWAYS" />
+                        <Button onAction="#onRemoveFromCart" styleClass="secondary-btn" text="Retirer" />
+                        <Button onAction="#onClearCart" styleClass="danger-btn" text="Vider" />
+                        <Button onAction="#onValidateCart" styleClass="primary-btn" text="Valider la commande" />
+                    </HBox>
+                    <ListView fx:id="cartListView" VBox.vgrow="ALWAYS" />
+                    <VBox spacing="10" styleClass="cart-summary">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <TextField fx:id="couponCodeField" promptText="Code promo: ARTEVIA10, VIP20, WELCOME5" HBox.hgrow="ALWAYS" />
+                            <Button onAction="#onApplyCoupon" styleClass="api-btn" text="Appliquer coupon" />
+                        </HBox>
+                        <Label fx:id="couponStatusLabel" styleClass="muted-label" text="Aucun coupon applique" />
+                        <HBox alignment="CENTER_RIGHT" spacing="14">
+                            <Label styleClass="muted-label" text="Sous-total" />
+                            <Label fx:id="cartSubtotalLabel" styleClass="summary-value" text="0,00 DT" />
+                            <Label styleClass="muted-label" text="Remise" />
+                            <Label fx:id="cartDiscountLabel" styleClass="summary-discount" text="0,00 DT" />
+                            <Label styleClass="muted-label" text="Total panier" />
+                            <Label fx:id="cartTotalLabel" styleClass="cart-total" text="0,00 DT" />
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Button onAction="#onConvertCartCurrency" styleClass="secondary-btn" text="Convertir EUR/USD" />
+                            <Label fx:id="currencyConversionLabel" styleClass="payment-status" text="Conversion devise non lancee" HBox.hgrow="ALWAYS" />
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Button onAction="#onPayWithStripe" styleClass="card-payment-btn" text="Payer avec Stripe" />
+                            <Button onAction="#onCheckStripeConfiguration" styleClass="secondary-btn" text="Tester Stripe" />
+                            <Button onAction="#onVerifyStripePayment" styleClass="secondary-btn" text="Verifier Stripe" />
+                            <Label fx:id="stripePaymentStatusLabel" styleClass="payment-status" text="Paiement Stripe non lance" HBox.hgrow="ALWAYS" />
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </StackPane>
+        </VBox>
+        </StackPane>
+    </HBox>
+</VBox>

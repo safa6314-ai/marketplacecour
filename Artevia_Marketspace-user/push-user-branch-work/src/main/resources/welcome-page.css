@@ -1,0 +1,192 @@
+.welcome-root {
+    -fx-background-color: radial-gradient(center 20% 20%, radius 95%, #4b1aa4 0%, #180b2b 46%, #0d0716 100%);
+    -fx-font-family: "Segoe UI", "Inter", Arial, sans-serif;
+}
+
+.welcome-header {
+    -fx-padding: 24px 34px 10px 34px;
+}
+
+.welcome-logo-mark {
+    -fx-alignment: center;
+    -fx-min-width: 46px;
+    -fx-min-height: 46px;
+    -fx-max-width: 46px;
+    -fx-max-height: 46px;
+    -fx-background-color: rgba(255, 255, 255, 0.13);
+    -fx-background-radius: 14px;
+    -fx-border-color: rgba(255, 255, 255, 0.24);
+    -fx-border-radius: 14px;
+    -fx-text-fill: #f8dd8f;
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+}
+
+.welcome-logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 28px;
+    -fx-font-weight: 900;
+}
+
+.welcome-logo-subtitle {
+    -fx-text-fill: #f1dca7;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+}
+
+.welcome-header-link,
+.welcome-header-primary,
+.welcome-cta-primary,
+.welcome-cta-gold {
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-cursor: hand;
+    -fx-font-weight: 900;
+}
+
+.welcome-header-link {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-border-color: rgba(255, 255, 255, 0.20);
+    -fx-text-fill: white;
+    -fx-padding: 10px 18px;
+}
+
+.welcome-header-link:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+}
+
+.welcome-header-primary {
+    -fx-background-color: linear-gradient(to right, #7c3aed, #a855f7);
+    -fx-text-fill: white;
+    -fx-padding: 10px 18px;
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.38), 18, 0.25, 0, 7);
+}
+
+.welcome-main {
+    -fx-padding: 18px 34px 34px 34px;
+}
+
+.welcome-hero {
+    -fx-padding: 30px 10px;
+}
+
+.welcome-title {
+    -fx-text-fill: white;
+    -fx-font-size: 58px;
+    -fx-font-weight: 900;
+}
+
+.welcome-subtitle {
+    -fx-text-fill: #c9bddc;
+    -fx-font-size: 18px;
+    -fx-line-spacing: 5px;
+    -fx-max-width: 560px;
+}
+
+.welcome-cta-primary,
+.welcome-cta-gold {
+    -fx-padding: 14px 24px;
+    -fx-font-size: 14px;
+    -fx-graphic-text-gap: 9px;
+}
+
+.welcome-cta-primary {
+    -fx-background-color: linear-gradient(to right, #6c2bd9, #8b5cf6);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(139, 92, 246, 0.32), 20, 0.22, 0, 8);
+}
+
+.welcome-cta-primary .ikonli-font-icon,
+.welcome-header-primary .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.welcome-cta-primary:hover,
+.welcome-header-primary:hover {
+    -fx-background-color: linear-gradient(to right, #7c3aed, #a855f7);
+    -fx-translate-y: -1px;
+}
+
+.welcome-cta-gold {
+    -fx-background-color: linear-gradient(to right, #f3c969, #f8dd8f);
+    -fx-text-fill: #2c1749;
+}
+
+.welcome-cta-gold .ikonli-font-icon {
+    -fx-icon-color: #2c1749;
+}
+
+.welcome-cta-gold:hover {
+    -fx-background-color: linear-gradient(to right, #f8dd8f, #fff1b8);
+    -fx-translate-y: -1px;
+}
+
+.welcome-role-row {
+    -fx-padding: 16px 0 0 0;
+}
+
+.welcome-role-pill {
+    -fx-background-color: rgba(255, 255, 255, 0.09);
+    -fx-border-color: rgba(248, 221, 143, 0.24);
+    -fx-background-radius: 999px;
+    -fx-border-radius: 999px;
+    -fx-padding: 7px 12px;
+    -fx-text-fill: #f1dca7;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+}
+
+.welcome-module-panel {
+    -fx-min-width: 380px;
+    -fx-pref-width: 420px;
+    -fx-padding: 22px;
+    -fx-background-color: rgba(255, 255, 255, 0.09);
+    -fx-background-radius: 28px;
+    -fx-border-color: rgba(255, 255, 255, 0.14);
+    -fx-border-radius: 28px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.32), 34, 0.24, 0, 16);
+}
+
+.welcome-panel-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+}
+
+.welcome-module-card,
+.welcome-module-card-wide {
+    -fx-alignment: center-left;
+    -fx-spacing: 10px;
+    -fx-padding: 17px;
+    -fx-min-height: 92px;
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-background-radius: 18px;
+    -fx-border-color: rgba(255, 255, 255, 0.13);
+    -fx-border-radius: 18px;
+}
+
+.welcome-module-card {
+    -fx-pref-width: 176px;
+}
+
+.welcome-module-card-wide {
+    -fx-pref-width: 366px;
+}
+
+.welcome-module-card:hover,
+.welcome-module-card-wide:hover {
+    -fx-background-color: rgba(124, 58, 237, 0.24);
+    -fx-border-color: rgba(248, 221, 143, 0.38);
+    -fx-translate-y: -2px;
+}
+
+.welcome-module-card .label,
+.welcome-module-card-wide .label {
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+}
+
+.welcome-module-card .ikonli-font-icon,
+.welcome-module-card-wide .ikonli-font-icon {
+    -fx-icon-color: #f8dd8f;
+}

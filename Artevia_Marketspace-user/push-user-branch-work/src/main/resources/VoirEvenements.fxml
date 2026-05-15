@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14.0" styleClass="event-root" stylesheets="@event-styles.css"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.VoirEvenements">
+    <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="event-heading">
+        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+            <Label text="Reservations Events" styleClass="event-title"/>
+            <Label text="Consultation, participation et suivi des reservations" styleClass="event-subtitle"/>
+        </VBox>
+        <Button text="Mon calendrier" onAction="#openCalendarPage" styleClass="event-primary-button"/>
+    </HBox>
+
+    <SplitPane dividerPositions="0.58" VBox.vgrow="ALWAYS" styleClass="event-split">
+        <VBox spacing="10.0" styleClass="event-panel">
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <TextField fx:id="tfRecherche" promptText="Rechercher evenement" styleClass="event-input" HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="cbFiltre" prefWidth="150.0" styleClass="event-input"/>
+            </HBox>
+            <TableView fx:id="eventTable" VBox.vgrow="ALWAYS" styleClass="event-table">
+                <columns>
+                    <TableColumn fx:id="colTitre" text="Titre" prefWidth="200.0"/>
+                    <TableColumn fx:id="colLieu" text="Lieu" prefWidth="135.0"/>
+                    <TableColumn fx:id="colDate" text="Date" prefWidth="135.0"/>
+                    <TableColumn fx:id="colPlaces" text="Places" prefWidth="70.0"/>
+                </columns>
+            </TableView>
+            <HBox spacing="8.0" alignment="CENTER_LEFT">
+                <Label fx:id="lblPlaces" text="Places disponibles : -" styleClass="event-status" HBox.hgrow="ALWAYS"/>
+                <Button text="Calendrier" onAction="#openCalendarPage" styleClass="event-secondary-button"/>
+                <Button text="Maps" onAction="#openMapForSelectedEvent" styleClass="event-secondary-button"/>
+                <Button fx:id="btnReserver" text="Reserver" onAction="#reserver" styleClass="event-primary-button"/>
+                <Button fx:id="btnAnnulerParticipation" text="Annuler" onAction="#annulerParticipation" styleClass="event-secondary-button"/>
+            </HBox>
+            <TextArea fx:id="taDetails" editable="false" wrapText="true" prefRowCount="6" styleClass="event-details"/>
+        </VBox>
+
+        <VBox spacing="10.0" styleClass="event-panel">
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label text="Participations" styleClass="event-panel-title" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnSupprimerParticipation" text="Supprimer" onAction="#supprimerParticipation" styleClass="event-danger-button"/>
+            </HBox>
+            <TableView fx:id="participationTable" VBox.vgrow="ALWAYS" styleClass="event-table">
+                <columns>
+                    <TableColumn fx:id="colParticipant" text="Participant" prefWidth="130.0"/>
+                    <TableColumn fx:id="colEvent" text="Evenement" prefWidth="150.0"/>
+                    <TableColumn fx:id="colStatut" text="Statut" prefWidth="95.0"/>
+                    <TableColumn fx:id="colReservationDate" text="Date" prefWidth="130.0"/>
+                </columns>
+            </TableView>
+            <Label fx:id="lblStatus" wrapText="true" styleClass="event-status"/>
+        </VBox>
+    </SplitPane>
+</VBox>
