@@ -39,13 +39,40 @@ CREATE TABLE `audit_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
 COLLATE=utf8mb4_general_ci;
 
+-- Table post
+CREATE TABLE `post` (
+  `id` int(11) NOT NULL,
+  `contenu` varchar(500) DEFAULT NULL,
+  `date_creation` timestamp NOT NULL DEFAULT current_timestamp(),
+  `image_path` varchar(500) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `statut` varchar(20) DEFAULT 'en_attente',
+  `categorie` varchar(50) DEFAULT 'Discussion generale',
+  `moderation_score` double DEFAULT NULL,
+  `moderation_message` varchar(500) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
 -- Table commentaire
 CREATE TABLE `commentaire` (
   `id` int(11) NOT NULL,
-  `contenu` varchar(255) DEFAULT NULL,
+  `contenu` varchar(500) DEFAULT NULL,
   `date_creation` timestamp NOT NULL 
     DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `post_id` int(11) DEFAULT NULL
+  `post_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `statut` varchar(20) DEFAULT 'en_attente',
+  `moderation_score` double DEFAULT NULL,
+  `moderation_message` varchar(500) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
+-- Table likes
+CREATE TABLE `likes` (
+  `id` int(11) NOT NULL,
+  `post_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `date_creation` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 
 COLLATE=utf8mb4_general_ci;
 
@@ -126,6 +153,9 @@ COLLATE=utf8mb4_general_ci;
 ALTER TABLE `abonnement` ADD PRIMARY KEY (`id_abonnement`);
 ALTER TABLE `achat` ADD PRIMARY KEY (`id`);
 ALTER TABLE `audit_logs` ADD PRIMARY KEY (`id`);
+ALTER TABLE `post` ADD PRIMARY KEY (`id`), ADD KEY `idx_post_user_id` (`user_id`);
+ALTER TABLE `commentaire` ADD PRIMARY KEY (`id`), ADD KEY `idx_commentaire_post_id` (`post_id`), ADD KEY `idx_commentaire_user_id` (`user_id`);
+ALTER TABLE `likes` ADD PRIMARY KEY (`id`), ADD KEY `idx_likes_post_id` (`post_id`), ADD KEY `idx_likes_user_id` (`user_id`);
 ALTER TABLE `evenement` ADD PRIMARY KEY (`id_event`);
 ALTER TABLE `flouci_payments` 
   ADD PRIMARY KEY (`id_payment`),
@@ -143,6 +173,12 @@ ALTER TABLE `abonnement`
   MODIFY `id_abonnement` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `souscription`
   MODIFY `id_souscription` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `post`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `commentaire`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `likes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 ALTER TABLE `achat`
@@ -155,5 +191,21 @@ ALTER TABLE `souscription`
   ADD CONSTRAINT `fk_souscription_abonnement`
   FOREIGN KEY (`id_abonnement`)
   REFERENCES `abonnement` (`id_abonnement`);
+
+ALTER TABLE `post`
+  ADD CONSTRAINT `fk_post_user`
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `commentaire`
+  ADD CONSTRAINT `fk_commentaire_post`
+  FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_commentaire_user`
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `likes`
+  ADD CONSTRAINT `fk_likes_post`
+  FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_likes_user`
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 COMMIT;

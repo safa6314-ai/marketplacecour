@@ -104,7 +104,7 @@ public class AdminController implements Initializable {
 
     // ✅ Méthode renommée showStatistiques (appelée par btnDashboardNav en FXML)
     @FXML
-    void showStatistiques(ActionEvent event) {
+    public void showStatistiques(ActionEvent event) {
         setActiveNav(btnDashboardNav);
         modeTitle.setText("Statistiques"); // ✅ Titre changé
         switchContainer.setVisible(false); switchContainer.setManaged(false);
@@ -117,7 +117,7 @@ public class AdminController implements Initializable {
 
     // ✅ Alias gardé pour compatibilité si utilisé ailleurs
     @FXML
-    void showDashboard(ActionEvent event) {
+    public void showDashboard(ActionEvent event) {
         showStatistiques(event);
     }
 
@@ -156,7 +156,7 @@ public class AdminController implements Initializable {
     }
 
     @FXML
-    void showAbonnements(ActionEvent event) {
+    public void showAbonnements(ActionEvent event) {
         setActiveNav(btnAbonnementNav);
         modeTitle.setText("Gestion des abonnements");
         switchContainer.setVisible(true); switchContainer.setManaged(true);
@@ -178,7 +178,7 @@ public class AdminController implements Initializable {
     }
 
     @FXML
-    void showSouscriptions(ActionEvent event) {
+    public void showSouscriptions(ActionEvent event) {
         setActiveNav(btnSouscriptionNav);
         modeTitle.setText("Gestion des souscriptions");
         switchContainer.setVisible(true); switchContainer.setManaged(true);

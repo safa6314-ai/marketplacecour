@@ -10,7 +10,7 @@
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <!-- ====== SIDEBAR ====== -->
-            <VBox prefWidth="240.0" styleClass="admin-sidebar">
+            <VBox prefWidth="240.0" styleClass="admin-sidebar" managed="false" visible="false">
                <children>
                   <!-- Brand -->
                   <VBox styleClass="sidebar-brand" spacing="2.0">
