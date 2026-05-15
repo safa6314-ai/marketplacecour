@@ -1,33 +1,48 @@
 package Utils;
 
-import javafx.scene.Scene;
-import javafx.scene.web.WebView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+
+import java.awt.Desktop;
+import java.net.URI;
+import java.util.Optional;
 
 public class StripePaymentWindow {
 
     public static void show(String url, Runnable onSuccess, Runnable onCancel) {
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Paiement Sécurisé Stripe");
+        openInBrowser(url);
 
-        WebView webView = new WebView();
-        webView.getEngine().load(url);
+        ButtonType paidButton = new ButtonType("Paiement termine", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        // Surveiller l'URL pour détecter le succès ou l'annulation
-        webView.getEngine().locationProperty().addListener((obs, oldLocation, newLocation) -> {
-            if (newLocation.contains("success.example.com")) {
-                stage.close();
-                if (onSuccess != null) javafx.application.Platform.runLater(onSuccess);
-            } else if (newLocation.contains("cancel.example.com")) {
-                stage.close();
-                if (onCancel != null) javafx.application.Platform.runLater(onCancel);
+        Alert alert = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                "La page Stripe a ete ouverte dans votre navigateur.",
+                paidButton,
+                cancelButton
+        );
+        alert.setTitle("Paiement Stripe");
+        alert.setHeaderText("Finalisez le paiement dans le navigateur");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == paidButton) {
+            if (onSuccess != null) {
+                Platform.runLater(onSuccess);
             }
-        });
+        } else if (onCancel != null) {
+            Platform.runLater(onCancel);
+        }
+    }
 
-        Scene scene = new Scene(webView, 1000, 700);
-        stage.setScene(scene);
-        stage.showAndWait();
+    private static void openInBrowser(String url) {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(URI.create(url));
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Impossible d'ouvrir la page de paiement: " + url, e);
+        }
     }
 }

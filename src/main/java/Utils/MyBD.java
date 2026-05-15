@@ -32,6 +32,10 @@ public class MyBD {
     public Connection getConn() {
         return conn;
     }
+
+    public Connection getCnx() {
+        return conn;
+    }
 }
 
 

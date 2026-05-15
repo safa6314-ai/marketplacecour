@@ -144,9 +144,9 @@ public class AdminDashboardController {
     @FXML public void openAbonnementStatistique() { loadAbonnementPage("statistique", btnAbonnementStatistique); }
     @FXML public void openSouscription() { loadAbonnementPage("souscription", btnSouscription); }
 
-    @FXML public void openQuiz() { loadPlaceholder("Quiz", "Module Quiz", btnQuiz); }
-    @FXML public void openQuestions() { loadPlaceholder("Questions", "Module Quiz - Questions", btnQuestions); }
-    @FXML public void openResultats() { loadPlaceholder("Resultats", "Module Quiz - Resultats", btnResultats); }
+    @FXML public void openQuiz() { setMenuOpen(quizSubmenu, quizArrowIcon, true); loadPage("/QuizUtilisateur.fxml", btnQuiz); }
+    @FXML public void openQuestions() { setMenuOpen(quizSubmenu, quizArrowIcon, true); loadPage("/Question.fxml", btnQuestions); }
+    @FXML public void openResultats() { setMenuOpen(quizSubmenu, quizArrowIcon, true); loadPage("/Reponse.fxml", btnResultats); }
 
     @FXML public void openEventAjouter() {
         setMenuOpen(eventsSubmenu, eventsArrowIcon, true);

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760.0" prefWidth="1180.0" styleClass="app-root" stylesheets="@quiz-theme.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.QuizUtilisateurController">
+   <left>
+      <VBox prefWidth="260.0" spacing="18.0" styleClass="sidebar">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+               <children>
+                  <Label styleClass="logo-mark" text="A" />
+                  <Label styleClass="brand-title" text="ARTEVIA QUIZ" />
+               </children>
+            </HBox>
+            <Label styleClass="sidebar-kicker" text="UTILISATEUR" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-btn-active" text="Choisir une question" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-btn" text="Quiz" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-btn" text="Score" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#allerVersAdmin" styleClass="switch-btn" text="Passer en Admin" />
+            <VBox spacing="6.0" styleClass="path-card">
+               <children>
+                  <Label styleClass="path-title" text="Theme" />
+                  <Label styleClass="path-text" text="Oeuvres - Tableaux - Sculptures" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="28.0" left="28.0" right="24.0" top="32.0" />
+         </padding>
+      </VBox>
+   </left>
+   <center>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="page-scroll">
+         <content>
+            <VBox spacing="18.0" styleClass="content-page">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="14.0">
+                     <children>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="page-title" text="Choisir une question" />
+                              <Label styleClass="page-subtitle" text="Selectionnez une question d'art, cochez les bonnes reponses et suivez votre score." />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="4.0" styleClass="score-card">
+                           <children>
+                              <Label styleClass="score-label" text="Score" />
+                              <Label fx:id="lblScore" styleClass="score-value" text="0" />
+                           </children>
+                           <padding>
+                              <Insets bottom="12.0" left="28.0" right="28.0" top="12.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <TextField fx:id="tfRecherche" promptText="Rechercher une question d'art..." styleClass="search-field" HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="cbCategorieFiltre" prefWidth="190.0" promptText="Categorie" styleClass="filter-combo" />
+                        <ComboBox fx:id="cbNiveauFiltre" prefWidth="150.0" promptText="Niveau" styleClass="filter-combo" />
+                        <ComboBox fx:id="cbLangue" prefWidth="145.0" promptText="Langue" styleClass="filter-combo" />
+                        <Label fx:id="lblResultats" styleClass="result-label" text="0 question(s)" />
+                     </children>
+                  </HBox>
+
+                  <VBox spacing="6.0" styleClass="quote-card">
+                     <children>
+                        <Label fx:id="lblCitation" styleClass="quote-text" text="Chargement de la citation..." wrapText="true" />
+                        <Label fx:id="lblCitationAuteur" styleClass="quote-author" text="" />
+                     </children>
+                     <padding>
+                        <Insets bottom="16.0" left="20.0" right="20.0" top="16.0" />
+                     </padding>
+                  </VBox>
+
+                  <HBox spacing="18.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox spacing="12.0" styleClass="panel" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="panel-title" text="Questions disponibles" />
+                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="430.0" styleClass="cards-scroll">
+                                 <content>
+                                    <VBox fx:id="questionsContainer" spacing="10.0" />
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="18.0" left="24.0" right="24.0" top="18.0" />
+                           </padding>
+                        </VBox>
+
+                        <VBox prefWidth="420.0" spacing="14.0" styleClass="panel">
+                           <children>
+                              <Label styleClass="panel-title" text="Quiz" />
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <ProgressBar fx:id="progressTimer" prefWidth="300.0" progress="0.0" styleClass="timer-bar" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblTempsRestant" styleClass="timer-label" text="-- s" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="lblQuestionChoisie" styleClass="selected-question" text="Aucune question sélectionnée" wrapText="true" />
+                              <VBox fx:id="reponsesContainer" spacing="12.0" />
+                              <Label fx:id="lblFeedbackReponse" styleClass="feedback-label" text="" wrapText="true" />
+                              <HBox spacing="10.0">
+                                 <children>
+                                    <Button fx:id="btnValiderReponse" mnemonicParsing="false" onAction="#validerReponse" styleClass="primary-btn" text="Valider" />
+                                    <Button fx:id="btnQuestionSuivante" mnemonicParsing="false" onAction="#questionSuivante" styleClass="soft-btn" text="Question suivante" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="lblAchievementNotice" styleClass="achievement-notice" text="" wrapText="true" />
+                              <Button mnemonicParsing="false" onAction="#recommencer" styleClass="soft-btn" text="Recommencer" />
+                              <Label styleClass="panel-title" text="Mes Succès" />
+                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="150.0" styleClass="cards-scroll">
+                                 <content>
+                                    <VBox fx:id="achievementsContainer" spacing="8.0" />
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="22.0" left="24.0" right="24.0" top="22.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="34.0" left="38.0" right="38.0" top="34.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

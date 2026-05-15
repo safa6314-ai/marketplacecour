@@ -127,7 +127,7 @@
                     <VBox fx:id="quizSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
                         <Button fx:id="btnQuiz" text="Quiz" onAction="#openQuiz" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
                         <Button fx:id="btnQuestions" text="Questions" onAction="#openQuestions" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
-                        <Button fx:id="btnResultats" text="Résultats" onAction="#openResultats" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnResultats" text="Response" onAction="#openResultats" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
                     </VBox>
 
                     <Button fx:id="btnEventsMenu" onAction="#toggleEventsMenu" maxWidth="Infinity" styleClass="sidebar-nav-button">
