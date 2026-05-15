@@ -20,12 +20,13 @@ public class ChapitreService {
     }
 
     public void ajouter(Chapitres chapitre) {
-        String sql = "INSERT INTO chapitres (titre, contenu, ordre, cours_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO chapitres (titre, contenu, pdf_path, ordre, cours_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = requireConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, chapitre.getTitre());
             ps.setString(2, chapitre.getContenu());
-            ps.setInt(3, chapitre.getOrdre());
-            ps.setInt(4, chapitre.getCoursId());
+            ps.setString(3, chapitre.getPdfPath());
+            ps.setInt(4, chapitre.getOrdre());
+            ps.setInt(5, chapitre.getCoursId());
             ps.executeUpdate();
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -40,13 +41,14 @@ public class ChapitreService {
     }
 
     public void modifier(Chapitres chapitre) {
-        String sql = "UPDATE chapitres SET titre=?, contenu=?, ordre=?, cours_id=? WHERE id=?";
+        String sql = "UPDATE chapitres SET titre=?, contenu=?, pdf_path=?, ordre=?, cours_id=? WHERE id=?";
         try (PreparedStatement ps = requireConnection().prepareStatement(sql)) {
             ps.setString(1, chapitre.getTitre());
             ps.setString(2, chapitre.getContenu());
-            ps.setInt(3, chapitre.getOrdre());
-            ps.setInt(4, chapitre.getCoursId());
-            ps.setInt(5, chapitre.getId());
+            ps.setString(3, chapitre.getPdfPath());
+            ps.setInt(4, chapitre.getOrdre());
+            ps.setInt(5, chapitre.getCoursId());
+            ps.setInt(6, chapitre.getId());
             ps.executeUpdate();
             System.out.println("Chapitre modifie avec succes.");
         } catch (SQLException e) {
@@ -102,6 +104,7 @@ public class ChapitreService {
         ch.setId(rs.getInt("id"));
         ch.setTitre(rs.getString("titre"));
         ch.setContenu(rs.getString("contenu"));
+        ch.setPdfPath(rs.getString("pdf_path"));
         ch.setOrdre(rs.getInt("ordre"));
         ch.setCoursId(rs.getInt("cours_id"));
         return ch;

@@ -5,6 +5,7 @@ public class Chapitres {
     private int id;
     private String titre;
     private String contenu;
+    private String pdfPath;
     private int ordre;
     private int coursId;
 
@@ -25,6 +26,9 @@ public class Chapitres {
 
     public String getContenu() { return contenu; }
     public void setContenu(String contenu) { this.contenu = contenu; }
+
+    public String getPdfPath() { return pdfPath; }
+    public void setPdfPath(String pdfPath) { this.pdfPath = pdfPath; }
 
     public int getOrdre() { return ordre; }
     public void setOrdre(int ordre) { this.ordre = ordre; }
