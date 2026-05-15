@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane prefWidth="1100.0"
+            prefHeight="650.0"
+            minWidth="1100.0"
+            minHeight="650.0"
+            stylesheets="@welcome-page.css"
+            styleClass="welcome-root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.WelcomePageController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT"
+              spacing="14.0"
+              styleClass="welcome-header">
+            <Label text="A"
+                   styleClass="welcome-logo-mark"/>
+            <VBox spacing="0.0">
+                <Label text="Artevia"
+                       styleClass="welcome-logo-text"/>
+                <Label text=".marketspace"
+                       styleClass="welcome-logo-subtitle"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Sign In"
+                    onAction="#openLogin"
+                    styleClass="welcome-header-link"/>
+            <Button text="Sign Up"
+                    onAction="#openSignUp"
+                    styleClass="welcome-header-primary"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox alignment="CENTER"
+              spacing="34.0"
+              styleClass="welcome-main">
+            <VBox fx:id="heroContent"
+                  alignment="CENTER_LEFT"
+                  spacing="22.0"
+                  HBox.hgrow="ALWAYS"
+                  styleClass="welcome-hero">
+                <Label text="Welcome to Artevia"
+                       wrapText="true"
+                       styleClass="welcome-title"/>
+                <Label text="Manage users, explore art, learn, connect and grow in one platform."
+                       wrapText="true"
+                       styleClass="welcome-subtitle"/>
+
+                <HBox spacing="12.0">
+                    <Button text="Sign In"
+                            onAction="#openLogin"
+                            styleClass="welcome-cta-primary">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-sign-in-alt"
+                                      iconSize="15"/>
+                        </graphic>
+                    </Button>
+                    <Button text="Sign Up"
+                            onAction="#openSignUp"
+                            styleClass="welcome-cta-gold">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-user-plus"
+                                      iconSize="15"/>
+                        </graphic>
+                    </Button>
+                </HBox>
+
+                <HBox spacing="12.0"
+                      styleClass="welcome-role-row">
+                    <Label text="ADMIN"
+                           styleClass="welcome-role-pill"/>
+                    <Label text="ARTIST"
+                           styleClass="welcome-role-pill"/>
+                    <Label text="BUYER"
+                           styleClass="welcome-role-pill"/>
+                </HBox>
+            </VBox>
+
+            <VBox fx:id="modulesPanel"
+                  spacing="16.0"
+                  styleClass="welcome-module-panel">
+                <Label text="Artevia Modules"
+                       styleClass="welcome-panel-title"/>
+                <GridPane hgap="14.0"
+                          vgap="14.0">
+                    <VBox GridPane.columnIndex="0"
+                          GridPane.rowIndex="0"
+                          styleClass="welcome-module-card">
+                        <FontIcon iconLiteral="fas-users"
+                                  iconSize="22"/>
+                        <Label text="User Management"/>
+                    </VBox>
+                    <VBox GridPane.columnIndex="1"
+                          GridPane.rowIndex="0"
+                          styleClass="welcome-module-card">
+                        <FontIcon iconLiteral="fas-store"
+                                  iconSize="22"/>
+                        <Label text="Marketplace"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+        </HBox>
+    </center>
+
+    <padding>
+        <Insets bottom="0.0" left="0.0" right="0.0" top="0.0"/>
+    </padding>
+</BorderPane>

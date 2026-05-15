@@ -1,0 +1,102 @@
+.admin-shell,
+.admin-shell .main-area,
+.admin-shell .content-host,
+.page-root {
+    -fx-background-color: #f6f8fc;
+}
+
+.admin-shell .sidebar {
+    -fx-background-color: linear-gradient(to bottom, #5b2b91, #6c2bd9);
+}
+
+.admin-shell .topbar,
+.admin-shell .metric-card,
+.admin-shell .mini-stat-card,
+.admin-shell .panel-card,
+.admin-shell .profile-card,
+.admin-shell .filter-bar,
+.admin-shell .user-card,
+.admin-shell .popup-root {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dfe6f1;
+    -fx-effect: dropshadow(gaussian, rgba(28, 39, 64, 0.07), 16, 0.12, 0, 5);
+}
+
+.admin-shell .page-title,
+.admin-shell .panel-title,
+.admin-shell .topbar-title,
+.admin-shell .topbar-name,
+.admin-shell .metric-value,
+.admin-shell .user-card-title,
+.admin-shell .meta-value {
+    -fx-text-fill: #1e1f2f;
+}
+
+.admin-shell .page-subtitle,
+.admin-shell .topbar-subtitle,
+.admin-shell .topbar-role,
+.admin-shell .metric-label,
+.admin-shell .mini-stat-label,
+.admin-shell .user-card-text,
+.admin-shell .user-card-date {
+    -fx-text-fill: #8a8fa3;
+}
+
+.admin-shell .admin-input,
+.admin-shell .admin-combo,
+.admin-shell .admin-date,
+.admin-shell .search-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8e0ec;
+    -fx-text-fill: #1e1f2f;
+    -fx-prompt-text-fill: #8a8fa3;
+}
+
+.admin-shell .admin-input:focused,
+.admin-shell .admin-combo:focused,
+.admin-shell .admin-date:focused {
+    -fx-border-color: #6c2bd9;
+    -fx-effect: dropshadow(gaussian, rgba(108, 43, 217, 0.20), 16, 0.18, 0, 0);
+}
+
+.admin-shell .topbar-icon-button,
+.admin-shell .theme-toggle-button {
+    -fx-background-color: #f7f8fb;
+    -fx-border-color: #e6ebf3;
+    -fx-text-fill: #5b2b91;
+}
+
+.admin-shell .topbar-icon-button:hover,
+.admin-shell .theme-toggle-button:hover {
+    -fx-background-color: #efe7fa;
+    -fx-effect: dropshadow(gaussian, rgba(108, 43, 217, 0.18), 14, 0.16, 0, 5);
+}
+
+.admin-shell .theme-toggle-button .ikonli-font-icon,
+.admin-shell .topbar-icon-button .ikonli-font-icon {
+    -fx-icon-color: #5b2b91;
+}
+
+.theme-toggle-button {
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+    -fx-background-radius: 13px;
+    -fx-border-radius: 13px;
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-graphic-text-gap: 8px;
+    -fx-cursor: hand;
+    -fx-padding: 0 13px;
+}
+
+.primary-action-button,
+.card-edit-button {
+    -fx-background-color: linear-gradient(to right, #6c2bd9, #7c3aed);
+    -fx-effect: dropshadow(gaussian, rgba(108, 43, 217, 0.30), 18, 0.22, 0, 8);
+}
+
+.primary-action-button:hover,
+.card-edit-button:hover {
+    -fx-background-color: linear-gradient(to right, #5b21b6, #6c2bd9);
+    -fx-effect: dropshadow(gaussian, rgba(108, 43, 217, 0.42), 24, 0.26, 0, 10);
+}

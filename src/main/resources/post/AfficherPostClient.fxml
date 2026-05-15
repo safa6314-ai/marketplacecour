@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.post.AfficherPostClientController"
+            prefWidth="1120"
+            prefHeight="780"
+            styleClass="root-pane"
+            stylesheets="@/forum-style.css">
+
+    <top>
+        <VBox spacing="10" styleClass="topbar">
+            <padding><Insets top="18" right="28" bottom="14" left="28"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="14">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="ForumInArtevia" styleClass="heading-title"/>
+                    <Label text="Fil artistique de la communaute" styleClass="heading-subtitle"/>
+                </VBox>
+                <Button text="Nouveau Post" onAction="#ouvrirDialogAjouter" styleClass="primary-btn"/>
+                <Button text="Actualiser" onAction="#rafraichir" styleClass="secondary-btn"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <TextField fx:id="tfRecherche" promptText="Rechercher dans les publications..." HBox.hgrow="ALWAYS"/>
+                <Button text="Effacer" onAction="#effacerRecherche" styleClass="secondary-btn"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="feed-scroll">
+            <FlowPane fx:id="feedGrid" hgap="24" vgap="22" prefWrapLength="1120" styleClass="feed-grid">
+                <padding><Insets top="28" right="26" bottom="22" left="26"/></padding>
+            </FlowPane>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <VBox spacing="8" styleClass="bottom-bar">
+            <padding><Insets top="10" right="28" bottom="12" left="28"/></padding>
+            <HBox spacing="12" alignment="CENTER">
+                <Button text="Precedent" onAction="#pagePrecedente" styleClass="secondary-btn"/>
+                <Label fx:id="lblPage" text="Page 1 / 1" styleClass="section-title"/>
+                <Button text="Suivant" onAction="#pageSuivante" styleClass="secondary-btn"/>
+            </HBox>
+            <Label fx:id="lblStatus" text="Pret." styleClass="status-label"/>
+        </VBox>
+    </bottom>
+</BorderPane>

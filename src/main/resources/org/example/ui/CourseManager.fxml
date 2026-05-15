@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.CourseManagerController"
+            stylesheets="@course-manager.css"
+            prefWidth="1280"
+            prefHeight="820"
+            styleClass="root-pane">
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" styleClass="scroll-section">
+            <VBox spacing="16" styleClass="catalog-page">
+                <padding><Insets top="14" right="18" bottom="18" left="18"/></padding>
+
+                <VBox fx:id="courseHeroSection" spacing="14" styleClass="hero-band">
+                    <Label text="Espace d'apprentissage avanc&#xE9;" styleClass="hero-title"/>
+                    <Label text="Un espace d'apprentissage pour liberer votre imagination"
+                           styleClass="hero-subtitle"/>
+                </VBox>
+
+                <VBox fx:id="coursesSection" spacing="14">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Cours" styleClass="section-heading"/>
+                        <Label fx:id="courseCountLabel" text="0 cours" styleClass="count-chip"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="courseSearchField"
+                                   promptText="Rechercher un cours..."
+                                   styleClass="search-field"
+                                   prefWidth="260"/>
+                        <Button fx:id="addCourseButton" text="Ajouter un cours" styleClass="btn-primary" onAction="#handleAddCourse"/>
+                        <Button fx:id="editCourseButton" text="Modifier" styleClass="btn-secondary" onAction="#handleEditCourse"/>
+                        <Button fx:id="deleteCourseButton" text="Supprimer" styleClass="btn-danger" onAction="#handleDeleteCourse"/>
+                    </HBox>
+
+                    <VBox fx:id="courseEditorBox" spacing="12" styleClass="editor-panel">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="&#xC9;diteur de cours" styleClass="panel-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="courseIdLabel" text="" styleClass="id-chip"/>
+                        </HBox>
+                        <HBox spacing="14">
+                            <TextField fx:id="courseTitleField"
+                                       promptText="Titre du cours"
+                                       styleClass="field-input"
+                                       HBox.hgrow="ALWAYS"/>
+                            <ComboBox fx:id="courseCategoryCombo" promptText="Cat&#xE9;gorie" styleClass="field-combo" prefWidth="180">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Peinture"/>
+                                        <String fx:value="Dessin"/>
+                                        <String fx:value="Poterie"/>
+                                        <String fx:value="C&#xE9;ramique"/>
+                                        <String fx:value="Sculpture"/>
+                                        <String fx:value="Aquarelle"/>
+                                        <String fx:value="Calligraphie"/>
+                                        <String fx:value="Photographie"/>
+                                        <String fx:value="Illustration digitale"/>
+                                        <String fx:value="Design graphique"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                            <ComboBox fx:id="courseLevelCombo" promptText="Niveau" styleClass="field-combo" prefWidth="180">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="D&#xE9;butant"/>
+                                        <String fx:value="Interm&#xE9;diaire"/>
+                                        <String fx:value="Avanc&#xE9;"/>
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </HBox>
+                        <TextArea fx:id="courseDescriptionArea"
+                                  promptText="Description du cours"
+                                  styleClass="field-textarea"
+                                  prefRowCount="3"
+                                  wrapText="true"/>
+                    </VBox>
+
+                    <TilePane fx:id="courseTilePane"
+                              hgap="20"
+                              vgap="20"
+                              prefColumns="3"
+                              styleClass="course-grid"/>
+                    <ListView fx:id="courseListView" visible="false" managed="false"/>
+                </VBox>
+
+                <VBox fx:id="servicesSection" spacing="12">
+                    <Label text="Services connect&#xE9;s" styleClass="section-heading"/>
+                    <FlowPane hgap="18" vgap="18" prefWrapLength="1120" alignment="CENTER_LEFT">
+                        <VBox styleClass="api-card" spacing="10">
+                            <Label text="&#x2709;" styleClass="api-icon"/>
+                            <Label text="Brevo" styleClass="feature-title"/>
+                            <Label text="Envoi automatique des emails de confirmation, rappels et notifications."
+                                   wrapText="true"
+                                   styleClass="api-description"/>
+                            <TextField fx:id="apiStudentNameField" promptText="Nom de l'&#xE9;tudiant" styleClass="field-input"/>
+                            <TextField fx:id="apiStudentEmailField" promptText="Email de l'&#xE9;tudiant" styleClass="field-input"/>
+                            <Button text="Envoyer un rappel" styleClass="btn-primary" onAction="#handleSendApiReminder"/>
+                        </VBox>
+                        <VBox styleClass="api-card" spacing="10">
+                            <Label text="&#x2301;" styleClass="api-icon"/>
+                            <Label text="Zoom" styleClass="feature-title"/>
+                            <Label text="Cr&#xE9;ation de r&#xE9;unions en ligne et g&#xE9;n&#xE9;ration de liens de visioconf&#xE9;rence."
+                                   wrapText="true"
+                                   styleClass="api-description"/>
+                            <TextField fx:id="apiMeetingStartField"
+                                       promptText="2026-05-20T10:00:00"
+                                       styleClass="field-input"/>
+                            <TextField fx:id="apiMeetingTopicField"
+                                       promptText="Sujet de la reunion"
+                                       styleClass="field-input"/>
+                            <TextField fx:id="apiMeetingDurationField"
+                                       promptText="Duree en minutes"
+                                       text="60"
+                                       styleClass="field-input"/>
+                            <Button fx:id="createZoomButton" text="Cr&#xE9;er une r&#xE9;union Zoom" styleClass="btn-secondary" onAction="#handleCreateApiMeeting"/>
+                            <Button fx:id="joinZoomButton" text="Rejoindre la r&#xE9;union" styleClass="btn-primary" onAction="#handleJoinZoomMeeting"/>
+                        </VBox>
+                        <VBox styleClass="api-card" spacing="10">
+                            <Label text="&#x2601;" styleClass="api-icon"/>
+                            <Label text="Cloudinary" styleClass="feature-title"/>
+                            <Label text="Partage de r&#xE9;sum&#xE9;s entre &#xE9;tudiants pour faciliter les r&#xE9;visions."
+                                   wrapText="true"
+                                   styleClass="api-description"/>
+                            <TextField fx:id="apiCloudUrlField"
+                                       promptText="Lien du fichier envoy&#xE9;..."
+                                       styleClass="field-input"
+                                       editable="false"/>
+                            <Button fx:id="chooseSummaryFileButton" text="Choisir r&#xE9;sum&#xE9;" styleClass="btn-secondary" onAction="#handleChooseSummaryFile"/>
+                            <Button fx:id="uploadSummaryButton" text="Envoyer r&#xE9;sum&#xE9;" styleClass="btn-primary" onAction="#handleUploadStudentSummary"/>
+                        </VBox>
+                        <VBox styleClass="api-card" spacing="10">
+                            <Label text="AI" styleClass="api-icon"/>
+                            <Label text="GroqAI" styleClass="feature-title"/>
+                            <Label text="Generation automatique d'un cours complet avec chapitres a partir d'une idee."
+                                   wrapText="true"
+                                   styleClass="api-description"/>
+                            <TextArea fx:id="apiCourseIdeaArea"
+                                      promptText="Ex: Un cours JavaFX debutant avec projet marketplace..."
+                                      styleClass="field-textarea"
+                                      prefRowCount="3"
+                                      wrapText="true"/>
+                            <Button fx:id="generateCourseButton"
+                                    text="Generer un cours"
+                                    styleClass="btn-primary"
+                                    onAction="#handleGenerateApiCourse"/>
+                        </VBox>
+                    </FlowPane>
+                </VBox>
+
+                <VBox fx:id="studentManagementSection" spacing="14" styleClass="student-management-section" visible="false" managed="false" VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                    <VBox spacing="4">
+                        <Label text="Gestion des &#xE9;tudiants" styleClass="section-heading"/>
+                            <Label text="G&#xE9;rez les &#xE9;tudiants, leurs pr&#xE9;sences, leurs notes, leurs r&#xE9;sum&#xE9;s et leur progression."
+                               wrapText="true"
+                               styleClass="section-subtitle"/>
+                    </VBox>
+
+                    <HBox spacing="14" alignment="CENTER_LEFT">
+                        <VBox styleClass="student-stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Total &#xE9;tudiants" styleClass="student-stat-title"/>
+                            <Label fx:id="totalStudentsLabel" text="0" styleClass="student-stat-value"/>
+                        </VBox>
+                        <VBox styleClass="student-stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Pr&#xE9;sents" styleClass="student-stat-title"/>
+                            <Label fx:id="activeStudentsLabel" text="0" styleClass="student-stat-value"/>
+                        </VBox>
+                        <VBox styleClass="student-stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Non pr&#xE9;sents" styleClass="student-stat-title"/>
+                            <Label fx:id="absentStudentsLabel" text="0" styleClass="student-stat-value"/>
+                        </VBox>
+                        <VBox styleClass="student-stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Moyenne g&#xE9;n&#xE9;rale" styleClass="student-stat-title"/>
+                            <Label fx:id="globalAverageLabel" text="0.00 / 5" styleClass="student-stat-value"/>
+                        </VBox>
+                    </HBox>
+
+                    <VBox spacing="12" styleClass="student-panel" VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <TextField fx:id="studentEmailLookupField"
+                                           promptText="Email de l'&#xE9;tudiant"
+                                           styleClass="search-field"
+                                           HBox.hgrow="ALWAYS"/>
+                                <Button text="Rechercher email" styleClass="btn-primary" onAction="#handleFindStudentByEmail"/>
+                            </HBox>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <TextField fx:id="studentSearchField"
+                                           promptText="Rechercher par nom, email, cours, genre ou statut..."
+                                           styleClass="search-field"
+                                           HBox.hgrow="ALWAYS"/>
+                                <ComboBox fx:id="studentFilterCombo"
+                                          promptText="Filtre"
+                                          styleClass="field-input"
+                                          prefWidth="170"/>
+                                <Button text="Ajouter &#xE9;tudiant" styleClass="btn-primary" onAction="#handleAddStudent"/>
+                            </HBox>
+
+                            <ListView fx:id="studentListView"
+                                       styleClass="modern-list student-list"
+                                       VBox.vgrow="ALWAYS">
+                                <placeholder>
+                                    <Label text="Aucun &#xE9;tudiant trouv&#xE9;"/>
+                                </placeholder>
+                            </ListView>
+                    </VBox>
+                </VBox>
+
+                <VBox fx:id="reportsSection" spacing="14" styleClass="student-management-section" visible="false" managed="false">
+                    <VBox spacing="4">
+                        <Label text="Rapports" styleClass="section-heading"/>
+                        <Label text="Consultez les indicateurs et synth&#xE8;ses de l'activit&#xE9; Artevia."
+                               wrapText="true"
+                               styleClass="section-subtitle"/>
+                    </VBox>
+                    <HBox spacing="14" alignment="CENTER_LEFT">
+                        <VBox styleClass="student-stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Cours publi&#xE9;s" styleClass="student-stat-title"/>
+                            <Label fx:id="reportCoursesLabel" text="0" styleClass="student-stat-value"/>
+                        </VBox>
+                        <VBox styleClass="student-stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="&#xC9;tudiants inscrits" styleClass="student-stat-title"/>
+                            <Label fx:id="reportStudentsLabel" text="0" styleClass="student-stat-value"/>
+                        </VBox>
+                        <VBox styleClass="student-stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Pr&#xE9;sents" styleClass="student-stat-title"/>
+                            <Label fx:id="reportPresentStudentsLabel" text="0" styleClass="student-stat-value"/>
+                        </VBox>
+                        <VBox styleClass="student-stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="Moyenne g&#xE9;n&#xE9;rale" styleClass="student-stat-title"/>
+                            <Label fx:id="reportAverageLabel" text="0.00 / 5" styleClass="student-stat-value"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <SplitPane fx:id="chapterWorkspacePane"
+                           orientation="HORIZONTAL"
+                           dividerPositions="0.33"
+                           styleClass="inner-split"
+                           visible="false"
+                           managed="false"
+                           prefHeight="560">
+                    <VBox styleClass="section-card" spacing="0" minWidth="300">
+                        <HBox styleClass="panel-header" alignment="CENTER_LEFT" spacing="10">
+                            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+                            <Label text="Chapitres" styleClass="section-heading"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="chapterCountLabel" text="0 chapitres" styleClass="count-chip"/>
+                        </HBox>
+                        <HBox styleClass="search-bar" alignment="CENTER_LEFT" spacing="8">
+                            <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+                            <TextField fx:id="chapterSearchField"
+                                       promptText="Rechercher un chapitre..."
+                                       styleClass="search-field"
+                                       HBox.hgrow="ALWAYS"
+                                       maxWidth="Infinity"/>
+                        </HBox>
+                        <ListView fx:id="chapterListView"
+                                  styleClass="modern-list chapter-list"
+                                  VBox.vgrow="ALWAYS">
+                            <placeholder>
+                                <Label text="Double-cliquez sur un cours"/>
+                            </placeholder>
+                        </ListView>
+                        <HBox styleClass="action-bar" spacing="8" alignment="CENTER">
+                            <padding><Insets top="10" right="12" bottom="10" left="12"/></padding>
+                            <Button fx:id="addChapterButton" text="Ajouter" styleClass="btn-primary" onAction="#handleAddChapter"/>
+                            <Button fx:id="editChapterButton" text="Modifier" styleClass="btn-secondary" onAction="#handleEditChapter"/>
+                            <Button fx:id="deleteChapterButton" text="Supprimer" styleClass="btn-danger" onAction="#handleDeleteChapter"/>
+                        </HBox>
+                    </VBox>
+
+                    <ScrollPane fitToWidth="true" styleClass="scroll-section" hbarPolicy="NEVER">
+                        <VBox styleClass="section-card" spacing="18">
+                            <padding><Insets top="22" right="24" bottom="22" left="24"/></padding>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="D&#xE9;tails du chapitre" styleClass="section-heading"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="chapterIdLabel" text="" styleClass="id-chip"/>
+                            </HBox>
+                            <Separator styleClass="divider"/>
+                            <HBox spacing="14" alignment="CENTER_LEFT">
+                                <VBox spacing="6" prefWidth="70">
+                                    <Label text="ORDRE" styleClass="field-label"/>
+                                    <TextField fx:id="chapterOrderField" promptText="1" styleClass="field-input field-input-sm"/>
+                                </VBox>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="TITRE" styleClass="field-label"/>
+                                    <TextField fx:id="chapterTitleField" promptText="Titre du chapitre..." styleClass="field-input"/>
+                                </VBox>
+                            </HBox>
+                            <VBox spacing="6">
+                                <Label text="CONTENU / PDF" styleClass="field-label"/>
+                                <TextArea fx:id="chapterContentArea"
+                                          promptText="Ecrivez le contenu ou choisissez le PDF du chapitre..."
+                                          styleClass="field-textarea field-textarea-content"
+                                          prefRowCount="5"
+                                          wrapText="true"/>
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <TextField fx:id="chapterPdfField"
+                                               promptText="Choisir le PDF du chapitre..."
+                                               styleClass="field-input"
+                                               editable="false"
+                                               HBox.hgrow="ALWAYS"/>
+                                    <Button fx:id="chooseChapterPdfButton"
+                                            text="Choisir PDF"
+                                            styleClass="btn-secondary"
+                                            onAction="#handleChooseChapterPdf"/>
+                                    <Button fx:id="openChapterPdfButton"
+                                            text="Ouvrir PDF"
+                                            styleClass="btn-secondary"
+                                            onAction="#handleOpenChapterPdf"/>
+                                </HBox>
+                            </VBox>
+                            <HBox alignment="CENTER_RIGHT">
+                                <Button fx:id="saveChapterButton" text="Enregistrer le chapitre" styleClass="btn-primary btn-wide" onAction="#handleSaveChapter"/>
+                            </HBox>
+                            <Separator styleClass="divider"/>
+
+                            <VBox spacing="14" styleClass="student-space">
+                                <Label text="Suivi de progres, evaluation et rendu" styleClass="section-heading"/>
+                                <VBox fx:id="advancedProgressBox" spacing="10">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <TextField fx:id="advancedStudentEmailField"
+                                                   promptText="Email de l'&#xE9;tudiant"
+                                                   styleClass="field-input"
+                                                   HBox.hgrow="ALWAYS"/>
+                                        <ComboBox fx:id="advancedProgressCombo"
+                                                  promptText="Progression"
+                                                  styleClass="field-combo"
+                                                  prefWidth="180">
+                                            <items>
+                                                <FXCollections fx:factory="observableArrayList">
+                                                    <String fx:value="Non commenc&#xE9;"/>
+                                                    <String fx:value="En cours"/>
+                                                    <String fx:value="Termin&#xE9;"/>
+                                                </FXCollections>
+                                            </items>
+                                        </ComboBox>
+                                        <Button text="Enregistrer progression" styleClass="btn-secondary" onAction="#handleAdvancedProgress"/>
+                                        <Button text="Recommander chapitre" styleClass="btn-secondary" onAction="#handleAdvancedRecommendation"/>
+                                    </HBox>
+                                    <Label fx:id="advancedResultLabel"
+                                           text="Selectionnez un chapitre, puis utilisez le suivi de progres."
+                                           styleClass="status-label"
+                                           wrapText="true"/>
+                                </VBox>
+                                <Separator styleClass="divider"/>
+                                <Label text="Rendu de l'etudiant" styleClass="student-block-title"/>
+                                <HBox fx:id="enseignantEvaluationBox" spacing="12" alignment="CENTER_LEFT">
+                                    <ComboBox fx:id="ratingCombo" promptText="Note" styleClass="field-combo" prefWidth="120">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="1"/>
+                                                <String fx:value="2"/>
+                                                <String fx:value="3"/>
+                                                <String fx:value="4"/>
+                                                <String fx:value="5"/>
+                                            </FXCollections>
+                                        </items>
+                                    </ComboBox>
+                                    <TextArea fx:id="feedbackCommentArea"
+                                              promptText="Observation enseignant selon la progression, le rendu et la presence..."
+                                              styleClass="field-textarea"
+                                              prefRowCount="2"
+                                              wrapText="true"
+                                              HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <HBox spacing="8" alignment="CENTER_RIGHT">
+                                    <Button fx:id="submitEnseignantGradeButton"
+                                            text="Enregistrer la note"
+                                            styleClass="btn-primary"
+                                            onAction="#handleSubmitFeedback"/>
+                                </HBox>
+                                <Label fx:id="enseignantRenduStatusLabel"
+                                       text="Aucun rendu soumis pour ce chapitre."
+                                       styleClass="status-label"
+                                       wrapText="true"/>
+                                <VBox spacing="6">
+                                    <Label text="FICHIER RENDU" styleClass="field-label"/>
+                                    <Label fx:id="renduAttemptLabel"
+                                           text="Il reste une tentative. Tu ne peux mettre qu'un seul rendu."
+                                           styleClass="status-label"
+                                           wrapText="true"/>
+                                    <HBox spacing="8" alignment="CENTER_LEFT">
+                                        <TextField fx:id="renduFileField"
+                                                   promptText="Choisir un fichier..."
+                                                   styleClass="field-input"
+                                                   editable="false"
+                                                   HBox.hgrow="ALWAYS"/>
+                                        <Button fx:id="chooseRenduFileButton"
+                                                text="Parcourir"
+                                                styleClass="btn-secondary"
+                                                onAction="#handleChooseRenduFile"/>
+                                        <Button fx:id="submitRenduButton"
+                                                text="Envoyer"
+                                                styleClass="btn-primary"
+                                                onAction="#handleSubmitRendu"/>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                        </VBox>
+                    </ScrollPane>
+                </SplitPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
+

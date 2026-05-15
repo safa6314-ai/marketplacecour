@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14.0" styleClass="event-root" stylesheets="@event-styles.css"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.AjouterEvenement">
+    <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="event-heading">
+        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblTitle" text="Gestion des evenements" styleClass="event-title"/>
+            <Label text="Creation, recherche et administration des evenements Artevia" styleClass="event-subtitle"/>
+        </VBox>
+        <Button text="Mon calendrier" onAction="#openCalendarPage" styleClass="event-primary-button"/>
+        <Button text="Maps" onAction="#openMapForSelectedEvent" styleClass="event-secondary-button"/>
+        <Button text="Details" onAction="#afficherDetails" styleClass="event-secondary-button"/>
+    </HBox>
+
+    <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+        <VBox fx:id="formBox" spacing="10.0" prefWidth="300.0" styleClass="event-panel">
+            <Label text="Evenement" styleClass="event-panel-title"/>
+            <TextField fx:id="tfTitre" promptText="Titre" styleClass="event-input"/>
+            <TextArea fx:id="taDescription" promptText="Description" prefRowCount="4" wrapText="true" styleClass="event-input"/>
+            <TextField fx:id="tfLieu" promptText="Lieu" styleClass="event-input"/>
+            <HBox spacing="8.0">
+                <DatePicker fx:id="dpDate" promptText="Date" styleClass="event-input" HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="tfHeure" promptText="HH:mm" prefWidth="78.0" styleClass="event-input"/>
+            </HBox>
+            <HBox spacing="8.0">
+                <Spinner fx:id="spCapacite" editable="true" prefWidth="126.0" styleClass="event-input"/>
+                <TextField fx:id="tfPrix" promptText="Prix" styleClass="event-input" HBox.hgrow="ALWAYS"/>
+            </HBox>
+            <ComboBox fx:id="cbCategorie" maxWidth="Infinity" styleClass="event-input"/>
+            <HBox spacing="8.0">
+                <Button fx:id="btnAjouter" text="Ajouter" onAction="#ajouterEvent" styleClass="event-primary-button" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnModifier" text="Modifier" onAction="#modifierEvent" styleClass="event-secondary-button" HBox.hgrow="ALWAYS"/>
+            </HBox>
+            <HBox spacing="8.0">
+                <Button fx:id="btnSupprimer" text="Supprimer" onAction="#supprimerEvent" styleClass="event-danger-button" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnAnnuler" text="Annuler" onAction="#annulerSelection" styleClass="event-secondary-button" HBox.hgrow="ALWAYS"/>
+            </HBox>
+            <Label fx:id="lblStatus" wrapText="true" styleClass="event-status"/>
+        </VBox>
+
+        <VBox spacing="10.0" styleClass="event-panel" HBox.hgrow="ALWAYS">
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <TextField fx:id="tfRecherche" promptText="Rechercher evenement" styleClass="event-input" HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="cbFiltre" prefWidth="160.0" styleClass="event-input"/>
+            </HBox>
+            <TableView fx:id="eventTable" VBox.vgrow="ALWAYS" styleClass="event-table">
+                <columns>
+                    <TableColumn fx:id="colTitre" text="Titre" prefWidth="210.0"/>
+                    <TableColumn fx:id="colLieu" text="Lieu" prefWidth="160.0"/>
+                    <TableColumn fx:id="colDate" text="Date" prefWidth="140.0"/>
+                    <TableColumn fx:id="colCapacite" text="Capacite" prefWidth="85.0"/>
+                    <TableColumn fx:id="colCategorie" text="Categorie" prefWidth="120.0"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </HBox>
+</VBox>

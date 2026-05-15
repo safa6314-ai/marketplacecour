@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane stylesheets="@admin.css"
+            styleClass="page-root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AdminUsersController">
+
+    <top>
+        <VBox spacing="12.0"
+              styleClass="users-header">
+            <HBox alignment="CENTER_LEFT"
+                  spacing="12.0">
+                <VBox spacing="2.0"
+                      HBox.hgrow="ALWAYS">
+                    <Label text="Gestion des membres"
+                           styleClass="page-title"/>
+                    <Label text="Search, filter and manage Artevia members"
+                           styleClass="page-subtitle"/>
+                </VBox>
+
+                <Button text="+ Nouveau membre"
+                        onAction="#openAddPopup"
+                        styleClass="primary-action-button"/>
+                <Button text="Refresh"
+                        onAction="#refreshUsers"
+                        styleClass="secondary-action-button">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-sync-alt"
+                                  iconSize="13"/>
+                    </graphic>
+                </Button>
+            </HBox>
+
+            <GridPane hgap="10.0"
+                      vgap="8.0">
+                <VBox GridPane.columnIndex="0"
+                      GridPane.rowIndex="0"
+                      styleClass="mini-stat-card">
+                    <Label text="Resultats"
+                           styleClass="mini-stat-label"/>
+                    <Label fx:id="lblFilteredUsers"
+                           text="0"
+                           styleClass="mini-stat-value"/>
+                </VBox>
+                <VBox GridPane.columnIndex="1"
+                      GridPane.rowIndex="0"
+                      styleClass="mini-stat-card">
+                    <Label text="Admins"
+                           styleClass="mini-stat-label"/>
+                    <Label fx:id="lblFilteredAdmins"
+                           text="0"
+                           styleClass="mini-stat-value"/>
+                </VBox>
+                <VBox GridPane.columnIndex="2"
+                      GridPane.rowIndex="0"
+                      styleClass="mini-stat-card">
+                    <Label text="Bloques"
+                           styleClass="mini-stat-label"/>
+                    <Label fx:id="lblFilteredBlocked"
+                           text="0"
+                           styleClass="mini-stat-value-danger"/>
+                </VBox>
+            </GridPane>
+
+            <HBox spacing="10.0"
+                  styleClass="filter-bar">
+                <HBox alignment="CENTER_LEFT"
+                      spacing="8.0"
+                      HBox.hgrow="ALWAYS"
+                      styleClass="search-box">
+                    <FontIcon iconLiteral="fas-search"
+                              iconSize="13"
+                              styleClass="search-icon"/>
+                    <TextField fx:id="tfSearch"
+                               promptText="Recherche username ou email"
+                               HBox.hgrow="ALWAYS"
+                               styleClass="search-input"/>
+                </HBox>
+                <ComboBox fx:id="cbRoleFilter"
+                          promptText="Role"
+                          prefWidth="145.0"
+                          styleClass="admin-combo"/>
+                <ComboBox fx:id="cbStatusFilter"
+                          promptText="Status"
+                          prefWidth="145.0"
+                          styleClass="admin-combo"/>
+                <ComboBox fx:id="cbSort"
+                          promptText="Tri"
+                          prefWidth="165.0"
+                          styleClass="admin-combo"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ListView fx:id="lvUsers"
+                  BorderPane.alignment="CENTER"
+                  styleClass="users-list"/>
+    </center>
+</BorderPane>

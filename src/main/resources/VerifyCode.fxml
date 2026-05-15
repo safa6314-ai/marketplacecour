@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="420.0"
+      spacing="14.0"
+      styleClass="signin-card"
+      stylesheets="@signin.css"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.VerifyCodeController">
+
+    <children>
+        <Label text="Verification OTP" styleClass="signin-title" />
+        <Label text="Entrez le code de 6 chiffres envoye par email."
+               styleClass="signin-subtitle" />
+
+        <TextField fx:id="tfCode"
+                   promptText="Code OTP"
+                   styleClass="form-control" />
+
+        <Label fx:id="lblMessage"
+               styleClass="popup-error-label" />
+
+        <HBox spacing="12.0" styleClass="actions-row">
+            <Button text="Verifier"
+                    onAction="#verifyCode"
+                    prefWidth="190.0"
+                    styleClass="primary-button" />
+            <Button text="Annuler"
+                    onAction="#cancel"
+                    prefWidth="150.0"
+                    styleClass="secondary-button" />
+        </HBox>
+    </children>
+</VBox>
+

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="430.0"
+      spacing="12.0"
+      stylesheets="@admin.css"
+      styleClass="popup-root"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.UserFormPopupController">
+
+    <Label fx:id="lblTitle"
+           text="Utilisateur"
+           styleClass="popup-title"/>
+
+    <TextField fx:id="tfUsername"
+               promptText="Username"
+               styleClass="admin-input"/>
+
+    <TextField fx:id="tfEmail"
+               promptText="Email"
+               styleClass="admin-input"/>
+
+    <PasswordField fx:id="pfPassword"
+                   promptText="Password"
+                   styleClass="admin-input"/>
+
+    <TextField fx:id="tfFirstName"
+               promptText="First Name"
+               styleClass="admin-input"/>
+
+    <TextField fx:id="tfLastName"
+               promptText="Last Name"
+               styleClass="admin-input"/>
+
+    <ComboBox fx:id="cbRole"
+              promptText="Role"
+              maxWidth="Infinity"
+              styleClass="admin-combo"/>
+
+    <ComboBox fx:id="cbStatus"
+              promptText="Status"
+              maxWidth="Infinity"
+              styleClass="admin-combo"/>
+
+    <HBox spacing="10.0">
+    <Button text="Enregistrer"
+                onAction="#save"
+                HBox.hgrow="ALWAYS"
+                maxWidth="Infinity"
+                styleClass="primary-action-button"/>
+
+        <Button text="Annuler"
+                onAction="#cancel"
+                HBox.hgrow="ALWAYS"
+                maxWidth="Infinity"
+                styleClass="secondary-action-button"/>
+    </HBox>
+</VBox>
