@@ -141,9 +141,8 @@
                         </graphic>
                     </Button>
                     <VBox fx:id="eventsSubmenu" managed="false" visible="false" spacing="6.0" styleClass="sidebar-submenu">
-                        <Button fx:id="btnEvenements" text="Événements" onAction="#openEvenements" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
-                        <Button fx:id="btnReservations" text="Réservations" onAction="#openReservations" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
-                        <Button fx:id="btnCalendrier" text="Calendrier" onAction="#openCalendrier" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnEvenements" text="Événement" onAction="#openEventAjouter" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
+                        <Button fx:id="btnReservations" text="Réservation" onAction="#openEventReservation" maxWidth="Infinity" styleClass="sidebar-submenu-button"/>
                     </VBox>
 
                     <Button fx:id="btnSettings" text="Settings" onAction="#openSettings" maxWidth="Infinity" styleClass="sidebar-nav-button">

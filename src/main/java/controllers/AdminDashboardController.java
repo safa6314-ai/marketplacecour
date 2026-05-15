@@ -68,7 +68,6 @@ public class AdminDashboardController {
     @FXML private Button btnEventsMenu;
     @FXML private Button btnEvenements;
     @FXML private Button btnReservations;
-    @FXML private Button btnCalendrier;
     @FXML private Button btnSettings;
     @FXML private Button btnThemeToggle;
 
@@ -148,9 +147,18 @@ public class AdminDashboardController {
     @FXML public void openQuestions() { loadPlaceholder("Questions", "Module Quiz - Questions", btnQuestions); }
     @FXML public void openResultats() { loadPlaceholder("Resultats", "Module Quiz - Resultats", btnResultats); }
 
-    @FXML public void openEvenements() { loadPlaceholder("Evenements", "Module Events - Evenements", btnEvenements); }
-    @FXML public void openReservations() { loadPlaceholder("Reservations", "Module Events - Reservations", btnReservations); }
-    @FXML public void openCalendrier() { loadPlaceholder("Calendrier", "Module Events - Calendrier", btnCalendrier); }
+    @FXML public void openEventAjouter() {
+        setMenuOpen(eventsSubmenu, eventsArrowIcon, true);
+        loadPage("/AjouterEvenement.fxml", btnEvenements);
+    }
+
+    @FXML public void openEventReservation() {
+        setMenuOpen(eventsSubmenu, eventsArrowIcon, true);
+        loadPage("/VoirEvenements.fxml", btnReservations);
+    }
+
+    @FXML public void openEvenements() { openEventAjouter(); }
+    @FXML public void openReservations() { openEventReservation(); }
 
     @FXML public void openSettings() { loadPlaceholder("Settings", "Parametres du compte et de l'application", btnSettings); }
 
@@ -185,6 +193,10 @@ public class AdminDashboardController {
             showAlert(Alert.AlertType.ERROR, "Erreur navigation", e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void setActiveMenu(Button activeButton) {
+        setActiveButton(activeButton);
     }
 
     private void loadMarketplacePage(String fxmlPath, boolean venteMode, Button activeButton) {
@@ -322,7 +334,7 @@ public class AdminDashboardController {
         if (Arrays.asList(btnForumPoste, btnForumLike, btnForumCommentaire).contains(child)) return btnForum;
         if (Arrays.asList(btnAbonnement, btnAbonnementStatistique, btnSouscription).contains(child)) return btnAbonnementMenu;
         if (Arrays.asList(btnQuiz, btnQuestions, btnResultats).contains(child)) return btnQuizMenu;
-        if (Arrays.asList(btnEvenements, btnReservations, btnCalendrier).contains(child)) return btnEventsMenu;
+        if (Arrays.asList(btnEvenements, btnReservations).contains(child)) return btnEventsMenu;
         return null;
     }
 
@@ -334,7 +346,7 @@ public class AdminDashboardController {
                 btnForum, btnForumPoste, btnForumLike, btnForumCommentaire,
                 btnAbonnementMenu, btnAbonnement, btnAbonnementStatistique, btnSouscription,
                 btnQuizMenu, btnQuiz, btnQuestions, btnResultats,
-                btnEventsMenu, btnEvenements, btnReservations, btnCalendrier,
+                btnEventsMenu, btnEvenements, btnReservations,
                 btnSettings
         );
     }
@@ -347,7 +359,7 @@ public class AdminDashboardController {
                 btnForumPoste, btnForumLike, btnForumCommentaire,
                 btnAbonnement, btnAbonnementStatistique, btnSouscription,
                 btnQuiz, btnQuestions, btnResultats,
-                btnEvenements, btnReservations, btnCalendrier
+                btnEvenements, btnReservations
         );
     }
 
