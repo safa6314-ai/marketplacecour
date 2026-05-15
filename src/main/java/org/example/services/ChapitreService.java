@@ -77,7 +77,7 @@ public class ChapitreService {
                 liste.add(ch);
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("Erreur lors du chargement des chapitres : " + e.getMessage(), e);
+            throw new IllegalStateException("Erreur lors du chargement des chapitres  : " + e.getMessage(), e);
         }
         return liste;
     }
