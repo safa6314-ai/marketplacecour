@@ -32,9 +32,9 @@ public final class MailService {
     private static final int SMTP_PORT = 587;
 
     /** Notifications go here (per product request). */
-    private static final String TO_ADDRESS = "hassanjebri@gmail.com";
+    private static final String TO_ADDRESS = "rawenghanmi8@gmail.com";
 
-    private static final String DEFAULT_FROM = "jebrihassan66@gmail.com";
+    private static final String DEFAULT_FROM = "Rawen.Ghanmi@esprit.tn";
 
     private MailService() {}
 
